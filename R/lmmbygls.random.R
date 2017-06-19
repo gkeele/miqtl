@@ -37,7 +37,9 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
       eigen.K <- eigen(K)
     }
     Ut <- t(eigen.K$vectors) # a small optimization
+    d <- eigen.K$values
   }
+  poly.K <- K
   y <- Ut %*% y
   X <- Ut %*% X
   Z <- Ut %*% Z
@@ -46,6 +48,12 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   ## Define local objective function/closure for Brent's optimization
   ### Optimize functions
   h2.fit <- function(h2, logLik.only=TRUE, ...){
+    if(null.h2 == 0){
+      H <- K*h2 + diag(1 - h2)
+    }
+    else{
+      H <- K*h2 + diag(d*null.h2*(1 - h2) + 1 - null.h2*(1 - h2) - h2)
+    }
     H <- K*h2 + diag(d*null.h2*(1 - h2) + 1 - null.h2*(1 - h2) - h2)
     chol.H <- chol(H)
     M <- t(solve(chol.H))
@@ -85,7 +93,7 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   fit$x <- X
   fit$y <- y
   fit$eigen.K <- eigen.K
-  fit$K <- K
+  fit$K <- poly.K
   fit$xlevels <- .getXlevels(Terms, m)
   fit$contrasts <- attr(X, "contrasts")
   class(fit) <- "lmmbygls"

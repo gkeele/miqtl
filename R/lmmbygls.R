@@ -70,13 +70,12 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
   ### Optimize functions
   h2.fit <- function(h2, logLik.only=TRUE, verbose=FALSE, ...){
     if(is.null(fix.par)){ # EMMA or first time optimization
+      d <- h2*eigen.K$values + (1-h2)
       if(is.null(weights)){
-        d <- h2*eigen.K$values + (1-h2)
         M <- d^-0.5 * Ut 
         logDetV <- sum(log(d))
       }
       else{
-        d <- h2*eigen.K$values + (1-h2)
         M <- d^-0.5 * t(sqrt(weights) * t(Ut))
         logDetV <- 2*sum(log(1/sqrt(weights))) + sum(log(d)) # maybe right
       }
