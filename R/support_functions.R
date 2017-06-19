@@ -169,7 +169,7 @@ replicates.eigen <- function(Z, K) {
               vectors=qr.Q(qr(Z %*% eigen$vectors))))
 }
 
-get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA")){
+get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA", "LRT.random.locus")){
   method <- method[1]
   if(method == "LRT"){
     p.value <- pchisq(q=-2*(fit0$logLik - fit1$logLik), df=fit1$rank-fit0$rank, lower.tail=FALSE)
@@ -177,6 +177,10 @@ get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA")){
   if(method == "ANOVA"){
     class(fit0) <- class(fit1) <- "lm"
     p.value <- anova(fit0, fit1)$`Pr(>F)`[2]
+  }
+  if(method == "LRT.random.locus"){
+    chi.sq <- -2*(fit0$logLik - fit1$REML.logLik)
+    p.value <- ifelse(chi.sq == 0, 1, 0.5*pchisq(q=chi.sq, df=1, lower.tail=FALSE))
   }
   return(p.value)
 }
