@@ -40,6 +40,10 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
     d <- eigen.K$values
   }
   poly.K <- K
+  original.y <- y
+  original.X <- X
+  original.Z <- Z
+  ## Rotations
   y <- Ut %*% y
   X <- Ut %*% X
   Z <- Ut %*% Z
@@ -100,9 +104,9 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   fit$locus.effect.type <- "random"
   fit$na.action <- attr(m, "na.action")
   fit$weights <- weights
-  fit$x <- X
-  fit$z <- Z
-  fit$y <- y
+  fit$x <- original.X
+  fit$z <- original.Z
+  fit$y <- original.y
   fit$eigen.K <- eigen.K
   fit$K <- poly.K
   fit$xlevels <- .getXlevels(Terms, m)
