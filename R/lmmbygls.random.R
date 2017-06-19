@@ -58,7 +58,6 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
     else{
       H <- K*h2 + diag(d*null.h2*(1 - h2) + 1 - null.h2*(1 - h2) - h2)
     }
-    H <- K*h2 + diag(d*null.h2*(1 - h2) + 1 - null.h2*(1 - h2) - h2)
     chol.H <- chol(H)
     M <- t(solve(chol.H))
     fit <- gls.fit(X=X, y=y, M=M, logDetV=0, ...)
@@ -101,6 +100,8 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
     fit$model <- m
   }
   names(y) <- rownames(X) <- rownames(Z) <- ids
+  fit$locus.h2 <- fit$h2
+  fit$h2 <- null.h2
   fit$locus.effect.type <- "random"
   fit$na.action <- attr(m, "na.action")
   fit$weights <- weights
