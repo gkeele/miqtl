@@ -65,7 +65,7 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
     fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(X) %*% X)) - 0.5*log(det(t(X) %*% chol2inv(chol.H) %*% X)) - 0.5*2*sum(log(diag(chol.H)))
     if(logLik.only){
       if(verbose){
-        cat(sep="", "h2 = ", h2, " : logLik = ", fit$logLik, "\n")
+        cat(sep="", "h2 = ", h2, " : logLik = ", fit$REML.logLik, "\n")
       }
       return(fit$REML.logLik)
     }
@@ -96,10 +96,12 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   if (model){
     fit$model <- m
   }
-  names(y) <- rownames(X) <- ids
+  names(y) <- rownames(X) <- rownames(Z) <- ids
+  fit$locus.effect.type <- "random"
   fit$na.action <- attr(m, "na.action")
   fit$weights <- weights
   fit$x <- X
+  fit$z <- Z
   fit$y <- y
   fit$eigen.K <- eigen.K
   fit$K <- poly.K

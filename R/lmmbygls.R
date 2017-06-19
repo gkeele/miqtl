@@ -193,6 +193,7 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
   }
   fit$na.action <- attr(m, "na.action")
 
+  fit$locus.effect.type <- "fixed"
   names(y) <- rownames(X) <- ids
   fit$weights <- weights
   fit$x <- X
