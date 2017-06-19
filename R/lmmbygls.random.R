@@ -67,7 +67,7 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
       if(verbose){
         cat(sep="", "h2 = ", h2, " : logLik = ", fit$logLik, "\n")
       }
-      return(fit$logLik)
+      return(fit$REML.logLik)
     }
     fit$h2 <- h2
     fit$lambda <- h2/(1 - h2)
