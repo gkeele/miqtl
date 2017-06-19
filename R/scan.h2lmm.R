@@ -266,7 +266,7 @@ scan.h2lmm <- function(genomecache, data,
                                   use.par="h2", null.h2=fix.par,
                                   brute=brute)
           LOD.vec[i] <- log10(exp(fit1$REML.logLik - fit0.REML$logLik))
-          chi.sq <- -2*(fit0$REML.logLik - fit1$REML.logLik)
+          chi.sq <- -2*(fit0.REML$logLik - fit1$REML.logLik)
           p.vec[i] <- ifelse(chi.sq == 0, 1, 0.5*pchisq(q=chi.sq, df=1, lower.tail=FALSE))
           df[i] <- 1
         }
