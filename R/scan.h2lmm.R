@@ -139,6 +139,10 @@ scan.h2lmm <- function(genomecache, data,
     cat("standard ANOVA F-test not valid with mixed effect model, swithcing to LRT\n")
     use.fix.par <- TRUE
   }
+  ###### Switching p-value LRT mode for a random effect
+  if(!locus.as.fixed & p.value.method == "LRT"){
+    p.value.method <- "LRT.random.locus"
+  }
   
   ###### Null model fits
   if(use.lmer){
@@ -266,8 +270,7 @@ scan.h2lmm <- function(genomecache, data,
                                   use.par="h2", null.h2=fix.par,
                                   brute=brute)
           LOD.vec[i] <- log10(exp(fit1$REML.logLik - fit0.REML$logLik))
-          chi.sq <- -2*(fit0.REML$logLik - fit1$REML.logLik)
-          p.vec[i] <- ifelse(chi.sq == 0, 1, 0.5*pchisq(q=chi.sq, df=1, lower.tail=FALSE))
+          p.vec[i] <- get.p.value(fit0=fit0.REML, fit1=fit1, method=p.value.method)
           df[i] <- 1
         }
       }
