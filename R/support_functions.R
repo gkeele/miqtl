@@ -179,7 +179,7 @@ get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA", "LRT.random.locus")
     p.value <- anova(fit0, fit1)$`Pr(>F)`[2]
   }
   if(method == "LRT.random.locus"){
-    chi.sq <- -2*(fit0$logLik - fit1$REML.logLik)
+    chi.sq <- -2*(fit0$REML.logLik - fit1$REML.logLik)
     p.value <- ifelse(chi.sq == 0, 1, 0.5*pchisq(q=chi.sq, df=1, lower.tail=FALSE))
   }
   return(p.value)

@@ -103,14 +103,13 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
     return(fit)
   }
   h2.fit.REML <- function(h2, logLik.only=TRUE, verbose=FALSE, ...){
-    if(is.null(fix.par)){
+    if(is.null(fix.par)){ # EMMA or first time optimization
+      d <- h2*eigen.K$values + (1-h2)
       if(is.null(weights)){
-        d <- h2*eigen.K$values + (1-h2)
         M <- d^-0.5 * Ut 
         logDetV <- sum(log(d))
       }
       else{
-        d <- h2*eigen.K$values + (1-h2)
         M <- d^-0.5 * t(sqrt(weights) * t(Ut))
         logDetV <- 2*sum(log(1/sqrt(weights))) + sum(log(d)) # maybe right
       }
@@ -122,7 +121,7 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
       }
       if(fix.par == 0 & !is.null(weights)){
         M <- diag(sqrt(weights))
-        logDetV <- sum(log(weights))
+        logDetV <- sum(log(1/weights))
       }
     }
     fit <- gls.fit(X=X, y=y, M=M, logDetV=logDetV, ...)
