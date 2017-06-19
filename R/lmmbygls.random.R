@@ -49,7 +49,7 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   ### Optimize functions
   h2.fit <- function(h2, logLik.only=TRUE, ...){
     if(null.h2 == 0){
-      H <- K*h2 + diag(1 - h2)
+      H <- K*h2 + diag(rep(1 - h2, n))
     }
     else{
       H <- K*h2 + diag(d*null.h2*(1 - h2) + 1 - null.h2*(1 - h2) - h2)
