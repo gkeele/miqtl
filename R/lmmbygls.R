@@ -148,7 +148,7 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
       peak <- optimize(f=h2.fit, logLik.only=TRUE, verbose=verbose, ..., interval=c(0,1), maximum=TRUE)
       if(brute){
         fit.h2.0 <- h2.fit(h2=0, logLik.only=FALSE, verbose=FALSE)
-        if(peak < fit.h2.0$logLik){
+        if(peak$objective < fit.h2.0$logLik){
           fit <- fit.h2.0
         }
         else{
