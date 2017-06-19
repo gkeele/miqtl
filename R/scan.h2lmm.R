@@ -264,8 +264,7 @@ scan.h2lmm <- function(genomecache, data,
         else{
           fit1 <- lmmbygls.random(formula=null.formula, data=data, pheno.id=pheno.id,
                                   eigen.K=fit0$eigen.K, K=fit0$K, Z=X, weights=weights,
-                                  use.par="h2", null.h2=fix.par,
-                                  brute=brute)
+                                  use.par="h2", null.h2=fix.par)
           LOD.vec[i] <- log10(exp(fit1$REML.logLik - fit0$REML.logLik))
           chi.sq <- -2*(fit0$REML.logLik - fit1$REML.logLik)
           p.vec[i] <- ifelse(chi.sq == 0, 1, 0.5*pchisq(q=chi.sq, df=1, lower.tail=FALSE))
