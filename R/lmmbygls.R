@@ -161,7 +161,7 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
     }
     fit$h2.optimized <- TRUE
   } 
-  if(!is.null(fix.par)) {
+  else{
     if(use.par[1] == "h2"){
       fit <- h2.fit(h2=fix.par, logLik.only=FALSE, verbose=FALSE)
     }

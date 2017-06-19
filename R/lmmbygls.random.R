@@ -1,16 +1,19 @@
-lmmbygls.random <- function(formula, data, Z, 
-                            null.h2, fit0,
-                            use.par,
+lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
+                            weights=NULL, 
+                            use.par="h2",
+                            pheno.id="SUBJECT.NAME",
+                            brute=TRUE,
                             subset, na.action,
-                            method = "qr",
-                            model = TRUE, 
-                            contrasts = NULL,
+                            method="qr",
+                            model=TRUE, 
+                            contrasts=NULL,
+                            verbose=FALSE,
                             ...) 
 {
   call <- match.call()
   m <- match.call(expand.dots = FALSE)
-  m$W <- m$Z <- m$null.h2 <- m$use.par <- m$fit0 <- NULL
-  m$method <- m$model <- m$x <- m$y <- m$contrasts <- NULL
+  m$W <- m$Z <- m$K <- m$eigen.K <- m$null.h2 <- m$use.par <- NULL
+  m$method <- m$model <- m$weights <- m$pheno.id <- m$x <- m$y <- m$contrasts <- NULL
   m$... <- NULL
   
   m[[1L]] <- quote(stats::model.frame)
@@ -24,14 +27,17 @@ lmmbygls.random <- function(formula, data, Z,
   n <- nrow(X)
   q <- ncol(X)
   
-  eigen.K <- fit0$eigen.K
-  if(!is.null(eigen.K)){
-    Ut <- t(eigen.K$vectors) # a small optimization
-    d <- eigen.K$values
+  ids <- data[,pheno.id]
+  
+  if(is.null(K)){ ## No kinship effect setting: K - NULL, eigen.K - NULL
+    null.h2 <- 0
+    Ut <- diag(n)
   }
   else{
-    Ut <- diag(nrow(X))
-    d <- rep(1, nrow(X))
+    if(is.null(eigen.K)){
+      eigen.K <- eigen(K)
+    }
+    Ut <- t(eigen.K$vectors) # a small optimization
   }
   y <- Ut %*% y
   X <- Ut %*% X
@@ -50,8 +56,8 @@ lmmbygls.random <- function(formula, data, Z,
     fit$rss <- sum(fit$residuals^2)
     fit$sigma2.reml <- fit$rss/df
     fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(X) %*% X)) - 0.5*log(det(t(X) %*% chol2inv(chol.H) %*% X)) - 0.5*2*sum(log(diag(chol.H)))
-    if (logLik.only){
-      return (fit$REML.logLik)
+    if(logLik.only){
+      return(fit$REML.logLik)
     }
     fit$h2 <- h2
     fit$lambda <- h2/(1 - h2)
@@ -74,10 +80,13 @@ lmmbygls.random <- function(formula, data, Z,
   if (model){
     fit$model <- m
   }
+  names(y) <- rownames(X) <- ids
   fit$na.action <- attr(m, "na.action")
+  fit$weights <- weights
   fit$x <- X
   fit$y <- y
   fit$eigen.K <- eigen.K
+  fit$K <- K
   fit$xlevels <- .getXlevels(Terms, m)
   fit$contrasts <- attr(X, "contrasts")
   class(fit) <- "lmmbygls"

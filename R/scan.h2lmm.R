@@ -17,6 +17,8 @@
 #' @param model DEFAULT: additive. Specifies how to model the founder haplotype probabilities. The additive options specifies
 #' use of haplotype dosages, and is most commonly used. The full option regresses the phenotype on the actual
 #' diplotype probabilities.
+#' @param locus.as.fixed DEFAULT: TRUE. If TRUE, the locus effect is fit as fixed effect. If FALSE, it is
+#' fit as a random effect.
 #' @param p.value.method DEFAULT: "LRT". "LRT" specifies a likelihood ratio test, which is flexible to testing fixed
 #' effects in fixed and mixed effect models. "ANOVA" specifies an F-test, which is only valid in fixed effect models.
 #' ANOVA is more conservative in models with low sample sizes, where the asymptotic theory underlying the LRT does not
@@ -53,7 +55,7 @@
 #' @examples scan.h2lmm()
 scan.h2lmm <- function(genomecache, data, 
                        formula, K=NULL,
-                       model=c("additive", "full"),
+                       model=c("additive", "full"), locus.as.fixed=TRUE,
                        p.value.method=c("LRT", "ANOVA"),
                        use.par="h2", use.multi.impute=TRUE, num.imp=11, chr="all", brute=TRUE, use.fix.par=TRUE, 
                        seed=1, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NAME",
@@ -114,19 +116,28 @@ scan.h2lmm <- function(genomecache, data,
   ## check for LMER notation
   use.lmer <- check.for.lmer.formula(null.formula)
   
+  ####################### CHECKS
   ###### check p-value method
   if(use.lmer & p.value.method == "ANOVA"){
     cat("ANOVA not currently supported with our implementation of LMER, swithcing to LRT\n")
     p.value.method <- "LRT"
   }
-  if(p.value.method == "ANOVA" & !is.null(K)){
-    cat("standard ANOVA F-test not valid with mixed effect model, swithcing to LRT\n")
+  else if(p.value.method == "ANOVA" & (!is.null(K) | !locus.as.fixed)){
+    cat("Standard ANOVA F-test not valid with mixed effect model, swithcing to LRT\n")
     p.value.method <- "LRT"
   }
-  
   ###### check that both sparse random effect and kinship random effect are not being specified together
   if(use.lmer & !is.null(K)){
     stop("Cannot use LMER sparse random effects AND a non-sparse random effect", call.=FALSE)
+  }
+  ###### check that both lmer and random locus effect are not being specified together
+  if(use.lmer & !locus.as.fixed){
+    stop("Cannot use LMER sparse random effects AND fit locus effect as random", call.=FALSE)
+  }
+  ###### check that use.fix.par=TRUE if locus.as.fixed=FALSE
+  if(!use.fix.par & !locus.as.fixed){
+    cat("standard ANOVA F-test not valid with mixed effect model, swithcing to LRT\n")
+    use.fix.par <- TRUE
   }
   
   ###### Null model fits
@@ -138,9 +149,9 @@ scan.h2lmm <- function(genomecache, data,
   else{
     ## No kinship effect - weights or no weights
     if(is.null(K)){
-      fit0 <- lmmbygls(null.formula, data=data, eigen.K=NULL, K=NULL, pheno.id=pheno.id,
+      fit0 <- lmmbygls(formula=null.formula, data=data, eigen.K=NULL, K=NULL, pheno.id=pheno.id,
                        use.par="h2", fix.par=0, weights=weights, brute=brute)
-      fit0.REML <- lmmbygls(null.formula, data=data, eigen.K=NULL, K=NULL, pheno.id=pheno.id,
+      fit0.REML <- lmmbygls(formula=null.formula, data=data, eigen.K=NULL, K=NULL, pheno.id=pheno.id,
                             use.par="h2.REML", fix.par=0, weights=weights, brute=brute)
     }
     ## Kinship effect - weights or no weights
@@ -214,17 +225,21 @@ scan.h2lmm <- function(genomecache, data,
     }
     if(!use.multi.impute){
       X <- h$getLocusMatrix(loci[i], model=model, subjects=non.augment.subjects)
-      max.column <- which.max(colSums(X, na.rm=TRUE))[1]
-      X <- X[,-max.column]
+      keep.col <- 1:ncol(X)
+      if(locus.as.fixed){
+        max.column <- which.max(colSums(X, na.rm=TRUE))[1]
+        keep.col <- keep.col[keep.col != max.column]
+        X <- X[,keep.col]
+      }
       colnames(X) <- gsub(pattern="/", replacement=".", x=colnames(X), fixed=TRUE)
       locus.formula <- make.alt.formula(formula=formula, X=X, do.augment=do.augment)
       if(do.augment){
         X.names <- rownames(X)
         if(model=="additive"){
-          X <- rbind(X, 2*diag(augment.n)[,-max.column])
+          X <- rbind(X, 2*diag(augment.n)[,keep.col])
         }
         if(model=="full"){
-          X <- rbind(X, diag(augment.n)[,-max.column])
+          X <- rbind(X, diag(augment.n)[,keep.col])
         }
         rownames(X) <- c(X.names, paste0("augment.obs", 1:augment.n))
       }
@@ -236,14 +251,26 @@ scan.h2lmm <- function(genomecache, data,
         p.vec[i] <- pchisq(q=-2*(as.numeric(logLik(fit0)) - as.numeric(logLik(fit1))), df=length(fixef(fit1))-length(fixef(fit0)), lower.tail=FALSE)
       }
       else{
-        fit1 <- lmmbygls(formula=locus.formula, data=data, pheno.id=pheno.id,
-                         eigen.K=fit0$eigen.K, K=fit0$K, 
-                         use.par="h2", fix.par=fix.par, M=fit0$M, logDetV=fit0$logDetV,
-                         brute=brute, 
-                         weights=weights)
-        LOD.vec[i] <- log10(exp(fit1$logLik - fit0$logLik))
-        p.vec[i] <- get.p.value(fit0=fit0, fit1=fit1, method=p.value.method)
-        df[i] <- fit1$rank
+        if(locus.as.fixed){
+          fit1 <- lmmbygls(formula=locus.formula, data=data, pheno.id=pheno.id,
+                           eigen.K=fit0$eigen.K, K=fit0$K, 
+                           use.par="h2", fix.par=fix.par, M=fit0$M, logDetV=fit0$logDetV,
+                           brute=brute, 
+                           weights=weights)
+          LOD.vec[i] <- log10(exp(fit1$logLik - fit0$logLik))
+          p.vec[i] <- get.p.value(fit0=fit0, fit1=fit1, method=p.value.method)
+          df[i] <- fit1$rank
+        }
+        else{
+          fit1 <- lmmbygls.random(formula=null.formula, data=data, pheno.id=pheno.id,
+                                  eigen.K=fit0$eigen.K, K=fit0$K, Z=X, weights=weights,
+                                  use.par="h2", null.h2=fix.par,
+                                  brute=brute)
+          LOD.vec[i] <- log10(exp(fit1$REML.logLik - fit0$REML.logLik))
+          chi.sq <- -2*(fit0$REML.logLik - fit1$REML.logLik)
+          p.vec[i] <- ifelse(chi.sq == 0, 1, 0.5*pchisq(q=chi.sq, df=1, lower.tail=FALSE))
+          df[i] <- 1
+        }
       }
     }
     if(debug.single.fit){ browser() }
