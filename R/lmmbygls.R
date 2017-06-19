@@ -146,12 +146,17 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
     }
     if(use.par[1] == "h2"){
       peak <- optimize(f=h2.fit, logLik.only=TRUE, verbose=verbose, ..., interval=c(0,1), maximum=TRUE)
-      fit  <- h2.fit(h2=peak$maximum, logLik.only=FALSE, verbose=FALSE)
       if(brute){
         fit.h2.0 <- h2.fit(h2=0, logLik.only=FALSE, verbose=FALSE)
-        if(fit$logLik < fit.h2.0$logLik){
+        if(peak < fit.h2.0$logLik){
           fit <- fit.h2.0
         }
+        else{
+          fit  <- h2.fit(h2=peak$maximum, logLik.only=FALSE, verbose=FALSE)
+        }
+      }
+      else{
+        fit  <- h2.fit(h2=peak$maximum, logLik.only=FALSE, verbose=FALSE)
       }
     }
     if(use.par[1] == "h2.REML"){

@@ -82,6 +82,9 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
       if(peak$objective < fit.h2.0$REML.logLik){
         fit <- fit.h2.0
       }
+      else{
+        fit <- h2.fit(h2=peak$maximum, logLik.only=FALSE)
+      }
     }
     else{
       fit <- h2.fit(h2=peak$maximum, logLik.only=FALSE)
