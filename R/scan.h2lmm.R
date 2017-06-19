@@ -181,7 +181,7 @@ scan.h2lmm <- function(genomecache, data,
     }
     ####### EMMA or EMMAX  
     if(use.fix.par){
-      fix.par <- fit0$h2
+      fix.par <- ifelse(locus.as.fixed, fit0$h2, fit0.REML$h2)
     }
     if(!use.fix.par){
       fix.par <- NULL
