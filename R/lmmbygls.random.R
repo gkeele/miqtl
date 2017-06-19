@@ -47,7 +47,7 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   
   ## Define local objective function/closure for Brent's optimization
   ### Optimize functions
-  h2.fit <- function(h2, logLik.only=TRUE, ...){
+  h2.fit <- function(h2, logLik.only=TRUE, verbose=FALSE, ...){
     if(null.h2 == 0){
       H <- K*h2 + diag(rep(1 - h2, n))
     }
@@ -64,7 +64,10 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
     fit$sigma2.reml <- fit$rss/df
     fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(X) %*% X)) - 0.5*log(det(t(X) %*% chol2inv(chol.H) %*% X)) - 0.5*2*sum(log(diag(chol.H)))
     if(logLik.only){
-      return(fit$REML.logLik)
+      if(verbose){
+        cat(sep="", "h2 = ", h2, " : logLik = ", fit$logLik, "\n")
+      }
+      return(fit$logLik)
     }
     fit$h2 <- h2
     fit$lambda <- h2/(1 - h2)
