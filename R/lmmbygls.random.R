@@ -1,7 +1,7 @@
 lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
                             weights=NULL, 
                             use.par="h2",
-                            pheno.id="SUBJECT.NAME",
+                            pheno.id="SUBJECT.NAME", brute=TRUE,
                             subset, na.action,
                             method="qr",
                             model=TRUE, 
@@ -12,7 +12,7 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   call <- match.call()
   m <- match.call(expand.dots = FALSE)
   m$W <- m$Z <- m$K <- m$eigen.K <- m$null.h2 <- m$use.par <- NULL
-  m$method <- m$model <- m$weights <- m$pheno.id <- m$x <- m$y <- m$contrasts <- NULL
+  m$method <- m$model <- m$weights <- m$pheno.id <- m$brute <- m$x <- m$y <- m$contrasts <- NULL
   m$... <- NULL
   
   m[[1L]] <- quote(stats::model.frame)
@@ -74,8 +74,11 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   fit <- NULL
   if(use.par == "h2"){
     peak <- optimize(f=h2.fit, logLik.only=TRUE, ..., interval=c(0, 1), maximum=TRUE)
-    if(fit0$REML.logLik > peak$objective){
-      fit <- fit0
+    if(brute){
+      fit.h2.0 <- h2.fit(h2=0, logLik.only=FALSE, verbose=FALSE)
+      if(peak$objective < fit.h2.0$REML.logLik){
+        fit <- fit.h2.0
+      }
     }
     else{
       fit <- h2.fit(h2=peak$maximum, logLik.only=FALSE)

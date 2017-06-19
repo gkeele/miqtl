@@ -253,10 +253,9 @@ scan.h2lmm <- function(genomecache, data,
       else{
         if(locus.as.fixed){
           fit1 <- lmmbygls(formula=locus.formula, data=data, pheno.id=pheno.id,
-                           eigen.K=fit0$eigen.K, K=fit0$K, 
+                           eigen.K=fit0$eigen.K, K=fit0$K, weights=weights,
                            use.par="h2", fix.par=fix.par, M=fit0$M, logDetV=fit0$logDetV,
-                           brute=brute, 
-                           weights=weights)
+                           brute=brute)
           LOD.vec[i] <- log10(exp(fit1$logLik - fit0$logLik))
           p.vec[i] <- get.p.value(fit0=fit0, fit1=fit1, method=p.value.method)
           df[i] <- fit1$rank
@@ -264,7 +263,8 @@ scan.h2lmm <- function(genomecache, data,
         else{
           fit1 <- lmmbygls.random(formula=null.formula, data=data, pheno.id=pheno.id,
                                   eigen.K=fit0$eigen.K, K=fit0$K, Z=X, weights=weights,
-                                  use.par="h2", null.h2=fix.par)
+                                  use.par="h2", null.h2=fix.par,
+                                  brute=brute)
           LOD.vec[i] <- log10(exp(fit1$REML.logLik - fit0$REML.logLik))
           chi.sq <- -2*(fit0$REML.logLik - fit1$REML.logLik)
           p.vec[i] <- ifelse(chi.sq == 0, 1, 0.5*pchisq(q=chi.sq, df=1, lower.tail=FALSE))
