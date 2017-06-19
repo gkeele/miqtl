@@ -57,7 +57,7 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
     H <- K*h2 + diag(d*null.h2*(1 - h2) + 1 - null.h2*(1 - h2) - h2)
     chol.H <- chol(H)
     M <- t(solve(chol.H))
-    fit <- gls.fit(X=X, y=y, M=M, ...)
+    fit <- gls.fit(X=X, y=y, M=M, logDetV=0, ...)
     # REML likelihood
     df <- fit$df.residual
     fit$rss <- sum(fit$residuals^2)
