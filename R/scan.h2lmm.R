@@ -269,7 +269,7 @@ scan.h2lmm <- function(genomecache, data,
                                   eigen.K=fit0$eigen.K, K=fit0$K, Z=X, weights=weights,
                                   use.par="h2", null.h2=fix.par,
                                   brute=brute)
-          LOD.vec[i] <- log10(exp(fit1$REML.logLik - fit0.REML$logLik))
+          LOD.vec[i] <- log10(exp(fit1$REML.logLik - fit0.REML$REML.logLik))
           p.vec[i] <- get.p.value(fit0=fit0.REML, fit1=fit1, method=p.value.method)
           df[i] <- 1
         }
