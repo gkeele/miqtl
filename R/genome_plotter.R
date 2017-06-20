@@ -236,18 +236,27 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   }
   
   shift.left <- min(pos[chr==chr.types[1]], na.rm=TRUE)
+  
+  ### Fixef or ranef
+  if(length(scan.list) == 1 & !is.null(scan.list[[1]]$locus.effect.type)){
+    locus.effect.type <- ifelse(scan.list[[1]]$locus.effect.type == "fixed", "fixef", "ranef")
+    locus.term <- paste("locus", locus.effect.type, sep=".")
+  }
+  else{
+    locus.term <- "locus"
+  }
 
   ### Handling the annoying differences between lmer and lm objects
   if(class(scan.list[[1]]$fit0) != "lmerMod"){
     this.title <- c(main, 
-                    paste0(scan.list[[1]]$formula, " + locus (", scan.list[[1]]$model.type, ")"),
+                    paste0(scan.list[[1]]$formula, " + ", locus.term, " (", scan.list[[1]]$model.type, ")"),
                     paste("n =", ifelse(is.null(scan.list[[1]]$fit0$weights), 
                                         length(scan.list[[1]]$fit0$y),
                                         sum(scan.list[[1]]$fit0$weights))))
   }
   else{
     this.title <- c(main, 
-                    paste0(scan.list[[1]]$formula, " + locus (", scan.list[[1]]$model.type, ")"),
+                    paste0(scan.list[[1]]$formula, " + ", locus.term, " (", scan.list[[1]]$model.type, ")"),
                     paste("n =", sum(scan.list[[1]]$fit0@resp$weights)))
   }
   
