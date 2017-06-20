@@ -48,7 +48,7 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   X <- Ut %*% X
   Z <- Ut %*% Z
   K <- Z %*% t(Z)
-  
+
   ## Define local objective function/closure for Brent's optimization
   ### Optimize functions
   h2.fit <- function(h2, logLik.only=TRUE, verbose=FALSE, ...){

@@ -47,7 +47,6 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
     return(m)    
   }
   Terms <- attr(m, "terms")
-  
   y <- model.response(m)
   X <- model.matrix(Terms, m, contrasts)
   n <- nrow(X)
@@ -179,7 +178,10 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
     if(use.par[1] == "h2"){
       fit <- h2.fit(h2=fix.par, logLik.only=FALSE, verbose=FALSE)
     }
-    fit$h2.optimized <- FALSE
+    else{
+      fit <- h2.fit.REML(h2=fix.par, logLik.only=FALSE, verbose=FALSE)
+    }
+    fit$h2.optimized <- TRRUE
   }
   fit$gls.sigma2.mle <- fit$sigma2.mle
   fit$gls.sigma2     <- fit$sigma2
