@@ -61,6 +61,7 @@ multi.imput.lmmbygls <- function(num.imp,
       imp.df[i] <- length(fixef(fit1))
       imp.LOD[i] <- log10(exp(imp.logLik[i] - as.numeric(logLik(fit0))))
       imp.p.value[i] <- pchisq(q=-2*(as.numeric(logLik(fit0)) - imp.logLik), df=imp.df - length(fixef(fit0)), lower.tail=FALSE)
+      fit1$locus.effect.type <- "fixed"
     }
     else{
       if(locus.as.fixed){
@@ -73,6 +74,7 @@ multi.imput.lmmbygls <- function(num.imp,
         imp.df[i] <- fit1$rank
         imp.LOD[i] <- log10(exp(imp.logLik[i] - fit0$logLik))
         imp.p.value[i] <- get.p.value(fit0=fit0, fit1=fit1, method=p.value.method)
+        fit1$locus.effect.type <- "fixed"
       }
       else{
         null.formula <- make.null.formula(formula=formula, do.augment=do.augment)
@@ -84,6 +86,7 @@ multi.imput.lmmbygls <- function(num.imp,
         imp.df[i] <- fit1$rank
         imp.LOD[i] <- log10(exp(imp.logLik[i] - fit0$REML.logLik))
         imp.p.value[i] <- get.p.value(fit0=fit0, fit1=fit1, method=p.value.method)
+        fit1$locus.effect.type <- "random"
       }
     }
   }

@@ -5,9 +5,9 @@
 \title{Run a haplotype-based genome scan from probabilities stored in a genome cache directory}
 \usage{
 scan.h2lmm(genomecache, data, formula, K = NULL, model = c("additive",
-  "full"), p.value.method = c("LRT", "ANOVA"), use.par = "h2",
-  use.multi.impute = TRUE, num.imp = 11, chr = "all", brute = TRUE,
-  use.fix.par = TRUE, seed = 1, pheno.id = "SUBJECT.NAME",
+  "full"), locus.as.fixed = TRUE, p.value.method = c("LRT", "ANOVA"),
+  use.par = "h2", use.multi.impute = TRUE, num.imp = 11, chr = "all",
+  brute = TRUE, use.fix.par = TRUE, seed = 1, pheno.id = "SUBJECT.NAME",
   geno.id = "SUBJECT.NAME", weights = NULL, do.augment = FALSE,
   use.full.null = FALSE, added.data.points = 1, just.these.loci = NULL,
   print.locus.fit = FALSE, debug.single.fit = FALSE, ...)
@@ -32,6 +32,9 @@ are included in the formula) or a fixed effect model (equivalent to lm).}
 \item{model}{DEFAULT: additive. Specifies how to model the founder haplotype probabilities. The additive options specifies
 use of haplotype dosages, and is most commonly used. The full option regresses the phenotype on the actual
 diplotype probabilities.}
+
+\item{locus.as.fixed}{DEFAULT: TRUE. If TRUE, the locus effect is fit as fixed effect. If FALSE, it is
+fit as a random effect.}
 
 \item{p.value.method}{DEFAULT: "LRT". "LRT" specifies a likelihood ratio test, which is flexible to testing fixed
 effects in fixed and mixed effect models. "ANOVA" specifies an F-test, which is only valid in fixed effect models.
