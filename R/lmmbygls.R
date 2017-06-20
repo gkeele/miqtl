@@ -117,16 +117,28 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
       if(fix.par == 0 & is.null(weights)){
         M <- NULL # more efficient than I
         logDetV <- 0
+        d <- rep(1, n)
+        Ut <- diag(d)
       }
       if(fix.par == 0 & !is.null(weights)){
         M <- diag(sqrt(weights))
         logDetV <- sum(log(1/weights))
+        d <- weights
+        Ut <- diag(length(d))
       }
     }
     fit <- gls.fit(X=X, y=y, M=M, logDetV=logDetV, ...)
-    adjusted.logLik <- -0.5*n*log(2*pi) - 0.5*n*log(fit$sigma2) - 0.5*(n-ncol(X)) - 0.5*logDetV 
-    REML.logLik <- adjusted.logLik + 0.5*(ncol(X)*log(2*pi*fit$sigma2) + log(det(t(X)%*%X)) - log(det(t(X)%*%t(Ut)%*%diag(1/d)%*%Ut%*%X)))
-    fit$REML.logLik <- REML.logLik
+    
+    df <- fit$df.residual
+    fit$rss <- sum(fit$residuals^2)
+    fit$sigma2.reml <- fit$rss/df
+    
+    ## Check to make sure design matrix is full rank - for REML estimation
+    col.keep <- !is.na(fit$coefficients)
+    X <- X[,col.keep]
+    
+    fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(X) %*% X)) - 0.5*log(det(t(X)%*%t(Ut)%*%diag(1/d)%*%Ut%*%X)) - 0.5*logDetV
+
     if(logLik.only){
       if(verbose){
         cat(sep="", "h2 = ", h2, " : logLik = ", fit$REML.logLik, "\n")

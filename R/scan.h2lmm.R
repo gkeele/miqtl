@@ -91,7 +91,7 @@ scan.h2lmm <- function(genomecache, data,
   
   augment.indicator <- NULL
   formula.string <- Reduce(paste, deparse(formula))
-  null.formula <- make.null.formula(formula, do.augment=do.augment)
+  null.formula <- make.null.formula(formula=formula, do.augment=do.augment)
   original.n <- nrow(data)
   old.data <- data
   
@@ -216,12 +216,13 @@ scan.h2lmm <- function(genomecache, data,
         diplotype.prob.matrix <- rbind(diplotype.prob.matrix, augment.matrix)
         rownames(diplotype.prob.matrix) <- c(sample.names, paste0("augment.obs", 1:augment.n))
       }
-      fit1 <- multi.imput.lmmbygls(num.imp=num.imp, data=data, formula=formula, founders=founders,
-                                   diplotype.probs=diplotype.prob.matrix, pheno.id=pheno.id,
-                                   model=model, p.value.method=p.value.method, 
+      if(locus.as.fixed){ fit0.for.mi <- fit0 }
+      else{ fit0.for.mi <- fit0.REML }
+      fit1 <- multi.imput.lmmbygls(num.imp=num.imp, data=data, formula=formula, weights=weights, locus.as.fixed=locus.as.fixed,
+                                   model=model, p.value.method=p.value.method, founders=founders, diplotype.probs=diplotype.prob.matrix, pheno.id=pheno.id, 
                                    use.lmer=use.lmer, impute.map=impute.map,
-                                   use.par=use.par, fix.par=fix.par, fit0=fit0, do.augment=do.augment, 
-                                   brute=brute, seed=seed, weights=weights) 
+                                   use.par=use.par, fix.par=fix.par, fit0=fit0.for.mi, do.augment=do.augment, 
+                                   brute=brute, seed=seed) 
       MI.LOD[,i] <- fit1$LOD
       MI.p.value[,i] <- fit1$p.value
       LOD.vec[i] <- median(fit1$LOD)

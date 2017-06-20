@@ -44,9 +44,17 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   original.X <- X
   original.Z <- Z
   ## Rotations
-  y <- Ut %*% y
-  X <- Ut %*% X
-  Z <- Ut %*% Z
+  if(!is.null(weights)){
+    rotate <- t(sqrt(weights) * t(Ut))
+    #un.rotate <- 1/sqrt(weights)*Ut
+  }
+  else{
+    rotate <- Ut
+    #un.rotate <- t(Ut)
+  }
+  y <- rotate %*% y
+  X <- rotate %*% X
+  Z <- rotate %*% Z
   K <- Z %*% t(Z)
 
   ## Define local objective function/closure for Brent's optimization
@@ -60,8 +68,12 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
     df <- fit$df.residual
     fit$rss <- sum(fit$residuals^2)
     fit$sigma2.reml <- fit$rss/df
+    ## Check to make sure design matrix is full rank - for REML estimation
+    col.keep <- !is.na(fit$coefficients)
+    X <- X[,col.keep]
+    #raw.H <- un.rotate %*% H %*% t(un.rotate)
+    #chol.raw.H <- chol(raw.H)
     fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(X) %*% X)) - 0.5*log(det(t(X) %*% chol2inv(chol.H) %*% X)) - sum(log(diag(chol.H)))
-    
     if(logLik.only){
       if(verbose){
         cat(sep="", "h2 = ", h2, " : logLik = ", fit$REML.logLik, "\n")
@@ -75,7 +87,7 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   ## Optimize using objective function, or otherwise given value of h2
   fit <- NULL
   if(use.par == "h2"){
-    peak <- optimize(f=h2.fit, logLik.only=TRUE, ..., interval=c(0, 1), maximum=TRUE)
+    peak <- optimize(f=h2.fit, logLik.only=TRUE, ..., interval=c(0, 1-null.h2), maximum=TRUE)
     if(brute){
       fit.h2.0 <- h2.fit(h2=0, logLik.only=FALSE, verbose=FALSE)
       if(peak$objective < fit.h2.0$REML.logLik){
@@ -92,7 +104,7 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   fit$h2.optimized <- TRUE
   fit$terms <- Terms
   fit$call <- call
-  if (model){
+  if(model){
     fit$model <- m
   }
   names(y) <- rownames(X) <- rownames(Z) <- ids
