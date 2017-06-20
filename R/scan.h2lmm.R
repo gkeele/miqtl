@@ -293,7 +293,8 @@ scan.h2lmm <- function(genomecache, data,
                  formula=formula.string,
                  model.type=model,
                  p.value.method=p.value.method,
-                 impute.map=impute.map)
+                 impute.map=impute.map,
+                 locus.effect.type=fit1$locus.effect.type)
   if(length(just.these.loci) == 1){ output$fit1 <- fit1 }
   if(pheno.id != geno.id & !is.null(K)){ rownames(Z) <- as.character(data[, pheno.id]); output$Z <- Z }
   return(output)

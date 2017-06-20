@@ -119,7 +119,14 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
     y.max <- y.max.manual
   }
   
-  this.title <- c(main, paste0(scan.object$formula, " + locus (", scan.object$model.type, ")"))
+  if(!is.null(scan.object$locus.effect.type)){
+    locus.effect.type <- ifelse(scan.object$locus.effect.type == "fixed", "fixef", "ranef")
+    locus.term <- paste("locus", locus.effect.type, sep=".")
+  }
+  else{
+    locus.term <- "locus"
+  }
+  this.title <- c(main, paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"))
   
   plot(pos, outcome, 
        xlim=c(0, max.pos), 

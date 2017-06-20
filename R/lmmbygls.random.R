@@ -29,8 +29,8 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   ids <- data[,pheno.id]
   
   if(is.null(K)){ ## No kinship effect setting: K - NULL, eigen.K - NULL
-    null.h2 <- 0
-    Ut <- diag(n)
+    d <- rep(1, n)
+    Ut <- diag(d)
   }
   else{
     if(is.null(eigen.K)){
