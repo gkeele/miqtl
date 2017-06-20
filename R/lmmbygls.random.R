@@ -52,26 +52,15 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   ## Define local objective function/closure for Brent's optimization
   ### Optimize functions
   h2.fit <- function(h2, logLik.only=TRUE, verbose=FALSE, ...){
-    if(null.h2 == 0){
-      H <- K*h2 + diag(rep(1 - h2, n))
-    }
-    else{
-      H <- K*h2 + diag(d*null.h2*(1 - h2) + 1 - null.h2*(1 - h2) - h2)
-    }
-    #logDetV <- sum(log(d))
+    H <- K*h2 + diag(d*null.h2*(1 - h2) + 1 - null.h2*(1 - h2) - h2)
     chol.H <- chol(H)
     M <- t(solve(chol.H))
     fit <- gls.fit(X=X, y=y, M=M, logDetV=0, ...)
     # REML likelihood
     df <- fit$df.residual
-    n <- length(fit$residuals)
     fit$rss <- sum(fit$residuals^2)
-    #sigma2 <- fit$rss/n
     fit$sigma2.reml <- fit$rss/df
-    fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(X) %*% X)) - 0.5*log(det(t(X) %*% chol2inv(chol.H) %*% X)) - 0.5*2*sum(log(diag(chol.H)))
-    
-    #adjusted.logLik <- -0.5*n*log(2*pi) - 0.5*n*log(fit$sigma2) - 0.5*(n-ncol(X)) - 0.5*logDetV 
-    #fit$REML.logLik <- adjusted.logLik + 0.5*(ncol(X)*log(2*pi*fit$sigma2) + log(det(t(X)%*%X)) - log(det(t(X)%*%t(Ut)%*%diag(1/d)%*%Ut%*%X)))
+    fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(X) %*% X)) - 0.5*log(det(t(X) %*% chol2inv(chol.H) %*% X)) - sum(log(diag(chol.H)))
     
     if(logLik.only){
       if(verbose){
