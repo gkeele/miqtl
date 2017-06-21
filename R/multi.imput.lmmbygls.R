@@ -92,5 +92,6 @@ multi.imput.lmmbygls <- function(num.imp,
   }
   return(list(h2=imp.h2, 
               LOD=imp.LOD,
-              p.value=imp.p.value))
+              p.value=imp.p.value,
+              locus.effect.type=fit1$locus.effect.type))
 }
