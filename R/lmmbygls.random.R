@@ -46,7 +46,7 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   ## Rotations
   if(!is.null(weights)){
     rotate <- t(sqrt(weights) * t(Ut))
-    #un.rotate <- 1/sqrt(weights)*Ut
+    un.rotate <- 1/sqrt(weights)*Ut
   }
   else{
     rotate <- Ut
@@ -73,7 +73,12 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
     X <- X[,col.keep]
     #raw.H <- un.rotate %*% H %*% t(un.rotate)
     #chol.raw.H <- chol(raw.H)
-    fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(X) %*% X)) - 0.5*log(det(t(X) %*% chol2inv(chol.H) %*% X)) - sum(log(diag(chol.H)))
+    if(is.null(weights)){
+      fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(X) %*% X)) - 0.5*log(det(t(X) %*% chol2inv(chol.H) %*% X)) - sum(log(diag(chol.H)))
+    }
+    else{
+      fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(original.X) %*% original.X)) - 0.5*log(det(t(X) %*% un.rotate %*% chol2inv(chol.H) %*% t(un.rotate) %*% X)) - 0.5*log(det(un.rotate %*% H %*% t(un.rotate)))
+    }
     if(logLik.only){
       if(verbose){
         cat(sep="", "h2 = ", h2, " : logLik = ", fit$REML.logLik, "\n")
@@ -88,6 +93,7 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
   fit <- NULL
   if(use.par == "h2"){
     peak <- optimize(f=h2.fit, logLik.only=TRUE, ..., interval=c(0, 1-null.h2), maximum=TRUE)
+    browser()
     if(brute){
       fit.h2.0 <- h2.fit(h2=0, logLik.only=FALSE, verbose=FALSE)
       if(peak$objective < fit.h2.0$REML.logLik){

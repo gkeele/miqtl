@@ -137,7 +137,12 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
     col.keep <- !is.na(fit$coefficients)
     X <- X[,col.keep]
     
-    fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(X) %*% X)) - 0.5*log(det(t(X)%*%t(Ut)%*%diag(1/d)%*%Ut%*%X)) - 0.5*logDetV
+    if(is.null(weights)){
+      fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(X) %*% X)) - 0.5*log(det(t(X)%*%t(Ut)%*%((1/d)*Ut)%*%X)) - 0.5*logDetV
+    }
+    else{
+      fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*log(det(t(X) %*% X)) - 0.5*log(det(t(X)%*%(sqrt(weights)*t(Ut))%*%((1/d)*Ut)%*%(sqrt(weights)*X))) - 0.5*logDetV
+    }
 
     if(logLik.only){
       if(verbose){
@@ -171,6 +176,7 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
     }
     if(use.par[1] == "h2.REML"){
       peak <- optimize(f=h2.fit.REML, logLik.only=TRUE, verbose=verbose, ..., interval=c(0,1), maximum=TRUE)
+      browser()
       if(brute){
         fit.h2.0 <- h2.fit.REML(h2=0, logLik.only=FALSE, verbose=FALSE)
         if(peak$objective < fit.h2.0$logLik){
