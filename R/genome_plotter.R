@@ -476,7 +476,8 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
   
   if(!is.null(hard.thresholds)){
     for(i in 1:length(hard.thresholds)){
-      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=2)
+      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=rep(thresholds.lty, length(hard.thresholds)), 
+             lwd=rep(thresholds.lwd, length(hard.thresholds)))
     }
   }
   if(!is.null(thresholds.legend)){
