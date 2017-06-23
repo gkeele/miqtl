@@ -432,7 +432,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
 
   plot(1,
        xlim=c(shift.left, sum(max.pos)+(length(chr.types)-1)),
-       ylim=c(-1, y.max),
+       ylim=c(-0.1, y.max),
        xaxt="n", yaxt="n", xlab="", ylab=this.ylab, main=this.title,
        frame.plot=F, type="n")
   axis(side=2, at=0:y.max, las=2)
