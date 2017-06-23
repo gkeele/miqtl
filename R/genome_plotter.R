@@ -512,8 +512,8 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
                                     scale="Mb",
                                     y.max.manual=NULL, title="", alt.col=NULL, this.cex=1,
                                     hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
-                                    my.legend.cex=0.6, my.legend.pos="topleft", thresholds.lty=2, thresholds.lwd=1,
-                                    my.bty="n", r2.bounds=NULL){
+                                    my.legend.cex=0.6, my.legend.pos="topleft", thresholds.lty=2, thresholds.lwd=1, my.bty="n", 
+                                    r2.bounds=NULL, bounds.col="gray"){
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
   main.object <- snp.scan
 
@@ -579,7 +579,7 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
       low.locus.pos <- r2.interval$lb.Mb
       high.locus.pos <- r2.interval$ub.Mb
     }
-    polygon(c(rep(low.locus.pos, 2), rep(high.locus.pos, 2)), c(0, rep(y.max, 2), 0), col="gray", border=NA)
+    polygon(c(rep(low.locus.pos, 2), rep(high.locus.pos, 2)), c(0, rep(y.max, 2), 0), col=bounds.col, border=NA)
   }
   points(x=pos, y=outcome, col=r2.col, pch=20, cex=this.cex)
   points(x=point.locus.pos, y=point.locus.outcome, 
@@ -588,12 +588,12 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
   
   if(!is.null(hard.thresholds)){
     for(i in 1:length(hard.thresholds)){
-      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=2)
+      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=thresholds.lty, lwd=thresholds.lwd)
     }
   }
   if(!is.null(thresholds.legend)){
-    legend(my.legend.pos, legend=thresholds.legend, col=thresholds.col, lty=rep(2, length(thresholds.legend)),
-           bty="n", cex=my.legend.cex)
+    legend(my.legend.pos, legend=thresholds.legend, col=thresholds.col, lty=rep(thresholds.lty, length(thresholds.legend)),
+           lwd=rep(thresholds.lwd, length(thresholds.legend)), bty=my.bty, cex=my.legend.cex)
   }
   
   plotrix::color.legend(xl=floor(0.75*max.pos), yb=y.max, xr=max.pos, yt=y.max+0.5, legend=c(0, 0.25, 0.5, 0.75, 1), rect.col=these.colors, align="rb", gradient="x")  
