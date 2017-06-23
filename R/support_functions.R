@@ -7,7 +7,7 @@
 #' @export
 #' @examples rint()
 rint <- function(phenotype, prop=0.5){
-  rint_phenotype <- qnorm((rank(phenotype)-prop)/length(phenotype))
+  rint_phenotype <- qnorm((rank(phenotype, na.last="keep")-prop)/sum(!is.na(phenotype)))
   return(rint_phenotype)
 }
 
