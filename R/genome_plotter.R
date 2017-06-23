@@ -472,7 +472,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
   if(!has.X){
     axis.label <- chr.types
   }
-  axis(side=1, tick=F, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-3.5)
+  axis(side=1, tick=F, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5)
   
   if(!is.null(hard.thresholds)){
     for(i in 1:length(hard.thresholds)){
