@@ -375,7 +375,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
                                      scale="Mb",
                                      y.max.manual=NULL, title="", alt.col=NULL,
                                      hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
-                                     my.legend.cex=0.6, my.legend.pos="topright"){
+                                     my.legend.cex=0.6, my.legend.pos="topright", my.bty="n"){
   
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
   main.object <- snp.scan
@@ -481,7 +481,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
   }
   if(!is.null(thresholds.legend)){
     legend(my.legend.pos, legend=thresholds.legend, col=thresholds.col, lty=rep(2, length(thresholds.legend)),
-           bty="n", cex=my.legend.cex)
+           bty=my.bty, cex=my.legend.cex)
   }
 }
 
