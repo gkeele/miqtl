@@ -512,8 +512,8 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
                                     scale="Mb",
                                     y.max.manual=NULL, title="", alt.col=NULL, this.cex=1,
                                     hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
-                                    my.legend.cex=0.6, my.legend.pos="topleft",
-                                    r2.bounds=NULL){
+                                    my.legend.cex=0.6, my.legend.pos="topleft", thresholds.lty=2, thresholds.lwd=1,
+                                    my.bty="n", r2.bounds=NULL){
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
   main.object <- snp.scan
 
