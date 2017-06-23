@@ -483,7 +483,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
   if(!is.null(thresholds.legend)){
     legend(my.legend.pos, legend=thresholds.legend, col=thresholds.col, lwd=rep(thresholds.lwd, length(thresholds.legend)),
            lty=rep(thresholds.lty, length(thresholds.legend)),
-           bty=my.bty, cex=my.legend.cex)
+           bty=my.bty, cex=my.legend.cex, bg="white")
   }
 }
 
