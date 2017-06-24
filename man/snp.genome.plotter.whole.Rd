@@ -7,8 +7,8 @@
 snp.genome.plotter.whole(snp.scan, just.these.chr = NULL, scale = "Mb",
   y.max.manual = NULL, title = "", alt.col = NULL,
   hard.thresholds = NULL, thresholds.col = "red",
-  thresholds.legend = NULL, my.legend.cex = 0.6,
-  my.legend.pos = "topright")
+  thresholds.legend = NULL, thresholds.lty = 2, thresholds.lwd = 1,
+  my.legend.cex = 0.6, my.legend.pos = "topright", my.bty = "n")
 }
 \arguments{
 \item{snp.scan}{An imputed.snp.scan.h2lmm() object.}

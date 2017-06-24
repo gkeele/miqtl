@@ -11,6 +11,32 @@ rint <- function(phenotype, prop=0.5){
   return(rint_phenotype)
 }
 
+#' Pulls loci from scan objects based on specified criteria
+#' 
+#' This function parses a scan object and returns loci, for instance, the locus with the minimum
+#' p-value.
+#' 
+#' @param scan.object A scan.h2lmm() object (ROP or multiple imputations). If multiple imputations, median and confidence interval 
+#' on median are plotted.
+#' @param use.lod DEFAULT: FALSE. Specifies whether loci should be selected based on LOD scores or p-values.
+#' @param chr DEFAULT: "all". The portion of the scan that loci are being pulled from.
+#' @param criterion DEFAULT: "min". The criterion by which loci are selected. Currently only "min" is 
+#' available, which selects the locus with the minimum statistical score. 
+#' @export
+#' @examples grab.locus.from.scan()
+grab.locus.from.scan <- function(scan.object, use.lod=FALSE, chr="all", criterion="min"){
+  if(use.lod){ outcome <- scan.object$LOD }
+  else{ outcome <- scan.object$p.value }
+  
+  if(chr == "all"){ keep <- rep(TRUE, length(outcome)) }
+  else{ keep <- scan.object$chr %in% chr }
+  
+  if(criterion == "min"){
+    locus <- scan.object$loci[keep][which.min(outcome[keep])]
+  }
+  return(locus)
+}
+
 #' Returns a significance threshold based on fitting max LODs or max -log10p to a generalized extreme value (GEV) distribution
 #'
 #' This function takes an scan.h2lmm() object, and returns a specified number of outcome samples, either permutations or
