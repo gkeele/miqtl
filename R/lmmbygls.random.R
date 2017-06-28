@@ -1,3 +1,4 @@
+#' @export
 lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
                             weights=NULL, 
                             use.par="h2",
