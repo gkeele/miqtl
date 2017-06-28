@@ -195,6 +195,7 @@ replicates.eigen <- function(Z, K) {
               vectors=qr.Q(qr(Z %*% eigen$vectors))))
 }
 
+#' @export
 get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA", "LRT.random.locus"),
                         round.tol=10){
   method <- method[1]
