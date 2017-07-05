@@ -587,7 +587,7 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
     }
     polygon(c(rep(low.locus.pos, 2), rep(high.locus.pos, 2)), c(0, rep(y.max, 2), 0), col=bounds.col, border=NA)
   }
-  points(x=pos, y=outcome, col=r2.col, pch=my.pch, cex=this.cex)
+  points(x=pos, y=outcome, col=r2.col, bg=r2.col, pch=my.pch, cex=this.cex)
   points(x=point.locus.pos, y=point.locus.outcome, 
          bg=high.color, pch=21, cex=1.5)
   axis(side=2, at=0:y.max, las=2)
