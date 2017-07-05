@@ -519,7 +519,7 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
                                     y.max.manual=NULL, title="", alt.col=NULL, this.cex=1,
                                     hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                     my.legend.cex=0.6, my.legend.pos="topleft", thresholds.lty=2, thresholds.lwd=1, my.bty="n", 
-                                    r2.bounds=NULL, bounds.col="gray", high.color="red", low.color="blue", my.pch=20){
+                                    r2.bounds=NULL, bounds.col="gray", high.color="red", low.color="blue", add.outline=FALSE){
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
   main.object <- snp.scan
 
@@ -587,7 +587,13 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
     }
     polygon(c(rep(low.locus.pos, 2), rep(high.locus.pos, 2)), c(0, rep(y.max, 2), 0), col=bounds.col, border=NA)
   }
-  points(x=pos, y=outcome, col="black", bg=r2.col, pch=my.pch, cex=this.cex)
+  if(add.outline){
+    points(x=pos, y=outcome, col="black", bg=r2.col, pch=21, cex=this.cex)
+  }
+  else{
+    points(x=pos, y=outcome, col=r2.col, pch=20, cex=this.cex)
+  }
+  
   points(x=point.locus.pos, y=point.locus.outcome, 
          bg=high.color, pch=21, cex=1.5)
   axis(side=2, at=0:y.max, las=2)
