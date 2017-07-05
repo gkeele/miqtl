@@ -589,7 +589,7 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
   }
   points(x=pos, y=outcome, col=r2.col, pch=20, cex=this.cex)
   points(x=point.locus.pos, y=point.locus.outcome, 
-         bg=low.color, pch=21, cex=1.5)
+         bg=high.color, pch=21, cex=1.5)
   axis(side=2, at=0:y.max, las=2)
   
   if(!is.null(hard.thresholds)){
