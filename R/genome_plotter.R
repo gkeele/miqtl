@@ -475,9 +475,15 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
   axis(side=1, tick=F, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5)
   
   if(!is.null(hard.thresholds)){
+    if(length(thresholds.lty) == 1 & length(hard.thresholds) > 1){
+      thresholds.lty <- rep(thresholds.lty, length(hard.thresholds))
+    }
+    if(length(thresholds.lwd) == 1 & length(hard.thresholds) > 1){
+      thresholds.lwd <- rep(thresholds.lwd, length(hard.thresholds))
+    }
     for(i in 1:length(hard.thresholds)){
-      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=rep(thresholds.lty, length(hard.thresholds)), 
-             lwd=rep(thresholds.lwd, length(hard.thresholds)))
+      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=thresholds.lty[i], 
+             lwd=thresholds.lwd[i])
     }
   }
   if(!is.null(thresholds.legend)){
