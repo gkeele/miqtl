@@ -519,7 +519,7 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
                                     y.max.manual=NULL, title="", alt.col=NULL, this.cex=1,
                                     hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                     my.legend.cex=0.6, my.legend.pos="topleft", thresholds.lty=2, thresholds.lwd=1, my.bty="n", 
-                                    r2.bounds=NULL, bounds.col="gray"){
+                                    r2.bounds=NULL, bounds.col="gray", high.color="red", low.color="blue"){
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
   main.object <- snp.scan
 
@@ -565,8 +565,8 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
   }
   this.xlab <- paste0("Chr ", chr, " Position (", scale, ")")
   
-  red2blue <- colorRampPalette(c("red", "blue"))
-  these.colors <- rev(red2blue(1000))
+  high2low <- colorRampPalette(c(high.color, low.color))
+  these.colors <- rev(high2low(1000))
   
   r2.col <- these.colors[ceiling(r2.object$r2*999.1)]
   
@@ -589,7 +589,7 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
   }
   points(x=pos, y=outcome, col=r2.col, pch=20, cex=this.cex)
   points(x=point.locus.pos, y=point.locus.outcome, 
-         bg="red", pch=21, cex=1.5)
+         bg=low.color, pch=21, cex=1.5)
   axis(side=2, at=0:y.max, las=2)
   
   if(!is.null(hard.thresholds)){
