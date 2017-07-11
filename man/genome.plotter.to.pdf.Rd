@@ -31,7 +31,7 @@ on median are plotted.}
 \item{thresholds.col}{DEFAULT: "red". Set the colors of the specified thresholds.}
 
 \item{thresholds.legend}{DEFAULT: NULL. If non-NULL, string arguments used as labels in thresholds legend. If NULL,
-no threshols legend is used.}
+no thresholds legend is used.}
 
 \item{pdf.output.path}{That path of the PDF file to be generated.}
 

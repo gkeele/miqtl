@@ -9,7 +9,8 @@ snp.genome.plotter.w.r2(snp.scan, r2.object, scale = "Mb",
   hard.thresholds = NULL, thresholds.col = "red",
   thresholds.legend = NULL, my.legend.cex = 0.6,
   my.legend.pos = "topleft", thresholds.lty = 2, thresholds.lwd = 1,
-  my.bty = "n", r2.bounds = NULL, bounds.col = "gray")
+  my.bty = "n", r2.bounds = NULL, bounds.col = "gray",
+  high.color = "red", low.color = "blue", add.outline = FALSE)
 }
 \arguments{
 \item{snp.scan}{An imputed.snp.scan.h2lmm() object.}
