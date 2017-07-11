@@ -72,6 +72,7 @@ prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="ad
   # plot heatmap
   ## save original par settings
   op <- par(no.readonly=TRUE)
+  oplt <- par()$plt
   cols <- rev(gray(10000:1/10000))
   par(plt=c(0.1,.75,0.1,.8))    ##set the margin  
   image(z=1-probs, axes=FALSE, col=cols)
@@ -81,7 +82,7 @@ prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="ad
        lty=0, srt=90, las=2) # add txt on the strain 
   phenotype <- ifelse(is.null(alternative.phenotype.label), phenotype, alternative.phenotype.label)
   axis(1, at=0.5, labels=phenotype, tick=FALSE)
-  axis(3, at=c(0,0.25,0.5,0.75,1), labels=c(s1,s2,s3,s5,s6))
+  axis(3, at=c(0, 0.25, 0.5, 0.75, 1), labels=c(s1, s2, s3, s5, s6))
   if(include.marker){
     this.title <- ifelse(is.null(p.value), marker, paste0(marker, ": -log10P=", p.value))
     title(this.title, line=2.5)
@@ -92,16 +93,17 @@ prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="ad
                     ifelse(model == "additive", "Dose", "Prob"))
     par(fig=c(0.9, 0.95, 0.33, 0.66), 
         mai=c(0.1, 0.05, 0.5, 0.05), 
-        #mar=c(0,0,2.5,0), 
         new=TRUE)
     if(model == "additive"){ image(y=seq(from=0, to=2, length.out=length(cols)), z=matrix(seq(from=0, to=2, length.out=length(cols)), nrow=1), 
                                    zlim=c(0, 2), ylim=c(0, 2), axes=FALSE, col=rev(cols), main=ramp.label, cex.main=0.77) } #for the legend 
     if(model == "full"){ image(y=seq(from=0, to=1, length.out=length(cols)), z=matrix(seq(from=0, to=1, length.out=length(cols)), nrow=1), 
                                zlim=c(0, 1), ylim=c(0, 1), axes=FALSE, col=rev(cols), main=ramp.label, cex.main=0.77) }
     box()
-    axis(2, las=1)          
+    axis(2, las=1)
+    par(op)
   }
-  par(op)
+  else{ par(plt <- oplt) }
+  
 }
 
 
