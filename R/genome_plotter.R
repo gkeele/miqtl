@@ -175,7 +175,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  scale="Mb", main.colors=c("black", "gray48", "blue"),
                                  use.legend=TRUE, main="",
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.pos="topright",
-                                 y.max.manual=NULL,
+                                 y.max.manual=NULL, no.title=FALSE,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL)
 {
   if(is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
@@ -260,6 +260,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                     paste("n =", sum(scan.list[[1]]$fit0@resp$weights)))
   }
   
+  if(no.title){ this.title <- NULL }
   plot(pos[pre.chr==chr.types[1]], outcome[pre.chr==chr.types[1]], 
        xlim=c(shift.left, sum(max.pos)+(length(chr.types)-1)), 
        ylim=c(-0.1, y.max), 
