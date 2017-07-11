@@ -25,6 +25,8 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
                         alternative.phenotype.label=NULL){
   h <- DiploprobReader$new(genomecache)
   X <- h$getLocusMatrix(locus=marker, model=model)
+  subjects <- h$getSubjects()
+  rownames(X) <- subjects
   
   prob.heatmap.from.matrix(geno.matrix=X, marker=marker, p.value=p.value, model=model, phenotype=phenotype,
                            phenotype.data, merge.by=merge.by, founder.labels=founder.labels, founder.cex=founder.cex,
@@ -42,14 +44,14 @@ prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="ad
   }
   
   X <- geno.matrix
+  
+  X.data <- data.frame(rownames(X), X)
+  names(X.data)[1] <- merge.by
+  
   if(is.null(founder.labels)){
     founder.labels <- colnames(X)
   }
   num.col <- length(founder.labels)
-  
-  subjects <- h$getSubjects()
-  X.data <- data.frame(rownames(X), X)
-  names(X.data)[1] <- merge.by
   
   # Allow function of phenotype
   phenotype.data <- model.frame(formula(paste(phenotype, "~ 1 +", merge.by)), data=phenotype.data)
