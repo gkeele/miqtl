@@ -16,7 +16,7 @@
 #' @param hard.thresholds DEFAULT: NULL. Specify one or more horizontal threshold lines.
 #' @param thresholds.col DEFAULT: "red". Set the colors of the specified thresholds.
 #' @param thresholds.legend DEFAULT: NULL. If non-NULL, string arguments used as labels in thresholds legend. If NULL,
-#' no threshols legend is used.
+#' no thresholds legend is used.
 #' @param pdf.output.path That path of the PDF file to be generated.
 #' @param pdf.height DEFAULT: 5. The height of an individual pages of the PDF.
 #' @param pdf.width DEFAULT: 9. The width of an individual pages of the PDF.
@@ -250,14 +250,14 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   if(class(scan.list[[1]]$fit0) != "lmerMod"){
     this.title <- c(main, 
                     paste0(scan.list[[1]]$formula, " + ", locus.term, " (", scan.list[[1]]$model.type, ")"),
-                    paste("n =", ifelse(is.null(scan.list[[1]]$fit0$weights), 
-                                        length(scan.list[[1]]$fit0$y),
-                                        sum(scan.list[[1]]$fit0$weights))))
+                    paste("n =", round(ifelse(is.null(scan.list[[1]]$fit0$weights), 
+                                              length(scan.list[[1]]$fit0$y),
+                                              sum(scan.list[[1]]$fit0$weights))), 2))
   }
   else{
     this.title <- c(main, 
                     paste0(scan.list[[1]]$formula, " + ", locus.term, " (", scan.list[[1]]$model.type, ")"),
-                    paste("n =", sum(scan.list[[1]]$fit0@resp$weights)))
+                    paste("n =", round(sum(scan.list[[1]]$fit0@resp$weights)), 2))
   }
   if(no.title){ this.title <- NULL }
   if(!is.null(override.title)){ this.title <- override.title }
@@ -339,7 +339,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     if(!has.X){
       axis.label <- chr.types
     }
-    axis(side=1, tick=F, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5)
+    axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5)
   if(use.legend){
     legend(my.legend.pos, legend=names(scan.list), 
            lty=rep(1, length(scan.list)), lwd=my.legend.lwd, 
@@ -474,7 +474,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
   if(!has.X){
     axis.label <- chr.types
   }
-  axis(side=1, tick=F, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5)
+  axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5)
   
   if(!is.null(hard.thresholds)){
     if(length(thresholds.lty) == 1 & length(hard.thresholds) > 1){

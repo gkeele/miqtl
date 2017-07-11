@@ -23,12 +23,25 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
                         phenotype, phenotype.data, merge.by="SUBJECT.NAME", founder.labels=NULL, founder.cex=1,
                         include.ramp=TRUE, include.marker=TRUE,
                         alternative.phenotype.label=NULL){
+  h <- DiploprobReader$new(genomecache)
+  X <- h$getLocusMatrix(locus=marker, model=model)
+  
+  prob.heatmap.from.matrix(geno.matrix=X, p.value=p.value, model=model, phenotype=phenotype,
+                           phenotype.data, merge.by=merge.by, founder.labels=founder.labels, founder.cex=founder.cex,
+                           include.ramp=include.ramp, include.marker=include.marker,
+                           alternative.phenotype.label=alternative.phenotype.label)
+}
+
+#' @export
+prob.heatmap.from.matrix = function(geno.matrix, p.value=NULL, model="additive",
+                                    phenotype, phenotype.data, merge.by="SUBJECT.NAME", founder.labels=NULL, founder.cex=1,
+                                    include.ramp=TRUE, include.marker=TRUE,
+                                    alternative.phenotype.label=NULL){
   if(!is.null(p.value)){
     p.value <- round(-log10(p.value), 4)
   }
   
-  h <- DiploprobReader$new(genomecache)
-  X <- h$getLocusMatrix(locus=marker, model=model)
+  X <- geno.matrix
   if(is.null(founder.labels)){
     founder.labels <- colnames(X)
   }
@@ -42,11 +55,11 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
   phenotype.data <- model.frame(formula(paste(phenotype, "~ 1 +", merge.by)), data=phenotype.data)
   names(phenotype.data)[1] <- "y"
   final.data <- merge(x=phenotype.data, y=X.data, by=merge.by, all=FALSE)
-
+  
   final.data <- final.data[order(final.data$y),] # sort by phenotypic value
   probs <- as.matrix(final.data[,-(1:2)]) # Just keep prob of 8 strains for a certain marker
   probs <- probs[,rev(1:ncol(probs))]
-
+  
   s <- summary(final.data[,"y"])
   s1 <- as.character(round(s[1], 2))
   s2 <- as.character(round(s[2], 2))
@@ -88,6 +101,7 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
   }
   par(op)
 }
+
 
 #' @export
 prob.image = function(marker.data, marker=NULL, p.value=NULL, 
