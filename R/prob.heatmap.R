@@ -26,14 +26,14 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
   h <- DiploprobReader$new(genomecache)
   X <- h$getLocusMatrix(locus=marker, model=model)
   
-  prob.heatmap.from.matrix(geno.matrix=X, p.value=p.value, model=model, phenotype=phenotype,
+  prob.heatmap.from.matrix(geno.matrix=X, marker=marker, p.value=p.value, model=model, phenotype=phenotype,
                            phenotype.data, merge.by=merge.by, founder.labels=founder.labels, founder.cex=founder.cex,
                            include.ramp=include.ramp, include.marker=include.marker,
                            alternative.phenotype.label=alternative.phenotype.label)
 }
 
 #' @export
-prob.heatmap.from.matrix = function(geno.matrix, p.value=NULL, model="additive",
+prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="additive",
                                     phenotype, phenotype.data, merge.by="SUBJECT.NAME", founder.labels=NULL, founder.cex=1,
                                     include.ramp=TRUE, include.marker=TRUE,
                                     alternative.phenotype.label=NULL){
