@@ -252,12 +252,12 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                     paste0(scan.list[[1]]$formula, " + ", locus.term, " (", scan.list[[1]]$model.type, ")"),
                     paste("n =", round(ifelse(is.null(scan.list[[1]]$fit0$weights), 
                                               length(scan.list[[1]]$fit0$y),
-                                              sum(scan.list[[1]]$fit0$weights))), 2))
+                                              sum(scan.list[[1]]$fit0$weights)), 2)))
   }
   else{
     this.title <- c(main, 
                     paste0(scan.list[[1]]$formula, " + ", locus.term, " (", scan.list[[1]]$model.type, ")"),
-                    paste("n =", round(sum(scan.list[[1]]$fit0@resp$weights)), 2))
+                    paste("n =", round(sum(scan.list[[1]]$fit0@resp$weights), 2)))
   }
   if(no.title){ this.title <- NULL }
   if(!is.null(override.title)){ this.title <- override.title }
