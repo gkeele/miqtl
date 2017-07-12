@@ -44,7 +44,6 @@ prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="ad
   }
   
   X <- geno.matrix
-  
   X.data <- data.frame(rownames(X), X)
   names(X.data)[1] <- merge.by
   
@@ -74,7 +73,7 @@ prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="ad
   op <- par(no.readonly=TRUE)
   oplt <- par()$plt
   cols <- rev(gray(10000:1/10000))
-  par(plt=c(0.1,.75,0.1,.8))    ##set the margin  
+  par(plt=c(0.15, 0.85, 0.15, 0.8))    ##set the margin  
   image(z=1-probs, axes=FALSE, col=cols)
   box()
   axis(2, at=seq(0, num.col, 1+1/num.col)/num.col, 
@@ -103,7 +102,6 @@ prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="ad
     par(op)
   }
   else{ par(plt <- oplt) }
-  
 }
 
 
