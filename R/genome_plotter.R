@@ -637,7 +637,8 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
 #' @examples single.chr.plotter.w.ci()
 single.chr.plotter.w.ci <- function(scan.object, qtl.ci.object, 
                                     ci.type, scan.type, 
-                                    these.col=c("#7BAFD4", "red"), scale="Mb"){
+                                    these.col=c("#7BAFD4", "red"), scale="Mb",
+                                    alpha=0.05){
   
   outcome <- -log10(scan.object$p.value[scan.object$chr == qtl.ci.object$chr]) 
   this.ylab <- expression("-log"[10]*"P")
@@ -654,7 +655,7 @@ single.chr.plotter.w.ci <- function(scan.object, qtl.ci.object,
   loci <- qtl.ci.object$peak.loci
   
   # Process per CI
-  ci <- qtl.ci.object$ci[[scale]]
+  ci <- quantile(peak.loci.pos[[scale]], probs=c(alpha/2, 1 - alpha/2))
 
   lb.dist <- pos - ci[1]
   low.locus <- all.loci[lb.dist <= 0][which.max(lb.dist[lb.dist <= 0])]

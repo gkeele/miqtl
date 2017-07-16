@@ -258,6 +258,7 @@ run.positional.scans <- function(sim.object, keep.full.scans=TRUE,
                                  use.par="h2", use.multi.impute=TRUE, num.imp=11, brute=TRUE, use.fix.par=FALSE, 
                                  scan.seed=1, do.augment=FALSE,
                                  use.augment.weights=FALSE, use.full.null=FALSE, added.data.points=1,
+                                 alpha=0.05,
                                  ...){
   model <- model[1]
   
@@ -311,8 +312,8 @@ run.positional.scans <- function(sim.object, keep.full.scans=TRUE,
   return(list(full.results=list(p.values=full.results, chr=these.chr, pos=these.pos), 
               peak.loci=peak.loci.vec, 
               peak.loci.pos=peak.pos, 
-              ci=list(Mb=quantile(peak.pos$Mb, probs=c(0.05, 0.95)),
-                      cM=quantile(peak.pos$cM, probs=c(0.05, 0.95))), 
+              #ci=list(Mb=quantile(peak.pos$Mb, probs=c(alpha/2, 1 - alpha/2)),
+              #        cM=quantile(peak.pos$cM, probs=c(alpha/2, 1 - alpha/2))), 
               chr=chr))
 }
 
