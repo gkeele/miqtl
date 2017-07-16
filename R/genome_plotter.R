@@ -656,7 +656,7 @@ single.chr.plotter.w.ci <- function(scan.object, qtl.ci.object,
   loci <- qtl.ci.object$peak.loci
   
   # Process per CI
-  ci <- quantile(peak.loci.pos[[scale]], probs=c(alpha/2, 1 - alpha/2))
+  ci <- quantile(qtl.ci.object$peak.loci.pos[[scale]], probs=c(alpha/2, 1 - alpha/2))
 
   lb.dist <- pos - ci[1]
   low.locus <- all.loci[lb.dist <= 0][which.max(lb.dist[lb.dist <= 0])]
