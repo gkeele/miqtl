@@ -673,7 +673,7 @@ single.chr.plotter.w.ci <- function(scan.object, qtl.ci.object,
   peak.locus.pos <- actual.pos[region][which.min(actual.p.value[region])]
   
   main.title <- c(paste0(scan.type, ": ", scan.object$formula, " + locus (", scan.object$model.type, ")"),
-                  paste0("QTL interval type: ", alpha, "% ", ci.type),
+                  paste0("QTL interval type: ", (1-alpha)*100, "% ", ci.type),
                   paste0("Width: ", round(high.locus.pos - low.locus.pos, 2), scale),
                   paste0("peak locus: ", peak.locus, " (", round(peak.locus.pos, 3), scale, ")"),
                   paste0("(closest) lower locus: ", low.locus, " (", round(low.locus.pos, 3), scale, ")"),
