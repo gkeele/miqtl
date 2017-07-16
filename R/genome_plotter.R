@@ -176,7 +176,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  use.legend=TRUE, main="",
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.pos="topright",
                                  y.max.manual=NULL, no.title=FALSE, override.title=NULL,
-                                 hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL)
+                                 hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
+                                 add.chr.to.label=FALSE)
 {
   if(is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
@@ -286,60 +287,63 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   
   # Plot other method's statistics
   if(length(scan.list) > 1){
-      for(i in 2:length(scan.list)){
+    for(i in 2:length(scan.list)){
         
-        this.scan <- scan.list[[i]]
-        if(use.lod){
-          compar.outcome <- this.scan$LOD
-        }
-        if(!use.lod){
-          compare.outcome <- -log10(this.scan$p.value)
-        }
-        pos <- ifelse(rep(scale=="Mb", length(compare.outcome)), this.scan$pos$Mb, this.scan$pos$cM)
+      this.scan <- scan.list[[i]]
+      if(use.lod){
+        compar.outcome <- this.scan$LOD
+      }
+      if(!use.lod){
+        compare.outcome <- -log10(this.scan$p.value)
+      }
+      pos <- ifelse(rep(scale=="Mb", length(compare.outcome)), this.scan$pos$Mb, this.scan$pos$cM)
         
-        ## Resetting for new scan objects
-        chr <- this.scan$chr
-        if(!is.null(just.these.chr)){
-            keep.chr <- chr %in% just.these.chr
-            chr <- chr[keep.chr]
-            compare.outcome <- compare.outcome[keep.chr]
-            pos <- pos[keep.chr]
-        }
+      ## Resetting for new scan objects
+      chr <- this.scan$chr
+      if(!is.null(just.these.chr)){
+        keep.chr <- chr %in% just.these.chr
+        chr <- chr[keep.chr]
+        compare.outcome <- compare.outcome[keep.chr]
+        pos <- pos[keep.chr]
+      }
         
-        has.X <- FALSE
-        if(any(chr=="X")){
-          has.X <- TRUE
-          chr[chr=="X"] <- max(as.numeric(unique(chr[chr != "X"]))) + 1
-        }
+      has.X <- FALSE
+      if(any(chr=="X")){
+        has.X <- TRUE
+        chr[chr=="X"] <- max(as.numeric(unique(chr[chr != "X"]))) + 1
+      }
         
-        pre.chr <- as.factor(as.numeric(chr))
-        order.i <- order(pre.chr, pos)
+      pre.chr <- as.factor(as.numeric(chr))
+      order.i <- order(pre.chr, pos)
         
-        compare.outcome <- compare.outcome[order.i]
-        pre.chr <- pre.chr[order.i]
-        pos <- pos[order.i]
+      compare.outcome <- compare.outcome[order.i]
+      pre.chr <- pre.chr[order.i]
+      pos <- pos[order.i]
         
-        min.pos <- tapply(pos, pre.chr, function(x) min(x, na.rm=TRUE))
-        max.pos <- tapply(pos, pre.chr, function(x) max(x, na.rm=TRUE))
-        chr.types <- levels(pre.chr)
+      min.pos <- tapply(pos, pre.chr, function(x) min(x, na.rm=TRUE))
+      max.pos <- tapply(pos, pre.chr, function(x) max(x, na.rm=TRUE))
+      chr.types <- levels(pre.chr)
         
-        compare.shift <- max.pos[1]
-        points(pos[pre.chr==chr.types[1]], compare.outcome[pre.chr==chr.types[1]], type="l", col=main.colors[i], lwd=my.legend.lwd[i])
-        if(length(chr.types) > 1){
-          for(j in 2:length(chr.types)){
-            points(pos[pre.chr==chr.types[j]] + compare.shift, compare.outcome[pre.chr==chr.types[j]], type="l", col=main.colors[i], lwd=my.legend.lwd[i])
-            compare.shift <- compare.shift + max.pos[j]
-          }
+      compare.shift <- max.pos[1]
+      points(pos[pre.chr==chr.types[1]], compare.outcome[pre.chr==chr.types[1]], type="l", col=main.colors[i], lwd=my.legend.lwd[i])
+      if(length(chr.types) > 1){
+        for(j in 2:length(chr.types)){
+          points(pos[pre.chr==chr.types[j]] + compare.shift, compare.outcome[pre.chr==chr.types[j]], type="l", col=main.colors[i], lwd=my.legend.lwd[i])
+          compare.shift <- compare.shift + max.pos[j]
         }
       }
     }
-    if(has.X){
-      axis.label <- c(chr.types[-length(chr.types)], "X")
-    }
-    if(!has.X){
-      axis.label <- chr.types
-    }
-    axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5)
+  }
+  if(has.X){
+    axis.label <- c(chr.types[-length(chr.types)], "X")
+  }
+  if(!has.X){
+    axis.label <- chr.types
+  }
+  if(add.chr.to.label){
+    axis.label <- paste("chr", axis.label)
+  }
+  axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5)
   if(use.legend){
     legend(my.legend.pos, legend=names(scan.list), 
            lty=rep(1, length(scan.list)), lwd=my.legend.lwd, 
