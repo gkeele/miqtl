@@ -5,7 +5,7 @@
 \title{Plot whole genome and single chromosome windows of haplotype-based genome scan in a PDF output document}
 \usage{
 single.chr.plotter.w.ci(scan.object, qtl.ci.object, ci.type, scan.type,
-  these.col = c("#7BAFD4", "red"), scale = "Mb")
+  these.col = c("#7BAFD4", "red"), scale = "Mb", alpha = 0.05)
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object (ROP or multiple imputations). If multiple imputations, median and confidence interval 
@@ -20,6 +20,8 @@ on median are plotted. Expected to the scan of the actual data.}
 \item{these.col}{Colors to be used for individual artificial scans.}
 
 \item{scale}{DEFAULT: "Mb". Specifies the scale of genomic position to be plotted. Either "Mb" or "cM" is expected.}
+
+\item{alpha}{DEFAULT: 0.05. The specified alpha level of the positional confidence interval.}
 }
 \description{
 This function takes the genome scan output from scan.h2lmm() and plots the whole genome and single chromosome zoom-ins for 

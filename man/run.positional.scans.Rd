@@ -8,7 +8,7 @@ run.positional.scans(sim.object, keep.full.scans = TRUE, genomecache, data,
   model = c("additive", "full"), use.par = "h2", use.multi.impute = TRUE,
   num.imp = 11, brute = TRUE, use.fix.par = FALSE, scan.seed = 1,
   do.augment = FALSE, use.augment.weights = FALSE, use.full.null = FALSE,
-  added.data.points = 1, ...)
+  added.data.points = 1, alpha = 0.05, ...)
 }
 \arguments{
 \item{sim.object}{A sample object. This is primarily a matrix of parametric bootstrap

@@ -633,6 +633,7 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
 #' @param scan.type Scan type to be included in the title. Example: "ROP".
 #' @param these.col Colors to be used for individual artificial scans.
 #' @param scale DEFAULT: "Mb". Specifies the scale of genomic position to be plotted. Either "Mb" or "cM" is expected.
+#' @param alpha DEFAULT: 0.05. The specified alpha level of the positional confidence interval.
 #' @export
 #' @examples single.chr.plotter.w.ci()
 single.chr.plotter.w.ci <- function(scan.object, qtl.ci.object, 
@@ -672,7 +673,7 @@ single.chr.plotter.w.ci <- function(scan.object, qtl.ci.object,
   peak.locus.pos <- actual.pos[region][which.min(actual.p.value[region])]
   
   main.title <- c(paste0(scan.type, ": ", scan.object$formula, " + locus (", scan.object$model.type, ")"),
-                  paste0("QTL interval type: ", ci.type),
+                  paste0("QTL interval type: ", alpha, "% ", ci.type),
                   paste0("Width: ", round(high.locus.pos - low.locus.pos, 2), scale),
                   paste0("peak locus: ", peak.locus, " (", round(peak.locus.pos, 3), scale, ")"),
                   paste0("(closest) lower locus: ", low.locus, " (", round(low.locus.pos, 3), scale, ")"),

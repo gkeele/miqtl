@@ -9,7 +9,8 @@ genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
   use.legend = TRUE, main = "", my.legend.cex = 0.6,
   my.legend.lwd = NULL, my.legend.pos = "topright", y.max.manual = NULL,
   no.title = FALSE, override.title = NULL, hard.thresholds = NULL,
-  thresholds.col = "red", thresholds.legend = NULL)
+  thresholds.col = "red", thresholds.legend = NULL,
+  add.chr.to.label = FALSE)
 }
 \arguments{
 \item{scan.list}{A list of scan.h2lmm() objects that are to be plotted within the same genome scan plot.}
