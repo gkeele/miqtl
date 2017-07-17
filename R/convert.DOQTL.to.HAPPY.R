@@ -191,7 +191,7 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
 convert.DOQTL.array.to.additive.HAPPY <- function(DOQTL.array,
                                                   map.path,
                                                   HAPPY.output.path,
-                                                  bp.column="Mb_NCBI38",
+                                                  bp.column="Mb_NCBI38", pos.is.MB=TRUE,
                                                   allele.labels=NULL, convert.to.dosage=TRUE,
                                                   chr=c(1:19, "X")){
   
@@ -249,15 +249,16 @@ convert.DOQTL.array.to.additive.HAPPY <- function(DOQTL.array,
     
     ## bp
     bp <- map.this.chr[,bp.column]
+    if(pos.is.MB){ bp <- bp*1000000 }
     save(bp, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/bp.RData'))
     save(bp, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/bp.RData'))
     save(bp, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/bp.RData'))
     
     ## map
     map <- map.this.chr$cM
-    save(map, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/bp.RData'))
-    save(map, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/bp.RData'))
-    save(map, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/bp.RData'))
+    save(map, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/map.RData'))
+    save(map, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/map.RData'))
+    save(map, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/map.RData'))
     
     ## subjects
     save(subjects, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/subjects.RData'))
