@@ -191,7 +191,7 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
 convert.DOQTL.array.to.additive.HAPPY <- function(DOQTL.array,
                                                   map.path,
                                                   HAPPY.output.path,
-                                                  bp.column="Mb_NCBI38"
+                                                  bp.column="Mb_NCBI38",
                                                   allele.labels=NULL, convert.to.dosage=TRUE,
                                                   chr=c(1:19, "X")){
   
