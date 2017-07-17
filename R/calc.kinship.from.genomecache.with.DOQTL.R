@@ -15,7 +15,7 @@ calc.kinship.from.genomecache.with.DOQTL <- function(genomecache, model="additiv
     #}
     if(model == "additive"){
       #use.probs <- (diplotypes %*% mapping)/2
-      use.probs <- h$getLocusMatrix(loci[i], model="full")/2
+      use.probs <- h$getLocusMatrix(loci[i], model="additive")/2
     }
     if(model == "full"){
       use.probs <- h$getLocusMatrix(loci[i], model="full")
