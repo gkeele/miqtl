@@ -214,7 +214,7 @@ convert.DOQTL.array.to.additive.HAPPY <- function(DOQTL.array,
   #-------------------------------
   # Marker info
   #-------------------------------
-  total.map <- read.table(total.map.path, header=TRUE, as.is=TRUE)
+  total.map <- read.table(map.path, header=TRUE, as.is=TRUE)
   
   for(i in 1:length(loci)){
     chr <- total.map$Chr[total.map$SNP_ID == loci[i]]
@@ -232,7 +232,7 @@ convert.DOQTL.array.to.additive.HAPPY <- function(DOQTL.array,
   for(this.chr in chr){
     ## chr
     map.this.chr <- total.map[total.map$Chr == this.chr,]
-    chromosome <- rep(this.chr, nrow(total.map.this.chr))
+    chromosome <- map.this.chr$Chr
     save(chromosome, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/chromosome.RData'))
     save(chromosome, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/chromosome.RData'))
     save(chromosome, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/chromosome.RData'))
