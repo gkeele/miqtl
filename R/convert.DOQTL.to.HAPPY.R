@@ -204,6 +204,9 @@ convert.DOQTL.array.to.additive.HAPPY <- function(DOQTL.array,
                                                recursive=TRUE, showWarnings=FALSE))
   sapply(1:length(chr), function(x) dir.create(path=paste0(HAPPY.output.path, "/full/chr", chr[x], "/data/"),
                                                recursive=TRUE, showWarnings=FALSE))
+  sapply(1:length(chr), function(x) dir.create(path=paste0(HAPPY.output.path, "/genotype/chr", chr[x], "/data/"),
+                                               recursive=TRUE, showWarnings=FALSE))
+  
   #----------------------------------
   # Putting together strain labels
   #----------------------------------
