@@ -220,14 +220,14 @@ convert.DOQTL.array.to.additive.HAPPY <- function(DOQTL.array,
   total.map <- read.table(map.path, header=TRUE, as.is=TRUE)
   
   for(i in 1:length(loci)){
-    chr <- total.map$Chr[total.map$SNP_ID == loci[i]]
+    chr.locus <- total.map$Chr[total.map$SNP_ID == loci[i]]
     
     if(convert.to.dosage){ locus.matrix <- DOQTL.array[,,i]*2 }
     else{ locus.matrix <- DOQTL.array[,,i] }
     
     var_name <- loci[i]
     assign(var_name, locus.matrix)
-    fn <- paste0(HAPPY.output.path, "/additive/chr", chr, "/data/", var_name, ".RData")
+    fn <- paste0(HAPPY.output.path, "/additive/chr", chr.locus, "/data/", var_name, ".RData")
     save(list=var_name, file=fn)
   }
   
