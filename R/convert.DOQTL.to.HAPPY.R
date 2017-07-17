@@ -200,10 +200,10 @@ convert.DOQTL.array.to.additive.HAPPY <- function(DOQTL.array,
   loci <- dimnames(DOQTL.array)[[3]]
   
   
-  dir.create(paths=paste0(HAPPY.output.path, "/additive/chr", chr, "/data/"),
-             recursive=TRUE, showWarnings=FALSE)
-  dir.create(paths=paste0(HAPPY.output.path, "/full/chr", chr, "/data/"),
-             recursive=TRUE, showWarnings=FALSE)
+  sapply(1:length(chr), function(x) dir.create(path=paste0(HAPPY.output.path, "/additive/chr", chr[x], "/data/"),
+                                               recursive=TRUE, showWarnings=FALSE))
+  sapply(1:length(chr), function(x) dir.create(path=paste0(HAPPY.output.path, "/full/chr", chr[x], "/data/"),
+                                               recursive=TRUE, showWarnings=FALSE))
   #----------------------------------
   # Putting together strain labels
   #----------------------------------
