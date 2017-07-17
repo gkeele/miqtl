@@ -70,6 +70,14 @@ scan.h2lmm <- function(genomecache, data,
   founders <- h$getFounders()
   num.founders <- length(founders)
   loci <- h$getLoci()
+  
+  ## check that full directory has data
+  if(model == "full" | use.multi.impute){
+    if(!file.exists(paste0(genomecache, "/full/chr1/data/loci.RData")){
+      stop("Error: Full model probabilities not available in genome cache, only additive ROP can be fit", call.=FALSE)
+    }
+  }
+  
   cache.subjects <- rownames(h$getLocusMatrix(loci[1], model="additive"))
   data.and.K <- make.processed.data(formula=formula, data=data, 
                                     cache.subjects=cache.subjects, K=K, 
