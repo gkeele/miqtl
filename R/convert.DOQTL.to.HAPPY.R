@@ -4,8 +4,8 @@
 #' The main output files of importance are the individual-level files with naming scheme [sample].genotype.probs.Rdata.
 #'
 #' @param DOQTL.recon.output.path The path to the directory containing DO-QTL founder haplotype output files. 
-#' @param map.path The path to the map file. The map file contains data on the loci. It should be a tab-delimited 
-#' file with columns labeled "marker", "chr", "bp", and "pos". "pos" represents map distance in cM. "bp" should 
+#' @param total.map.path The path to the total.map file. The total.map file contains data on the loci. It should be a tab-delimited 
+#' file with columns labeled "marker", "chr", "bp", and "pos". "pos" represents total.map distance in cM. "bp" should 
 #' be in bp, not Mb. 
 #' @param HAPPY.output.path The path to a directory that will be created as the HAPPY-format genome cache.
 #' @param allele.labels DEFAULT: NULL. Allows for specification of founder labels different from what is in the DO-QTL
@@ -15,7 +15,7 @@
 #' @import data.table
 #' @examples convert.DOQTL.to.HAPPY()
 convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
-                                   map.path,
+                                   total.map.path,
                                    HAPPY.output.path,
                                    allele.labels=NULL,
                                    chr=c(1:19, "X")){
@@ -49,7 +49,7 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
   #-------------------------------
   # Marker info
   #-------------------------------
-  map <- read.table(map.path, header=TRUE, as.is=TRUE)
+  total.map <- read.table(total.map.path, header=TRUE, as.is=TRUE)
   
   
   #-------------------------------
@@ -109,12 +109,12 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
     save(chromosome, file=paste0(HAPPY.output.path, '/full/chr',chr[1], '/chromosome.RData'))
     save(chromosome, file=paste0(HAPPY.output.path, '/genotype/chr',chr[1], '/chromosome.RData'))
   }
-  # Export file of map distance (cM)
+  # Export file of total.map distance (cM)
   export_marker_map_distance_file <- function(chr, pos) {
-    map <- as.character(pos)
-    save(map, file=paste0(HAPPY.output.path, '/additive/chr', chr[1], '/map.RData'))
-    save(map, file=paste0(HAPPY.output.path, '/full/chr', chr[1], '/map.RData'))
-    save(map, file=paste0(HAPPY.output.path, '/genotype/chr', chr[1], '/map.RData'))
+    total.map <- as.character(pos)
+    save(total.map, file=paste0(HAPPY.output.path, '/additive/chr', chr[1], '/total.map.RData'))
+    save(total.map, file=paste0(HAPPY.output.path, '/full/chr', chr[1], '/total.map.RData'))
+    save(total.map, file=paste0(HAPPY.output.path, '/genotype/chr', chr[1], '/total.map.RData'))
   }
   
   #-----------------------------
@@ -127,7 +127,7 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
       marker <- rownames(prsmth)
       subject <- rep(samples[j], nrow(prsmth))
       one.sample.data <- data.frame(marker, subject,  prsmth)
-      combined.data <- merge(x=map, y=one.sample.data, by.x="marker", by.y="marker")[,c(1:5,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
+      combined.data <- merge(x=total.map, y=one.sample.data, by.x="marker", by.y="marker")[,c(1:5,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
                                                                                               17,5,12,18,23,6,13,19,24,28,7,14,
                                                                                               20,25,29,32,8,15,21,26,30,33,35)+5)]
       combined.data <- combined.data[combined.data$chr == chr[i],]
@@ -181,6 +181,86 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
     save(subjects, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/subjects.RData'))
     save(subjects, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/subjects.RData'))
     
+    save(strains, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/strains.RData'))
+    save(strains, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/strains.RData'))
+    save(strains, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/strains.RData'))
+  }
+}
+
+#' @export
+convert.DOQTL.array.to.additive.HAPPY <- function(DOQTL.array,
+                                                  map.path,
+                                                  HAPPY.output.path,
+                                                  bp.column="Mb_NCBI38"
+                                                  allele.labels=NULL, convert.to.dosage=TRUE,
+                                                  chr=c(1:19, "X")){
+  
+  samples <- dimnames(DOQTL.array)[[1]]
+  simple.alleles <- dimnames(DOQTL.array)[[2]]
+  loci <- dimnames(DOQTL.array)[[3]]
+  
+  
+  dir.create(paths=paste0(HAPPY.output.path, "/additive/chr", chr, "/data/"),
+             recursive=TRUE, showWarnings=FALSE)
+  dir.create(paths=paste0(HAPPY.output.path, "/full/chr", chr, "/data/"),
+             recursive=TRUE, showWarnings=FALSE)
+  #----------------------------------
+  # Putting together strain labels
+  #----------------------------------
+  if(is.null(allele.labels)){
+    allele.labels <- simple.alleles
+  }
+  
+  #-------------------------------
+  # Marker info
+  #-------------------------------
+  total.map <- read.table(total.map.path, header=TRUE, as.is=TRUE)
+  
+  for(i in 1:length(loci)){
+    chr <- total.map$Chr[total.map$SNP_ID == loci[i]]
+    
+    if(conver.to.dosage){ locus.matrix <- DOQTL.array[,,i]*2 }
+    else{ locus.matrix <- DOQTL.array[,,i] }
+    
+    assign(var_name, locus.matrix)
+    fn <- paste0(HAPPY.output.path, "/additive/chr", chr, "/data/", var_name, ".RData")
+    save(list=var_name, file=fn)
+  }
+  
+  subjects <- samples
+  strains <- allele.labels
+  for(this.chr in chr){
+    ## chr
+    map.this.chr <- total.map[total.map$Chr == this.chr,]
+    chromosome <- rep(this.chr, nrow(total.map.this.chr))
+    save(chromosome, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/chromosome.RData'))
+    save(chromosome, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/chromosome.RData'))
+    save(chromosome, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/chromosome.RData'))
+    
+    ## marker
+    markers <- map.this.chr$SNP_ID
+    save(markers, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/markers.RData'))
+    save(markers, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/markers.RData'))
+    save(markers, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/markers.RData'))
+    
+    ## bp
+    bp <- map.this.chr[,bp.column]
+    save(bp, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/bp.RData'))
+    save(bp, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/bp.RData'))
+    save(bp, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/bp.RData'))
+    
+    ## map
+    map <- map.this.chr$cM
+    save(map, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/bp.RData'))
+    save(map, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/bp.RData'))
+    save(map, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/bp.RData'))
+    
+    ## subjects
+    save(subjects, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/subjects.RData'))
+    save(subjects, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/subjects.RData'))
+    save(subjects, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/subjects.RData'))
+    
+    ## strains
     save(strains, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/strains.RData'))
     save(strains, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/strains.RData'))
     save(strains, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/strains.RData'))
