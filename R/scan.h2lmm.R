@@ -93,7 +93,7 @@ scan.h2lmm <- function(genomecache, data,
   ## check that full directory has data
   if(model == "full" | use.multi.impute){
     if(!file.exists(paste0(genomecache, "/full/chr", loci.chr[1], "/data/", loci[1], ".RData"))){
-      stop("Error: Full model probabilities not available in genome cache, only additive ROP can be fit", call.=FALSE)
+      stop("Full model probabilities not available in genome cache, only additive ROP can be fit", call.=FALSE)
     }
   }
   
