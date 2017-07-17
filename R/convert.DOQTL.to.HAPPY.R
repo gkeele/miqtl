@@ -219,7 +219,7 @@ convert.DOQTL.array.to.additive.HAPPY <- function(DOQTL.array,
   for(i in 1:length(loci)){
     chr <- total.map$Chr[total.map$SNP_ID == loci[i]]
     
-    if(conver.to.dosage){ locus.matrix <- DOQTL.array[,,i]*2 }
+    if(convert.to.dosage){ locus.matrix <- DOQTL.array[,,i]*2 }
     else{ locus.matrix <- DOQTL.array[,,i] }
     
     assign(var_name, locus.matrix)
