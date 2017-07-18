@@ -135,6 +135,7 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
   for(i in 1:length(chr)){
     for(j in 1:length(samples)){
       cat(paste("Loading DOQTL output for individual", j, "for chr", chr[i]), "\n")
+      browser()
       load(paste0(DOQTL.recon.output.path, "/", samples[j], ".genotype.probs.Rdata"))
       marker <- rownames(prsmth)
       subject <- rep(samples[j], nrow(prsmth))
@@ -142,7 +143,7 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
       combined.data <- merge(x=map, y=one.sample.data, by.x="marker", by.y="marker")[,c(1:5,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
                                                                                               17,5,12,18,23,6,13,19,24,28,7,14,
                                                                                               20,25,29,32,8,15,21,26,30,33,35)+5)]
-      if(physical_dist.is.Mb){ combined.data$bp <- combined.data*1000000 }
+      if(physical_dist.is.Mb){ combined.data$bp <- combined.data$bp*1000000 }
       combined.data <- combined.data[combined.data$chr == chr[i],]
     
       if(!exists('all.subjects')){
