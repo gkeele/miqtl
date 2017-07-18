@@ -204,6 +204,9 @@ scan.h2lmm <- function(genomecache, data,
   names(impute.map) <- c(pheno.id, geno.id)
   non.augment.subjects <- as.character(data[,geno.id])[grep(pattern="augment", x=as.character(data[,geno.id]), invert=TRUE)]
 
+  
+  # Progress bar
+  pb <- txtProgressBar(min=0, max=length(loci), style=3)
   for(i in 1:length(loci)){
     if(use.multi.impute){
       if(i == 1){ # only at the beginning
@@ -285,7 +288,12 @@ scan.h2lmm <- function(genomecache, data,
       }
     }
     if(debug.single.fit){ browser() }
+    # Print out locus fit
     if(print.locus.fit){ cat(paste("locus", i, "out of", length(loci)), "\n") }
+    else{
+      # Update progress bar
+      setTxtProgressBar(pb, i)
+    }
   }
   names(LOD.vec) <- names(p.vec) <- names(df) <- loci
   output <- list(LOD=LOD.vec,
