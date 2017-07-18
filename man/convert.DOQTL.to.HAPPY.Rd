@@ -4,13 +4,13 @@
 \alias{convert.DOQTL.to.HAPPY}
 \title{Takes DO-QTL founder haplotype reconstruction output files and re-formats into a HAPPY genome cache}
 \usage{
-convert.DOQTL.to.HAPPY(DOQTL.recon.output.path, total.map.path,
+convert.DOQTL.to.HAPPY(DOQTL.recon.output.path, map.path, bp.is.MB = FALSE,
   HAPPY.output.path, allele.labels = NULL, chr = c(1:19, "X"))
 }
 \arguments{
 \item{DOQTL.recon.output.path}{The path to the directory containing DO-QTL founder haplotype output files.}
 
-\item{total.map.path}{The path to the total.map file. The total.map file contains data on the loci. It should be a tab-delimited 
+\item{map.path}{The path to the total.map file. The total.map file contains data on the loci. It should be a tab-delimited 
 file with columns labeled "marker", "chr", "bp", and "pos". "pos" represents total.map distance in cM. "bp" should 
 be in bp, not Mb.}
 

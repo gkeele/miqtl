@@ -4,7 +4,7 @@
 #' The main output files of importance are the individual-level files with naming scheme [sample].genotype.probs.Rdata.
 #'
 #' @param DOQTL.recon.output.path The path to the directory containing DO-QTL founder haplotype output files. 
-#' @param total.map.path The path to the total.map file. The total.map file contains data on the loci. It should be a tab-delimited 
+#' @param map.path The path to the total.map file. The total.map file contains data on the loci. It should be a tab-delimited 
 #' file with columns labeled "marker", "chr", "bp", and "pos". "pos" represents total.map distance in cM. "bp" should 
 #' be in bp, not Mb. 
 #' @param HAPPY.output.path The path to a directory that will be created as the HAPPY-format genome cache.
@@ -15,7 +15,7 @@
 #' @import data.table
 #' @examples convert.DOQTL.to.HAPPY()
 convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
-                                   total.map.path,
+                                   map.path, bp.is.MB=FALSE,
                                    HAPPY.output.path,
                                    allele.labels=NULL,
                                    chr=c(1:19, "X")){
@@ -49,8 +49,7 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
   #-------------------------------
   # Marker info
   #-------------------------------
-  total.map <- read.table(total.map.path, header=TRUE, as.is=TRUE)
-  
+  map <- read.table(map.path, header=TRUE, as.is=TRUE)
   
   #-------------------------------
   # Functions to output marker files
@@ -109,12 +108,12 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
     save(chromosome, file=paste0(HAPPY.output.path, '/full/chr',chr[1], '/chromosome.RData'))
     save(chromosome, file=paste0(HAPPY.output.path, '/genotype/chr',chr[1], '/chromosome.RData'))
   }
-  # Export file of total.map distance (cM)
+  # Export file of map distance (cM)
   export_marker_map_distance_file <- function(chr, pos) {
-    total.map <- as.character(pos)
-    save(total.map, file=paste0(HAPPY.output.path, '/additive/chr', chr[1], '/total.map.RData'))
-    save(total.map, file=paste0(HAPPY.output.path, '/full/chr', chr[1], '/total.map.RData'))
-    save(total.map, file=paste0(HAPPY.output.path, '/genotype/chr', chr[1], '/total.map.RData'))
+    map <- as.character(pos)
+    save(map, file=paste0(HAPPY.output.path, '/additive/chr', chr[1], '/map.RData'))
+    save(map, file=paste0(HAPPY.output.path, '/full/chr', chr[1], '/map.RData'))
+    save(map, file=paste0(HAPPY.output.path, '/genotype/chr', chr[1], '/map.RData'))
   }
   
   #-----------------------------
@@ -127,9 +126,10 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
       marker <- rownames(prsmth)
       subject <- rep(samples[j], nrow(prsmth))
       one.sample.data <- data.frame(marker, subject,  prsmth)
-      combined.data <- merge(x=total.map, y=one.sample.data, by.x="marker", by.y="marker")[,c(1:5,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
+      combined.data <- merge(x=map, y=one.sample.data, by.x="marker", by.y="marker")[,c(1:5,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
                                                                                               17,5,12,18,23,6,13,19,24,28,7,14,
                                                                                               20,25,29,32,8,15,21,26,30,33,35)+5)]
+      if(bp.is.MB){ combined.data$bp <- combined.data*1000000 }
       combined.data <- combined.data[combined.data$chr == chr[i],]
     
       if(!exists('all.subjects')){
