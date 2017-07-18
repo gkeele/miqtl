@@ -4,9 +4,12 @@
 #' The main output files of importance are the individual-level files with naming scheme [sample].genotype.probs.Rdata.
 #'
 #' @param DOQTL.recon.output.path The path to the directory containing DO-QTL founder haplotype output files. 
-#' @param map.path The path to the total.map file. The total.map file contains data on the loci. It should be a tab-delimited 
-#' file with columns labeled "marker", "chr", "bp", and "pos". "pos" represents total.map distance in cM. "bp" should 
-#' be in bp, not Mb. 
+#' @param map The map file (which contains important information on the loci) loaded into R.
+#' @param bp.is.Mb DEFAULT: TRUE IF true, Mb will be converted to bp within the function.
+#' @param map.locus_name.colname DEFAULT: "SNP_ID". The column name in the map data that corresponds to locus/marker names.
+#' @param map.chr.colname DEFAULT: "Chr". The column name in the map data that corresponds to chromosome.
+#' @param map.physical_dist.colname DEFAULT: "Mb_NCBI38". The column name in the map data that corresponds to physical position.
+#' @param map.genetic_dist.colname DEFAULT: "cM". The column name in the map data that corresponds to genetic position.
 #' @param HAPPY.output.path The path to a directory that will be created as the HAPPY-format genome cache.
 #' @param allele.labels DEFAULT: NULL. Allows for specification of founder labels different from what is in the DO-QTL
 #' output. The DEFAULT of NULL leads to using the labels from the DO-QTL output.
@@ -15,7 +18,8 @@
 #' @import data.table
 #' @examples convert.DOQTL.to.HAPPY()
 convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
-                                   map.path, bp.is.MB=FALSE,
+                                   map, bp.is.Mb=TRUE, 
+                                   map.locus_name.colname="SNP_ID", map.chr.colname="Chr", map.physical_dist.colname="Mb_NCBI38", map.genetic_dist.colname="cM",
                                    HAPPY.output.path,
                                    allele.labels=NULL,
                                    chr=c(1:19, "X")){
@@ -49,7 +53,7 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
   #-------------------------------
   # Marker info
   #-------------------------------
-  map <- read.table(map.path, header=TRUE, as.is=TRUE)
+  #map <- read.table(map.path, header=TRUE, as.is=TRUE)
   
   #-------------------------------
   # Functions to output marker files
@@ -115,6 +119,15 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
     save(map, file=paste0(HAPPY.output.path, '/full/chr', chr[1], '/map.RData'))
     save(map, file=paste0(HAPPY.output.path, '/genotype/chr', chr[1], '/map.RData'))
   }
+  
+  #-----------------------------
+  # Rename map data columns
+  #-----------------------------
+  colnames(map)[colnames(map) == map.locus_name.colname] <- "marker"
+  colnames(map)[colnames(map) == map.chr.colname] <- "chr"
+  colnames(map)[colnames(map) == map.physical_dist.colname] <- "bp"
+  colnames(map)[colnames(map) == map.genetic_dist.colname] <- "pos"
+  map <- map[,c("marker", "chr", "bp", "pos")]
   
   #-----------------------------
   # Combining data of individuals

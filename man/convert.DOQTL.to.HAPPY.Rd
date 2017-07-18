@@ -4,15 +4,25 @@
 \alias{convert.DOQTL.to.HAPPY}
 \title{Takes DO-QTL founder haplotype reconstruction output files and re-formats into a HAPPY genome cache}
 \usage{
-convert.DOQTL.to.HAPPY(DOQTL.recon.output.path, map.path, bp.is.MB = FALSE,
+convert.DOQTL.to.HAPPY(DOQTL.recon.output.path, map, bp.is.Mb = TRUE,
+  map.locus_name.colname = "SNP_ID", map.chr.colname = "Chr",
+  map.physical_dist.colname = "Mb_NCBI38", map.genetic_dist.colname = "cM",
   HAPPY.output.path, allele.labels = NULL, chr = c(1:19, "X"))
 }
 \arguments{
 \item{DOQTL.recon.output.path}{The path to the directory containing DO-QTL founder haplotype output files.}
 
-\item{map.path}{The path to the total.map file. The total.map file contains data on the loci. It should be a tab-delimited 
-file with columns labeled "marker", "chr", "bp", and "pos". "pos" represents total.map distance in cM. "bp" should 
-be in bp, not Mb.}
+\item{map}{The map file (which contains important information on the loci) loaded into R.}
+
+\item{bp.is.Mb}{DEFAULT: TRUE IF true, Mb will be converted to bp within the function.}
+
+\item{map.locus_name.colname}{DEFAULT: "SNP_ID". The column name in the map data that corresponds to locus/marker names.}
+
+\item{map.chr.colname}{DEFAULT: "Chr". The column name in the map data that corresponds to chromosome.}
+
+\item{map.physical_dist.colname}{DEFAULT: "Mb_NCBI38". The column name in the map data that corresponds to physical position.}
+
+\item{map.genetic_dist.colname}{DEFAULT: "cM". The column name in the map data that corresponds to genetic position.}
 
 \item{HAPPY.output.path}{The path to a directory that will be created as the HAPPY-format genome cache.}
 
