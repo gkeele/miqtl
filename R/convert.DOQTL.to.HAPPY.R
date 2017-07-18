@@ -135,7 +135,6 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
   for(i in 1:length(chr)){
     for(j in 1:length(samples)){
       cat(paste("Loading DOQTL output for individual", j, "for chr", chr[i]), "\n")
-      browser()
       load(paste0(DOQTL.recon.output.path, "/", samples[j], ".genotype.probs.Rdata"))
       marker <- rownames(prsmth)
       subject <- rep(samples[j], nrow(prsmth))
