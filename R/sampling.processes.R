@@ -103,6 +103,7 @@ generate.sample.outcomes.matrix <- function(scan.object, model.type=c("null", "a
   }
   sim.threshold.object <- list(y.matrix=sim.y.matrix,
                                formula=scan.object$formula,
+                               model=scan.object$model.type,
                                weights=return.weights,
                                K=K,
                                method=method,
@@ -134,9 +135,6 @@ reduce.large.K <- function(large.K, impute.map){
 #' store .RData files for the probabilities/dosages of each locus.
 #' @param data A data frame with outcome and potential covariates. Should also have IDs
 #' that link to IDs in the genome cache, often the individual-level ID named "SUBJECT.NAME".
-#' @param model DEFAULT: additive. Specifies how to model the founder haplotype probabilities. The additive options specifies
-#' use of haplotype dosages, and is most commonly used. The full option regresses the phenotype on the actual
-#' diplotype probabilities.
 #' @param use.multi.impute DEFAULT: TRUE. This option specifies whether to use ROP or multiple imputations.
 #' @param num.imp DEFAULT: 11. IF multiple imputations are used, this specifies the number of imputations to perform.
 #' @param chr DEFAULT: "all". The chromosomes to conduct scans over.
@@ -148,11 +146,11 @@ reduce.large.K <- function(large.K, impute.map){
 #' @examples run.threshold.scans()
 run.threshold.scans <- function(sim.threshold.object, keep.full.scans=TRUE,
                                 genomecache, data,
-                                model=c("additive", "full"),
                                 use.multi.impute=TRUE, num.imp=11, chr="all", just.these.loci=NULL, 
                                 scan.seed=1, ...){
   y.matrix <- sim.threshold.object$y.matrix
   formula <- sim.threshold.object$formula
+  model <- sim.threshold.object$model
   weights <- sim.threshold.object$weights
   K <- sim.threshold.object$K
   pheno.id <- names(sim.threshold.object$impute.map)[1]

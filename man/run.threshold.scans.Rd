@@ -5,8 +5,8 @@
 \title{Runs threshold scans from a matrix of outcomes, either parametric bootstraps from the null model or permutations}
 \usage{
 run.threshold.scans(sim.threshold.object, keep.full.scans = TRUE, genomecache,
-  data, model = c("additive", "full"), use.multi.impute = TRUE,
-  num.imp = 11, chr = "all", just.these.loci = NULL, scan.seed = 1, ...)
+  data, use.multi.impute = TRUE, num.imp = 11, chr = "all",
+  just.these.loci = NULL, scan.seed = 1, ...)
 }
 \arguments{
 \item{sim.threshold.object}{An object created by either generate.null.bootstrap.matrix() or generate.perm.matrix().}
@@ -21,10 +21,6 @@ store .RData files for the probabilities/dosages of each locus.}
 
 \item{data}{A data frame with outcome and potential covariates. Should also have IDs
 that link to IDs in the genome cache, often the individual-level ID named "SUBJECT.NAME".}
-
-\item{model}{DEFAULT: additive. Specifies how to model the founder haplotype probabilities. The additive options specifies
-use of haplotype dosages, and is most commonly used. The full option regresses the phenotype on the actual
-diplotype probabilities.}
 
 \item{use.multi.impute}{DEFAULT: TRUE. This option specifies whether to use ROP or multiple imputations.}
 
