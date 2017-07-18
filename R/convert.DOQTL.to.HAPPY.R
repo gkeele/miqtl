@@ -142,7 +142,7 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
       combined.data <- merge(x=map, y=one.sample.data, by.x="marker", by.y="marker")[,c(1:5,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
                                                                                               17,5,12,18,23,6,13,19,24,28,7,14,
                                                                                               20,25,29,32,8,15,21,26,30,33,35)+5)]
-      if(bp.is.MB){ combined.data$bp <- combined.data*1000000 }
+      if(physical_dist.is.Mb){ combined.data$bp <- combined.data*1000000 }
       combined.data <- combined.data[combined.data$chr == chr[i],]
     
       if(!exists('all.subjects')){
