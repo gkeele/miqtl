@@ -4,17 +4,18 @@
 \alias{convert.DOQTL.to.HAPPY}
 \title{Takes DO-QTL founder haplotype reconstruction output files and re-formats into a HAPPY genome cache}
 \usage{
-convert.DOQTL.to.HAPPY(DOQTL.recon.output.path, map, bp.is.Mb = TRUE,
-  map.locus_name.colname = "SNP_ID", map.chr.colname = "Chr",
-  map.physical_dist.colname = "Mb_NCBI38", map.genetic_dist.colname = "cM",
-  HAPPY.output.path, allele.labels = NULL, chr = c(1:19, "X"))
+convert.DOQTL.to.HAPPY(DOQTL.recon.output.path, map,
+  physical_dist.is.Mb = TRUE, map.locus_name.colname = "SNP_ID",
+  map.chr.colname = "Chr", map.physical_dist.colname = "Mb_NCBI38",
+  map.genetic_dist.colname = "cM", HAPPY.output.path, allele.labels = NULL,
+  chr = c(1:19, "X"))
 }
 \arguments{
 \item{DOQTL.recon.output.path}{The path to the directory containing DO-QTL founder haplotype output files.}
 
 \item{map}{The map file (which contains important information on the loci) loaded into R.}
 
-\item{bp.is.Mb}{DEFAULT: TRUE IF true, Mb will be converted to bp within the function.}
+\item{physical_dist.is.Mb}{DEFAULT: TRUE IF true, Mb will be converted to bp within the function.}
 
 \item{map.locus_name.colname}{DEFAULT: "SNP_ID". The column name in the map data that corresponds to locus/marker names.}
 

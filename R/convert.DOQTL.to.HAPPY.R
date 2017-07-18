@@ -5,7 +5,7 @@
 #'
 #' @param DOQTL.recon.output.path The path to the directory containing DO-QTL founder haplotype output files. 
 #' @param map The map file (which contains important information on the loci) loaded into R.
-#' @param bp.is.Mb DEFAULT: TRUE IF true, Mb will be converted to bp within the function.
+#' @param physical_dist.is.Mb DEFAULT: TRUE IF true, Mb will be converted to bp within the function.
 #' @param map.locus_name.colname DEFAULT: "SNP_ID". The column name in the map data that corresponds to locus/marker names.
 #' @param map.chr.colname DEFAULT: "Chr". The column name in the map data that corresponds to chromosome.
 #' @param map.physical_dist.colname DEFAULT: "Mb_NCBI38". The column name in the map data that corresponds to physical position.
@@ -18,7 +18,7 @@
 #' @import data.table
 #' @examples convert.DOQTL.to.HAPPY()
 convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
-                                   map, bp.is.Mb=TRUE, 
+                                   map, physical_dist.is.Mb=TRUE, 
                                    map.locus_name.colname="SNP_ID", map.chr.colname="Chr", map.physical_dist.colname="Mb_NCBI38", map.genetic_dist.colname="cM",
                                    HAPPY.output.path,
                                    allele.labels=NULL,
