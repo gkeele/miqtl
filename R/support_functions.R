@@ -213,6 +213,16 @@ get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA", "LRT.random.locus")
   return(p.value)
 }
 
+get.allele.effects.from.ROP.fixef <- function(fit, founders, allele.in.intercept, 
+                                              center=TRUE, scale=FALSE){
+  effects <- fit$coefficients[founders]
+  names(effects) <- founders
+  
+  effects <- effects + fit$coefficients["(Intercept)"]
+  effects[allele.in.intercept] <- fit$coefficients["(Intercept)"]
+  return(as.vector(scale(effects, center=center, scale=scale)))
+}
+
 
 
 

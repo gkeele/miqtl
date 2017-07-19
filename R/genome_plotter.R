@@ -132,7 +132,7 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
        xlim=c(0, max.pos), 
        ylim=c(0, y.max), 
        yaxt="n", xlab=paste("Chr", chr, paste0("(", scale, ")")), ylab=this.ylab, main=this.title,
-       frame.plot=F, type="l", lwd=1.5, col=main.col)
+       frame.plot=FALSE, type="l", lwd=1.5, col=main.col)
   axis(side=2, at=0:y.max, las=2)
   if(!is.null(CI)){
     polygon(x=c(pos, rev(pos)), y=c(CI[1,], rev(CI[2,])), density=NA, col=median.band.col)
@@ -269,7 +269,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
        xlim=c(shift.left, sum(max.pos)+(length(chr.types)-1)), 
        ylim=c(-0.1, y.max), 
        xaxt="n", yaxt="n", xlab="", ylab=this.ylab, main=this.title,
-       frame.plot=F, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], col=main.colors[1])
+       frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], col=main.colors[1])
   axis(side=2, at=0:y.max, las=2)
   
   label.spots <- min.pos[1] + (max.pos[1] - min.pos[1])/2
@@ -442,7 +442,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
        xlim=c(shift.left, sum(max.pos)+(length(chr.types)-1)),
        ylim=c(-0.1, y.max),
        xaxt="n", yaxt="n", xlab="", ylab=this.ylab, main=this.title,
-       frame.plot=F, type="n")
+       frame.plot=FALSE, type="n")
   axis(side=2, at=0:y.max, las=2)
   
   label.spots <- min.pos[1] + (max.pos[1] - min.pos[1])/2
@@ -582,7 +582,7 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
        xlim=c(min.pos, max.pos),
        ylim=c(0, y.max+1),
        yaxt="n", xlab=this.xlab, ylab=this.ylab, main=this.title,
-       frame.plot=F)
+       frame.plot=FALSE)
   if(!is.null(r2.bounds)){
     r2.interval <- extract.r2.interval(scan.object=snp.scan, r2.scan.object=r2.object, r2.level=r2.bounds)
     if(scale == "cM"){

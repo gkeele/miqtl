@@ -55,7 +55,7 @@
 #' @examples scan.h2lmm()
 scan.h2lmm <- function(genomecache, data, 
                        formula, K=NULL,
-                       model=c("additive", "full"), locus.as.fixed=TRUE,
+                       model=c("additive", "full"), locus.as.fixed=TRUE, return.allele.effects=FALSE,
                        p.value.method=c("LRT", "ANOVA"),
                        use.par="h2", use.multi.impute=TRUE, num.imp=11, chr="all", brute=TRUE, use.fix.par=TRUE, 
                        seed=1, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NAME",
@@ -195,9 +195,12 @@ scan.h2lmm <- function(genomecache, data,
       fix.par <- NULL
     }
   }
-  MI.LOD <- MI.p.value <- NULL
+  MI.LOD <- MI.p.value <- allele.effects <- NULL
   LOD.vec <- p.vec <- df <- rep(NA, length(loci))
   null.data <- data
+  
+  if(return.allele.effects){ allele.effects <- matrix(NA, nrow=length(founders), ncol=length(loci),
+                                                      dimnames=list(founders, loci)) }
   
   ## Prepping link between phenotype and genotype (necessary for imputation in multiple imputations)
   impute.map <- data.frame(data[,pheno.id], data[,geno.id])
@@ -275,6 +278,10 @@ scan.h2lmm <- function(genomecache, data,
           LOD.vec[i] <- log10(exp(fit1$logLik - fit0$logLik))
           p.vec[i] <- get.p.value(fit0=fit0, fit1=fit1, method=p.value.method)
           df[i] <- fit1$rank
+          
+          if(return.allele.effects){
+            allele.effects[,i] <- get.allele.effects.from.ROP.fixef(fit=fit1, founders=founders, allele.in.intercept=founders[max.column])
+          }
         }
         else{
           fit1 <- lmmbygls.random(formula=null.formula, data=data, pheno.id=pheno.id,
@@ -311,7 +318,8 @@ scan.h2lmm <- function(genomecache, data,
                  model.type=model,
                  p.value.method=p.value.method,
                  impute.map=impute.map,
-                 locus.effect.type=fit1$locus.effect.type)
+                 locus.effect.type=fit1$locus.effect.type,
+                 allele.effects=allele.effects)
   if(length(just.these.loci) == 1){ output$fit1 <- fit1 }
   if(pheno.id != geno.id & !is.null(K)){ rownames(Z) <- as.character(data[, pheno.id]); output$Z <- Z }
   return(output)
