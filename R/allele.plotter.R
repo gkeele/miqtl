@@ -125,7 +125,7 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
                     paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"),
                     paste("n =", round(ifelse(is.null(scan.object$fit0$weights), 
                                               length(scan.object$fit0$y),
-                                              sum(scan.object$fit0$weights)), 2)),)
+                                              sum(scan.object$fit0$weights)), 2)))
   }
   else{
     this.title <- c(main, 
