@@ -197,7 +197,7 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
     if(!is.null(alternative.labels)){ these.labels <- alternative.labels }
     else{ these.labels <- rownames(allele.effects) }
     legend(my.legend.pos, legend=these.labels, 
-           lty=rep(1, nrow(allele.effects)), lwd=1.5, 
+           lty=rep(1, nrow(allele.effects)), fill=TRUE, border="black", 
            col=main.colors, bty=my.bty, cex=my.legend.cex)
   }
 }
