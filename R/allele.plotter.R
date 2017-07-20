@@ -55,16 +55,20 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
   
   pos <- ifelse(rep(scale=="Mb", length(scan.object$loci)), scan.object$pos$Mb, scan.object$pos$cM)
 
+  ## Grabbing the number of alleles
+  if(length(dim(allele.effects)) == 3){ num.founders <- dim(allele.effects)[1] }
+  else{ num.founders <- nrow(allele.effects) }
+    
+  
   if(!is.null(just.these.chr)){
     keep.chr <- chr %in% just.these.chr
     chr <- chr[keep.chr]
     if(length(dim(allele.effects)) == 3){
       allele.effects <- allele.effects[, keep.chr,]
-      num.founders <- dim(allele.effects)[1]
     }
     else{
       allele.effects <- allele.effects[, keep.chr]
-      num.founders <- nrow(allele.effects)
+      
     }
     pos <- pos[keep.chr]
   }
@@ -121,7 +125,7 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
                     paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"),
                     paste("n =", round(ifelse(is.null(scan.object$fit0$weights), 
                                               length(scan.object$fit0$y),
-                                              sum(scan.object$fit0$weights)), 2)))
+                                              sum(scan.object$fit0$weights)), 2)),)
   }
   else{
     this.title <- c(main, 

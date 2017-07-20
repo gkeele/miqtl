@@ -5,15 +5,12 @@
 \title{Plot the regression coefficients or BLUPs as allele effects for a genome scan (whole genomes or subset of chromosomes)}
 \usage{
 allele.plotter.whole(scan.object, just.these.chr = NULL, scale = "Mb",
-  main.colors = c(scales::alpha(rgb(240, 240, 0, maxColorValue = 255), 0.8),
-  scales::alpha(rgb(128, 128, 128, maxColorValue = 255), 0.8),
-  scales::alpha(rgb(240, 128, 128, maxColorValue = 255), 0.8),
-  scales::alpha(rgb(16, 16, 240, maxColorValue = 255), 0.8),
-  scales::alpha(rgb(0, 160, 240, maxColorValue = 255), 0.8),
-  scales::alpha(rgb(0, 160, 0, maxColorValue = 255), 0.8),
-  scales::alpha(rgb(240, 0, 0, maxColorValue = 255), 0.8),
-  scales::alpha(rgb(144, 0, 224, maxColorValue = 255), 0.8)),
-  use.legend = TRUE, main = "", my.bty = "n", my.lwd = rep(1.5, 8),
+  imp.confint.alpha = NULL, main.colors = c(rgb(240, 240, 0, maxColorValue =
+  255), rgb(128, 128, 128, maxColorValue = 255), rgb(240, 128, 128,
+  maxColorValue = 255), rgb(16, 16, 240, maxColorValue = 255), rgb(0, 160, 240,
+  maxColorValue = 255), rgb(0, 160, 0, maxColorValue = 255), rgb(240, 0, 0,
+  maxColorValue = 255), rgb(144, 0, 224, maxColorValue = 255)),
+  use.legend = TRUE, main = "", my.bty = "n", my.lwd = rep(1.25, 8),
   my.legend.cex = 0.6, my.legend.pos = "topright", y.max.manual = NULL,
   y.min.manual = NULL, no.title = FALSE, override.title = NULL,
   add.chr.to.label = FALSE, alternative.labels = NULL)
