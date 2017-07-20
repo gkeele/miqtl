@@ -11,9 +11,10 @@ allele.plotter.whole(scan.object, just.these.chr = NULL, scale = "Mb",
   maxColorValue = 255), rgb(0, 160, 0, maxColorValue = 255), rgb(240, 0, 0,
   maxColorValue = 255), rgb(144, 0, 224, maxColorValue = 255)),
   use.legend = TRUE, main = "", my.bty = "n", my.lwd = rep(1.25, 8),
-  my.legend.cex = 0.6, my.legend.pos = "topright", y.max.manual = NULL,
-  y.min.manual = NULL, no.title = FALSE, override.title = NULL,
-  add.chr.to.label = FALSE, alternative.labels = NULL)
+  my.legend.cex = 0.6, my.legend.pos = "topright", transparency = 0.6,
+  y.max.manual = NULL, y.min.manual = NULL, no.title = FALSE,
+  override.title = NULL, add.chr.to.label = FALSE,
+  alternative.labels = NULL)
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object that had return.allele.effects=TRUE.}
@@ -33,6 +34,8 @@ allele.plotter.whole(scan.object, just.these.chr = NULL, scale = "Mb",
 \item{my.legend.cex}{DEFAULT: 0.6. Specifies the size of the text in the legend.}
 
 \item{my.legend.pos}{DEFAULT: "topright". Specifies where to put the legend, if specified in use.legend.}
+
+\item{transparency}{DEFAULT: 0.6. The transparency level for the confidence bands. 0 is invisible, 1 is solid.}
 
 \item{y.max.manual}{DEFAULT: NULL. Manually adds a max y-value.}
 

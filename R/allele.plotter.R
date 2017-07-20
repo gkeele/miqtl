@@ -12,6 +12,7 @@
 #' @param my.legend.cex DEFAULT: 0.6. Specifies the size of the text in the legend.
 #' @param my.lwd DEFAULT: rep(1.5, 8). Specifies the lwds for the alleles.
 #' @param my.legend.pos DEFAULT: "topright". Specifies where to put the legend, if specified in use.legend.
+#' @param transparency DEFAULT: 0.6. The transparency level for the confidence bands. 0 is invisible, 1 is solid.
 #' @param y.max.manual DEFAULT: NULL. Manually adds a max y-value. 
 #' @param y.min.manual DEFAULT: NULL. Manually adds a min y-value.
 #' @param no.title DEFAULT: FALSE. If TRUE, produces a plot with no title, not even the automatic
@@ -34,7 +35,7 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
                                                rgb(240, 0, 0, maxColorValue=255), # red
                                                rgb(144, 0, 224, maxColorValue=255)), # purple,
                                  use.legend=TRUE, main="", my.bty="n", my.lwd=rep(1.25, 8),
-                                 my.legend.cex=0.6, my.legend.pos="topright",
+                                 my.legend.cex=0.6, my.legend.pos="topright", transparency=0.6,
                                  y.max.manual=NULL, y.min.manual=NULL, no.title=FALSE, override.title=NULL,
                                  add.chr.to.label=FALSE, alternative.labels=NULL)
 {
@@ -148,7 +149,7 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
     for(i in 1:num.founders){
       polygon(x=c(pos[pre.chr==chr.types[1]], rev(pos[pre.chr==chr.types[1]])),
               y=c(allele.effect.confint[1, i,  pre.chr==chr.types[1]], rev(allele.effect.confint[2, i, pre.chr==chr.types[1]])),
-              border=NA, col=scales::alpha(main.colors[i], 0.5))
+              border=NA, col=scales::alpha(main.colors[i], transparency))
     }
   }
   ## Means for first chr
@@ -170,7 +171,7 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
         for(j in 1:num.founders){
           polygon(x=c(pos[pre.chr==chr.types[i]] + shift, rev(pos[pre.chr==chr.types[i]] + shift)),
                   y=c(allele.effect.confint[1, j,  pre.chr==chr.types[i]], rev(allele.effect.confint[2, j, pre.chr==chr.types[i]])),
-                  border=NA, col=scales::alpha(main.colors[j], 0.5))
+                  border=NA, col=scales::alpha(main.colors[j], transparency))
         }
       }
       ## Means for later chr
