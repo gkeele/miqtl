@@ -1,14 +1,19 @@
 #' @export
 multi.imput.lmmbygls <- function(num.imp, 
                                  data, formula, pheno.id="SUBJECT.NAME",
-                                 founders=founders, diplotype.probs, K=NULL, fit0=NULL,
+                                 founders=founders, diplotype.probs, K=NULL, fit0=NULL, return.allele.effects=FALSE,
                                  use.par, fix.par=NULL, model=c("additive", "full"), p.value.method=c("LRT", "ANOVA"), locus.as.fixed=TRUE,
                                  use.lmer, impute.map,
                                  brute=TRUE, seed=1, do.augment,
                                  weights=NULL){
   model <- model[1]
   p.value.method <- p.value.method[1]
-  eigen.K <- logDetV <- M <- NULL
+  
+  eigen.K <- logDetV <- M <- allele.effects <- NULL
+  if(return.allele.effects){ 
+    allele.effects <- matrix(NA, nrow=length(founders), ncol=num.imp,
+                             dimnames=list(founders, paste0("imp", 1:num.imp)))
+  }
   if(is.null(fit0)){
     null.formula <- make.null.formula(formula=formula, do.augment=do.augment)
     if(use.lmer){
@@ -75,6 +80,10 @@ multi.imput.lmmbygls <- function(num.imp,
         imp.LOD[i] <- log10(exp(imp.logLik[i] - fit0$logLik))
         imp.p.value[i] <- get.p.value(fit0=fit0, fit1=fit1, method=p.value.method)
         fit1$locus.effect.type <- "fixed"
+        
+        if(return.allele.effects){
+          allele.effects[,i] <- get.allele.effects.from.fixef(fit=fit1, founders=founders, allele.in.intercept=founders[max.column])
+        }
       }
       else{
         null.formula <- make.null.formula(formula=formula, do.augment=do.augment)
@@ -93,5 +102,6 @@ multi.imput.lmmbygls <- function(num.imp,
   return(list(h2=imp.h2, 
               LOD=imp.LOD,
               p.value=imp.p.value,
+              allele.effects=allele.effects,
               locus.effect.type=fit1$locus.effect.type))
 }

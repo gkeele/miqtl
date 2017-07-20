@@ -71,6 +71,16 @@ ci.median <- function(x, conf=0.95){ # from R/asbio
   return(ci)
 }
 
+#' @export
+ci.mean <- function(x, alpha=0.05){
+  n <- length(x)
+  sd <- sd(x)
+  se <- sd/sqrt(n)
+  er <- qt(1-alpha/2, df=n-1)*se
+  ci <- c(mean(x)-er, mean(x)+er)
+  return(ci)
+}
+
 predict.lmmbygls <- function(fit0.no.augment, original.n, augment.n, covariates, weights){
   e <- rnorm(augment.n, 0, sd=sqrt(fit0.no.augment$sigma2.mle))
   if(!is.null(weights)){
@@ -164,11 +174,6 @@ run.imputation <- function(diplotype.probs, impute.map){
   imputable.diplotype.probs <- as.matrix(diplotype.probs[!duplicated(diplotype.probs[,geno.id]),][,!(names(diplotype.probs) %in% c("original.order", names(impute.map)))])
   rownames(imputable.diplotype.probs) <- diplotype.probs[,geno.id][!duplicated(diplotype.probs[,geno.id])]
   
-  #diplotype.probs <- diplotype.probs[, names(diplotype.probs) != "original.order"]
-  #diplotype.matrix <- as.matrix(diplotype.probs[,!(names(diplotype.probs) %in% names(impute.map))])
-  #rownames(diplotype.matrix) <- diplotype.probs[,geno.id]
-  #imputable.diplotype.matrix <- diplotype.matrix[(unique(as.character(diplotype.probs[,geno.id]))),]
-  
   imputation <- t(apply(imputable.diplotype.probs, 1, function(x) rmultinom(1, 1, x)))
   full.imputation <- imputation[as.character(impute.map[, geno.id]),]
   rownames(full.imputation) <- impute.map[, pheno.id]
@@ -213,8 +218,8 @@ get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA", "LRT.random.locus")
   return(p.value)
 }
 
-get.allele.effects.from.ROP.fixef <- function(fit, founders, allele.in.intercept, 
-                                              center=TRUE, scale=FALSE){
+get.allele.effects.from.fixef <- function(fit, founders, allele.in.intercept, 
+                                          center=TRUE, scale=FALSE){
   effects <- fit$coefficients[founders]
   names(effects) <- founders
   
@@ -222,6 +227,27 @@ get.allele.effects.from.ROP.fixef <- function(fit, founders, allele.in.intercept
   effects[allele.in.intercept] <- fit$coefficients["(Intercept)"]
   return(as.vector(scale(effects, center=center, scale=scale)))
 }
+
+get.allele.effects.from.ranef <- function(fit, founders, allele.in.intercept, 
+                                          center=TRUE, scale=FALSE){
+  X <- fit$x
+  Z <- fit$z
+  weights <- fit$weights
+  if(is.null(weights)){ weights <- rep(1, nrow(Z)) }
+  sigma2 <- fit$sigma2.reml
+  tau2 <- fit$
+  Sigma <- K*tau2 + diag(1/weights)*sigma2
+  inv.Sigma <- solve(Sigma)
+  u.BLUP <- (original.K*tau2) %*% inv.Sigma %*% (diag(nrow(original.K)) - X %*% solve(t(X) %*% inv.Sigma %*% X) %*% t(X) %*% inv.Sigma) %*% fit$y  
+  
+  effects <- fit$coefficients[founders]
+  names(effects) <- founders
+  
+  effects <- effects + fit$coefficients["(Intercept)"]
+  effects[allele.in.intercept] <- fit$coefficients["(Intercept)"]
+  return(as.vector(scale(effects, center=center, scale=scale)))
+}
+
 
 
 

@@ -24,33 +24,59 @@
 #' @export
 #' @examples allele.plotter.whole()
 allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
-                                 scale="Mb", 
-                                 main.colors=c(scales::alpha(rgb(240, 240, 0, maxColorValue=255), 0.8), # yellow
-                                               scales::alpha(rgb(128, 128, 128, maxColorValue=255), 0.8), # gray
-                                               scales::alpha(rgb(240, 128, 128, maxColorValue=255), 0.8), # pink/salmon
-                                               scales::alpha(rgb(16, 16, 240, maxColorValue=255), 0.8), # dark blue
-                                               scales::alpha(rgb(0, 160, 240, maxColorValue=255), 0.8), # light blue
-                                               scales::alpha(rgb(0, 160, 0, maxColorValue=255), 0.8), # green
-                                               scales::alpha(rgb(240, 0, 0, maxColorValue=255), 0.8), # red
-                                               scales::alpha(rgb(144, 0, 224, maxColorValue=255), 0.8)), # purple,
-                                 use.legend=TRUE, main="", my.bty="n", my.lwd=rep(1.5, 8),
+                                 scale="Mb", imp.confint.alpha=NULL,
+                                 main.colors=c(rgb(240, 240, 0, maxColorValue=255), # yellow
+                                               rgb(128, 128, 128, maxColorValue=255), # gray
+                                               rgb(240, 128, 128, maxColorValue=255), # pink/salmon
+                                               rgb(16, 16, 240, maxColorValue=255), # dark blue
+                                               rgb(0, 160, 240, maxColorValue=255), # light blue
+                                               rgb(0, 160, 0, maxColorValue=255), # green
+                                               rgb(240, 0, 0, maxColorValue=255), # red
+                                               rgb(144, 0, 224, maxColorValue=255)), # purple,
+                                 use.legend=TRUE, main="", my.bty="n", my.lwd=rep(1.25, 8),
                                  my.legend.cex=0.6, my.legend.pos="topright",
                                  y.max.manual=NULL, y.min.manual=NULL, no.title=FALSE, override.title=NULL,
                                  add.chr.to.label=FALSE, alternative.labels=NULL)
 {
   allele.effects <- scan.object$allele.effects
+  
+  ## Check that scan object has allele effect estimate - stop if not
   if(is.null(allele.effects)){
     stop("No allele effects in scan object. Re-run scan.h2lmm with return.allele.effects=TRUE", call.=FALSE)
   }
+  ## Check that confint is specified, imputations were used
+  if(length(dim(allele.effects)) != 3 & !is.null(imp.confint.alpha)){
+    cat("Multiple imputations must have been used to plot effect confidence intervals!\n",
+        "Setting imp.confint.alpha to NULL\n")
+    imp.confint.alpha <- NULL
+  }
+  
   chr <- scan.object$chr
   
-  pos <- ifelse(rep(scale=="Mb", ncol(allele.effects)), scan.object$pos$Mb, scan.object$pos$cM)
+  pos <- ifelse(rep(scale=="Mb", length(scan.object$loci)), scan.object$pos$Mb, scan.object$pos$cM)
 
   if(!is.null(just.these.chr)){
     keep.chr <- chr %in% just.these.chr
     chr <- chr[keep.chr]
-    allele.effects <- allele.effects[, keep.chr]
+    if(length(dim(allele.effects)) == 3){
+      allele.effects <- allele.effects[, keep.chr,]
+      num.founders <- dim(allele.effects)[1]
+    }
+    else{
+      allele.effects <- allele.effects[, keep.chr]
+      num.founders <- nrow(allele.effects)
+    }
     pos <- pos[keep.chr]
+  }
+  
+  ## Calculating confidence intervals on the allele effect means
+  allele.effect.confint <- NULL
+  if(!is.null(imp.confint.alpha)){
+    allele.effect.confint <- apply(allele.effects, c(1, 2), function(x) ci.mean(x, alpha=imp.confint.alpha))
+  }
+  ## Calculating the allele effect means given that multiple imputations were used
+  if(length(dim(allele.effects)) == 3){
+    allele.effects <- apply(allele.effects, c(1, 2), function(x) mean(x))
   }
   
   has.X <- FALSE
@@ -71,8 +97,12 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
   chr.types <- levels(pre.chr)
   
   # Finding max and min of y for plot window
-  y.max <- ifelse(max(allele.effects) > 0, ceiling(max(allele.effects)), floor(max(allele.effects)))
-  y.min <- ifelse(min(allele.effects) > 0, ceiling(min(allele.effects)), floor(min(allele.effects)))
+  y.max <- ifelse(max(allele.effects) > 0, 
+                  ceiling(max(allele.effects, allele.effect.confint)), 
+                  floor(max(allele.effects, allele.effect.confint)))
+  y.min <- ifelse(min(allele.effects) > 0, 
+                  ceiling(min(allele.effects, allele.effect.confint)), 
+                  floor(min(allele.effects, allele.effect.confint)))
   if(!is.null(y.max.manual)){
     y.max <- y.max.manual
   }
@@ -101,37 +131,52 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
   if(no.title){ this.title <- NULL }
   if(!is.null(override.title)){ this.title <- override.title }
   
-  plot(pos[pre.chr==chr.types[1]], allele.effects[1, pre.chr==chr.types[1]], 
+  plot(0, pch="",
        xlim=c(shift.left, sum(max.pos)+(length(chr.types)-1)), 
        ylim=c(y.min, y.max), 
        xaxt="n", yaxt="n", xlab="", ylab="Additive allele effects", main=this.title,
-       frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=1.5, col=main.colors[1])
+       frame.plot=FALSE, type="l", cex=0.5, lwd=1.5, col=main.colors[1])
   axis(side=2, at=y.min:y.max, las=2)
-  
   label.spots <- min.pos[1] + (max.pos[1] - min.pos[1])/2
-  shift <- max.pos[1]
+  
+  ## Confint for first chr
+  if(!is.null(imp.confint.alpha)){
+    for(i in 1:num.founders){
+      polygon(x=c(pos[pre.chr==chr.types[1]], rev(pos[pre.chr==chr.types[1]])),
+              y=c(allele.effect.confint[1, i,  pre.chr==chr.types[1]], rev(allele.effect.confint[2, i, pre.chr==chr.types[1]])),
+              border=NA, col=scales::alpha(main.colors[i], 0.5))
+    }
+  }
+  ## Means for first chr
+  for(i in 1:num.founders){
+    points(x=pos[pre.chr==chr.types[1]], y=allele.effects[i,  pre.chr==chr.types[1]],
+           type="l", lwd=my.lwd[i], col=main.colors[i])
+  }
   if(length(chr.types) > 1){
+    shift <- max.pos[1]
     for(i in 2:length(chr.types)){
       this.pos <- pos[pre.chr==chr.types[i]] + shift
       if(i %% 2 == 0){
         polygon(x=c(min(this.pos, na.rm=TRUE), min(this.pos, na.rm=TRUE):max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE)), 
                 y=c(y.min, rep(y.max, length(min(this.pos, na.rm=TRUE):max(this.pos, na.rm=TRUE))), y.min), border=NA, col="gray88")
       }
-      label.spots <- c(label.spots, min.pos[i] + shift + (max.pos[i] - min.pos[i])/2)
-      points(this.pos, allele.effects[1, pre.chr==chr.types[i]], type="l", lwd=1.5, col=main.colors[1])
-      shift <- shift + max.pos[i]
-    }
-  }
-  
-  # Plot other alleles
-  for(i in 2:nrow(allele.effects)){
-    points(pos[pre.chr==chr.types[1]], allele.effects[i, pre.chr==chr.types[1]], type="l", col=main.colors[i], lwd=1.5)
-    if(length(chr.types) > 1){
-      shift <- max.pos[1]
-      for(j in 2:length(chr.types)){
-        points(pos[pre.chr==chr.types[j]] + shift, allele.effects[i, pre.chr==chr.types[j]], type="l", col=main.colors[i], lwd=1.5)
-        shift <- shift + max.pos[j]
+      
+      ## Confint for later chr
+      if(!is.null(imp.confint.alpha)){
+        for(j in 1:num.founders){
+          polygon(x=c(pos[pre.chr==chr.types[i]] + shift, rev(pos[pre.chr==chr.types[i]] + shift)),
+                  y=c(allele.effect.confint[1, j,  pre.chr==chr.types[i]], rev(allele.effect.confint[2, j, pre.chr==chr.types[i]])),
+                  border=NA, col=scales::alpha(main.colors[j], 0.5))
+        }
       }
+      ## Means for later chr
+      for(j in 1:num.founders){
+        points(x=pos[pre.chr==chr.types[i]] + shift, y=allele.effects[j,  pre.chr==chr.types[i]],
+               type="l", lwd=my.lwd[j], col=main.colors[j])
+      }
+      label.spots <- c(label.spots, min.pos[i] + shift + (max.pos[i] - min.pos[i])/2)
+      #points(this.pos, allele.effects[1, pre.chr==chr.types[i]], type="l", lwd=1.5, col=main.colors[1])
+      shift <- shift + max.pos[i]
     }
   }
   if(has.X){

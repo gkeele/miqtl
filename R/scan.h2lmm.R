@@ -66,6 +66,12 @@ scan.h2lmm <- function(genomecache, data,
   model <- model[1]
   p.value.method <- p.value.method[1]
   
+  if(model == "full" & return.allele.effects){
+    return.allele.effects <- FALSE
+    cat("Allele effects from regression models currently only available in additive model", "\n",
+        "Setting return.allele.effects to FALSE", "\n")
+  }
+  
   h <- DiploprobReader$new(genomecache)
   founders <- h$getFounders()
   num.founders <- length(founders)
@@ -88,13 +94,6 @@ scan.h2lmm <- function(genomecache, data,
   if(!is.null(just.these.loci)){
     loci <- loci[loci %in% just.these.loci]
     loci.chr <- loci.chr[loci %in% just.these.loci]
-  }
-  
-  ## check that full directory has data
-  if(model == "full" | use.multi.impute){
-    if(!file.exists(paste0(genomecache, "/full/chr", loci.chr[1], "/data/", loci[1], ".RData"))){
-      stop("Full model probabilities not available in genome cache, only additive ROP can be fit", call.=FALSE)
-    }
   }
   
   augment.indicator <- NULL
@@ -125,6 +124,18 @@ scan.h2lmm <- function(genomecache, data,
   use.lmer <- check.for.lmer.formula(null.formula)
   
   ####################### CHECKS
+  ###### check that full directory has data
+  if(model == "full" | use.multi.impute){
+    if(!file.exists(paste0(genomecache, "/full/chr", loci.chr[1], "/data/", loci[1], ".RData"))){
+      stop("Full model probabilities not available in genome cache, only additive ROP can be fit", call.=FALSE)
+    }
+  }
+  ###### check that full model and return.allele.effects aren't both specified
+  if(model == "full" & return.allele.effects){
+    return.allele.effects <- FALSE
+    cat("Allele effects from regression models currently only available with additive model\n",
+        "Setting return.allele.effects to FALSE\n")
+  }
   ###### check p-value method
   if(use.lmer & p.value.method == "ANOVA"){
     cat("ANOVA not currently supported with our implementation of LMER, swithcing to LRT\n")
@@ -199,9 +210,16 @@ scan.h2lmm <- function(genomecache, data,
   LOD.vec <- p.vec <- df <- rep(NA, length(loci))
   null.data <- data
   
-  if(return.allele.effects){ allele.effects <- matrix(NA, nrow=length(founders), ncol=length(loci),
-                                                      dimnames=list(founders, loci)) }
-  
+  if(return.allele.effects){ 
+    if(use.multi.impute){
+      allele.effects <- array(NA, dim=c(length(founders), length(loci), num.imp),
+                              dimnames=list(founders, loci, paste0("imp", 1:num.imp)))
+    }
+    else{
+      allele.effects <- matrix(NA, nrow=length(founders), ncol=length(loci),
+                               dimnames=list(founders, loci))
+    }
+  }
   ## Prepping link between phenotype and genotype (necessary for imputation in multiple imputations)
   impute.map <- data.frame(data[,pheno.id], data[,geno.id])
   names(impute.map) <- c(pheno.id, geno.id)
@@ -232,7 +250,7 @@ scan.h2lmm <- function(genomecache, data,
       }
       if(locus.as.fixed){ fit0.for.mi <- fit0 }
       else{ fit0.for.mi <- fit0.REML }
-      fit1 <- multi.imput.lmmbygls(num.imp=num.imp, data=data, formula=formula, weights=weights, locus.as.fixed=locus.as.fixed,
+      fit1 <- multi.imput.lmmbygls(num.imp=num.imp, data=data, formula=formula, weights=weights, locus.as.fixed=locus.as.fixed, return.allele.effects=return.allele.effects,
                                    model=model, p.value.method=p.value.method, founders=founders, diplotype.probs=diplotype.prob.matrix, pheno.id=pheno.id, 
                                    use.lmer=use.lmer, impute.map=impute.map,
                                    use.par=use.par, fix.par=fix.par, fit0=fit0.for.mi, do.augment=do.augment, 
@@ -241,6 +259,10 @@ scan.h2lmm <- function(genomecache, data,
       MI.p.value[,i] <- fit1$p.value
       LOD.vec[i] <- median(fit1$LOD)
       p.vec[i] <- median(fit1$p.value)
+      
+      if(return.allele.effects){
+        allele.effects[,i,] <- fit1$allele.effects
+      }
     }
     if(!use.multi.impute){
       X <- h$getLocusMatrix(loci[i], model=model, subjects=non.augment.subjects)
@@ -280,7 +302,7 @@ scan.h2lmm <- function(genomecache, data,
           df[i] <- fit1$rank
           
           if(return.allele.effects){
-            allele.effects[,i] <- get.allele.effects.from.ROP.fixef(fit=fit1, founders=founders, allele.in.intercept=founders[max.column])
+            allele.effects[,i] <- get.allele.effects.from.fixef(fit=fit1, founders=founders, allele.in.intercept=founders[max.column])
           }
         }
         else{
@@ -313,13 +335,13 @@ scan.h2lmm <- function(genomecache, data,
                  chr=h$getChromOfLocus(loci),
                  fit0=fit0,
                  fit0.REML=fit0.REML,
+                 allele.effects=allele.effects,
                  y=data$y,
                  formula=formula.string,
                  model.type=model,
                  p.value.method=p.value.method,
                  impute.map=impute.map,
-                 locus.effect.type=fit1$locus.effect.type,
-                 allele.effects=allele.effects)
+                 locus.effect.type=fit1$locus.effect.type)
   if(length(just.these.loci) == 1){ output$fit1 <- fit1 }
   if(pheno.id != geno.id & !is.null(K)){ rownames(Z) <- as.character(data[, pheno.id]); output$Z <- Z }
   return(output)
