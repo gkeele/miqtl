@@ -309,6 +309,8 @@ convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
   #-------------------------------
   # Marker info
   #-------------------------------
+  total.map <- map
+  
   for(i in 1:length(loci)){
     chr.locus <- map[total.map$SNP_ID == loci[i], map.chr.colname]
     
