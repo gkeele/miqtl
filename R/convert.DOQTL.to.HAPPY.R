@@ -233,7 +233,7 @@ convert.additive.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
   total.map <- map
   
   for(i in 1:length(loci)){
-    chr.locus <- total.map[total.map$SNP_ID == loci[i], map.chr.colname]
+    chr.locus <- as.character(total.map[total.map$SNP_ID == loci[i], map.chr.colname])
     
     if(convert.to.dosage){ locus.matrix <- DOQTL.array[,,i]*2 }
     else{ locus.matrix <- DOQTL.array[,,i] }
@@ -312,7 +312,7 @@ convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
   total.map <- map
   
   for(i in 1:length(loci)){
-    chr.locus <- map[total.map$SNP_ID == loci[i], map.chr.colname]
+    chr.locus <- as.character(map[total.map$SNP_ID == loci[i], map.chr.colname])
     
     locus.matrix <- DOQTL.array[,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
                                    17,5,12,18,23,6,13,19,24,28,7,14,
