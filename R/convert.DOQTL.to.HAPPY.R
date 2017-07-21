@@ -201,7 +201,7 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
 }
 
 #' @export
-convert.DOQTL.array.to.additive.HAPPY <- function(DOQTL.array, map,
+convert.additive.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
                                                   map.locus_name.colname="SNP_ID", map.chr.colname="Chr", map.physical_dist.colname="Mb_NCBI38", map.genetic_dist.colname="cM",
                                                   HAPPY.output.path,
                                                   physical_dist.is.Mb=TRUE,
