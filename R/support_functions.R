@@ -228,23 +228,26 @@ get.allele.effects.from.fixef <- function(fit, founders, allele.in.intercept,
   return(as.vector(scale(effects, center=center, scale=scale)))
 }
 
-get.allele.effects.from.ranef <- function(fit, founders, allele.in.intercept, 
+get.allele.effects.from.ranef <- function(fit, founders, 
                                           center=TRUE, scale=FALSE){
-  X <- fit$x
-  Z <- fit$z
-  weights <- fit$weights
-  if(is.null(weights)){ weights <- rep(1, nrow(Z)) }
-  sigma2 <- fit$sigma2.reml
-  tau2 <- fit$
-  Sigma <- K*tau2 + diag(1/weights)*sigma2
-  inv.Sigma <- solve(Sigma)
-  u.BLUP <- (original.K*tau2) %*% inv.Sigma %*% (diag(nrow(original.K)) - X %*% solve(t(X) %*% inv.Sigma %*% X) %*% t(X) %*% inv.Sigma) %*% fit$y  
-  
-  effects <- fit$coefficients[founders]
+  ## Big time savings potentially
+  if(fit$locus.h2 == 0){
+    effects <- rep(0, 8)
+  }
+  else{
+    X <- fit$x
+    Z <- fit$z
+    ZZt <- Z %*% t(Z)
+    weights <- fit$weights
+    if(is.null(weights)){ weights <- rep(1, nrow(Z)) }
+    sigma2 <- fit$sigma2.reml
+    tau2 <- fit$locus.h2*(sigma2/((1 - fit$locus.h2)*fit$h2 + fit$locus.h2))
+    Sigma <- ZZt*tau2 + diag(1/weights)*sigma2
+    inv.Sigma <- solve(Sigma)
+    effects <- as.vector((t(Z)*tau2) %*% inv.Sigma %*% (fit$y - X %*% solve(t(X) %*% inv.Sigma %*% X) %*% t(X) %*% inv.Sigma %*% fit$y)
+  }
   names(effects) <- founders
-  
-  effects <- effects + fit$coefficients["(Intercept)"]
-  effects[allele.in.intercept] <- fit$coefficients["(Intercept)"]
+
   return(as.vector(scale(effects, center=center, scale=scale)))
 }
 

@@ -313,6 +313,9 @@ scan.h2lmm <- function(genomecache, data,
           LOD.vec[i] <- log10(exp(fit1$REML.logLik - fit0.REML$REML.logLik))
           p.vec[i] <- get.p.value(fit0=fit0.REML, fit1=fit1, method=p.value.method)
           df[i] <- 1
+          if(return.allele.effects){
+            allele.effects[,i] <- get.allele.effects.from.ranef(fit=fit1, founders=founders)
+          }
         }
       }
     }
