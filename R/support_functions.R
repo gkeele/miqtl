@@ -244,7 +244,7 @@ get.allele.effects.from.ranef <- function(fit, founders,
     tau2 <- fit$locus.h2*(sigma2/((1 - fit$locus.h2)*fit$h2 + fit$locus.h2))
     Sigma <- ZZt*tau2 + diag(1/weights)*sigma2
     inv.Sigma <- solve(Sigma)
-    effects <- as.vector((t(Z)*tau2) %*% inv.Sigma %*% (fit$y - X %*% solve(t(X) %*% inv.Sigma %*% X) %*% t(X) %*% inv.Sigma %*% fit$y)
+    effects <- as.vector((t(Z)*tau2) %*% inv.Sigma %*% (fit$y - X %*% solve(t(X) %*% inv.Sigma %*% X) %*% t(X) %*% inv.Sigma %*% fit$y))
   }
   names(effects) <- founders
 
