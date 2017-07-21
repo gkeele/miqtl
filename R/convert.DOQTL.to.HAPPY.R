@@ -255,7 +255,7 @@ convert.DOQTL.array.to.additive.HAPPY <- function(DOQTL.array, map,
     save(chromosome, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/chromosome.RData'))
     
     ## marker
-    markers <- map.this.chr[, map.locus_name.colname]
+    markers <- as.character(map.this.chr[, map.locus_name.colname])
     save(markers, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/markers.RData'))
     save(markers, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/markers.RData'))
     save(markers, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/markers.RData'))
@@ -341,7 +341,7 @@ convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
     save(chromosome, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/chromosome.RData'))
     
     ## marker
-    markers <- map.this.chr[, map.locus_name.colname]
+    markers <- as.character(map.this.chr[, map.locus_name.colname])
     save(markers, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/markers.RData'))
     save(markers, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/markers.RData'))
     save(markers, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/markers.RData'))
