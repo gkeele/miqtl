@@ -96,6 +96,10 @@ multi.imput.lmmbygls <- function(num.imp,
         imp.LOD[i] <- log10(exp(imp.logLik[i] - fit0$REML.logLik))
         imp.p.value[i] <- get.p.value(fit0=fit0, fit1=fit1, method=p.value.method)
         fit1$locus.effect.type <- "random"
+        
+        if(return.allele.effects){
+          allele.effects[,i] <- get.allele.effects.from.ranef(fit=fit1, founders=founders)
+        }
       }
     }
   }
