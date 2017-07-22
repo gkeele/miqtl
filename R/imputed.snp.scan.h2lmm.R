@@ -107,6 +107,9 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
     loci.chr <- loci.chr[keep.loci]
   }
   LOD.vec <- p.vec <- h2.record <- rep(0, length(loci))
+  
+  # Progress bar
+  pb <- txtProgressBar(min=0, max=length(loci), style=3)
   for(i in 1:length(loci)){
     X <- X.list[[i]]
     data <- cbind(null.data, X[as.character(null.data$SUBJECT.NAME),, drop=FALSE])
@@ -119,6 +122,10 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
     p.vec[i] <- pchisq(q=-2*(fit0$logLik - fit1$logLik), df=fit1$rank-fit0$rank, lower.tail=FALSE)
     h2.record[i] <- fit1$h2
     if(print.locus.fit){ cat(paste("locus", i, "out of", length(loci)), "\n") }
+    else{
+      # Update progress bar
+      setTxtProgressBar(pb, i)
+    }
   }
   if(!return.X.list){ X.list <- NULL }
   output <- list(LOD=LOD.vec,
