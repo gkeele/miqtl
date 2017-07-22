@@ -69,7 +69,7 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
   cache.subjects <- rownames(h$getLocusMatrix(locus=loci[1], model="additive"))
   loci.chr <- h$getChromOfLocus(loci)
   
-  data.and.K <- make.processed.data(formula=formula, data=data, K=K, cache.subjects=cache.subjects, impute.on="SUBJECT.NAME")
+  data.and.K <- make.processed.data(formula=formula, data=data, K=K, cache.subjects=cache.subjects, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NAME")
   data <- data.and.K$data
   K <- data.and.K$K
   
