@@ -74,7 +74,9 @@ prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="ad
   oplt <- par()$plt
   cols <- rev(gray(10000:1/10000))
   par(plt=c(0.15, 0.85, 0.15, 0.8))    ##set the margin  
-  image(z=1-probs, axes=FALSE, col=cols)
+  if(model == "additive"){ z.val <- 2 - probs; z.lim <- c(0, 2) }
+  else{ z.val <- 1 - probs; z.lim <- c(0, 1) }
+  image(z=z.val, axes=FALSE, col=cols, zlim=z.lim)
   box()
   axis(2, at=seq(0, num.col, 1+1/num.col)/num.col, 
        labels=rev(founder.labels), cex.axis=founder.cex,
