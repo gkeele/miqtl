@@ -8,7 +8,6 @@ multi.imput.lmmbygls <- function(num.imp,
                                  weights=NULL){
   model <- model[1]
   p.value.method <- p.value.method[1]
-  
   eigen.K <- logDetV <- M <- allele.effects <- NULL
   if(return.allele.effects){ 
     allele.effects <- matrix(NA, nrow=length(founders), ncol=num.imp,
