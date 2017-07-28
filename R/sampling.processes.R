@@ -117,7 +117,7 @@ generate.simple.permutation.index.matrix <- function(scan.object, num.samples, s
   n <- length(scan.object$fit0$y)
   
   perm.ind.matrix <- replicate(n=num.samples, sample(1:n, replace=FALSE))
-  colnames(perm.ind.matrix) <- paste0("perm.", 1:n)
+  colnames(perm.ind.matrix) <- paste0("perm.", 1:num.samples)
   rownames(perm.ind.matrix) <- names(scan.object$fit0$y)
   
   sim.threshold.object <- list(y.matrix=perm.ind.matrix,
