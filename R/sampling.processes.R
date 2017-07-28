@@ -125,8 +125,7 @@ generate.simple.permutation.index.matrix <- function(scan.object, num.samples, s
                                model=scan.object$model.type,
                                weights=scan.object$fit0$weights,
                                K=scan.object$fit0$K,
-                               impute.map=scan.object$impute.map,
-                               locus=locus)
+                               impute.map=scan.object$impute.map)
   return(sim.threshold.object)
 }
 
