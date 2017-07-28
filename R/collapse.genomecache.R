@@ -1,6 +1,6 @@
 #' @export
 collapse.genomecache <- function(original.cache, 
-                                 new.cache,
+                                 new.cache, subjects=NULL,
                                  criterion=c("l2.norm", "max.category"),
                                  model=c("full", "additive"),
                                  tol=1e-6){
@@ -17,7 +17,7 @@ collapse.genomecache <- function(original.cache,
   full.to.add.matrix <- straineff.mapping.matrix()
   
   strains <- h$getFounders()
-  subjects <- h$getSubjects()
+  if(is.null(subjects)){ subjects <- h$getSubjects() }
   
   for(i in 1:length(chr)){
     dir.create(paste0(new.cache, "/additive", "/chr", chr[i], "/data"), recursive=TRUE, showWarnings=FALSE)
@@ -36,13 +36,13 @@ collapse.genomecache <- function(original.cache,
     total.loci <- length(these.loci)
     left.marker <- these.loci[1]
     reduced.loci <- reduced.map <- reduced.pos <- NULL
-    bin.matrix <- h$getLocusMatrix(locus=left.marker, model="full"); bin.loci.count <- 1
+    bin.matrix <- h$getLocusMatrix(locus=left.marker, model="full", subjects=subjects); bin.loci.count <- 1
     for(j in 2:total.loci){
       OUTPUT=FALSE
       right.marker <- these.loci[j]
       
-      locus1 <- h$getLocusMatrix(locus=left.marker, model=model)
-      locus2 <- h$getLocusMatrix(locus=right.marker, model=model)
+      locus1 <- h$getLocusMatrix(locus=left.marker, model=model, subjects=subjects)
+      locus2 <- h$getLocusMatrix(locus=right.marker, model=model, subjects=subjects)
       
       ## Check to see if X changes between markers
       if(criterion == "l2.norm"){
@@ -54,7 +54,7 @@ collapse.genomecache <- function(original.cache,
 
       ## Extend bin
       if(test){
-        bin.matrix <- bin.matrix + h$getLocusMatrix(locus=right.marker, model="full")
+        bin.matrix <- bin.matrix + h$getLocusMatrix(locus=right.marker, model="full", subjects=subjects)
         bin.loci.count <- bin.loci.count + 1
         ## CASE: Muli-locus bin at end of chromosome
         if(j == total.loci){
@@ -104,7 +104,7 @@ collapse.genomecache <- function(original.cache,
       ## CASE: Last marker is alone in a bin
       if(!test & j == total.loci){
         bin.marker <- right.marker
-        bin.matrix <- h$getLocusMatrix(locus=bin.marker, model="full")
+        bin.matrix <- h$getLocusMatrix(locus=bin.marker, model="full", subjects=subjects)
         
         # Additive dosages
         bin.dosages <- bin.matrix %*% full.to.add.matrix
@@ -130,7 +130,7 @@ collapse.genomecache <- function(original.cache,
       # Reset
       if(!test & j < total.loci){
         left.marker <- right.marker 
-        bin.matrix <- h$getLocusMatrix(locus=left.marker, model="full") 
+        bin.matrix <- h$getLocusMatrix(locus=left.marker, model="full", subjects=subjects) 
         bin.loci.count <- 1
       }
     }
