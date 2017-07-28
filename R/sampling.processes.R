@@ -223,7 +223,7 @@ run.threshold.scans <- function(sim.threshold.object, outcome.type=c("outcome", 
     }
     min.p[i] <-  min(this.scan$p.value)
     max.lod[i] <- max(this.scan$LOD)
-    cat("\n", "Threshold scan:", i, "complete", \n")
+    cat("\n", "Threshold scan:", i, "complete", "\n")
   }
   return(list(full.results=list(LOD=full.lod,
                                 p.value=full.p,
