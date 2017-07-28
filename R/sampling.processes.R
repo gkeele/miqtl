@@ -112,6 +112,24 @@ generate.sample.outcomes.matrix <- function(scan.object, model.type=c("null", "a
   return(sim.threshold.object)
 }
 
+#' @export
+generate.simple.permutation.index.matrix <- function(scan.object, num.samples, seed=1){
+  n <- length(scan.object$fit0$y)
+  
+  perm.ind.matrix <- replicate(n=num.samples, sample(1:n, replace=FALSE))
+  colnames(perm.ind.matrix) <- paste0("perm.", 1:n)
+  rownames(perm.ind.matrix) <- names(scan.object$fit0$y)
+  
+  sim.threshold.object <- list(y.matrix=perm.ind.matrix,
+                               formula=scan.object$formula,
+                               model=scan.object$model.type,
+                               weights=scan.object$fit0$weights,
+                               K=scan.object$fit0$K,
+                               impute.map=scan.object$impute.map,
+                               locus=locus)
+  return(sim.threshold.object)
+}
+
 ### Support function that can take a large K with replicates rows/columns, and reduce it down
 reduce.large.K <- function(large.K, impute.map){
   map.order <- match(impute.map[,1], table=colnames(large.K))
@@ -144,10 +162,13 @@ reduce.large.K <- function(large.K, impute.map){
 #' across machines.
 #' @export
 #' @examples run.threshold.scans()
-run.threshold.scans <- function(sim.threshold.object, keep.full.scans=TRUE,
+run.threshold.scans <- function(sim.threshold.object, outcome.type=c("outcome", "index"),
+                                keep.full.scans=TRUE,
                                 genomecache, data,
                                 use.multi.impute=TRUE, num.imp=11, chr="all", just.these.loci=NULL, 
                                 scan.seed=1, ...){
+  outcome.type <- outcome.type[1]
+  
   y.matrix <- sim.threshold.object$y.matrix
   formula <- sim.threshold.object$formula
   model <- sim.threshold.object$model
@@ -185,6 +206,10 @@ run.threshold.scans <- function(sim.threshold.object, keep.full.scans=TRUE,
     new.y <- data.frame(y.matrix[,i], rownames(y.matrix))
     names(new.y) <- c("new_y", pheno.id)
     this.data <- merge(x=new.y, y=data, by=pheno.id, all.x=TRUE)
+    ## Matrix of permutation indexes
+    if(outcome.type == "index"){
+      this.data$new.y <- this.data[,all.vars(formula)[1]][this.data$new.y]
+    }
     
     this.scan <- scan.h2lmm(genomecache=genomecache, data=this.data, 
                             formula=iteration.formula, K=K, model=model,
