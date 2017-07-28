@@ -207,7 +207,7 @@ run.threshold.scans <- function(sim.threshold.object, outcome.type=c("outcome", 
     this.data <- merge(x=new.y, y=data, by=pheno.id, all.x=TRUE)
     ## Matrix of permutation indexes
     if(outcome.type == "index"){
-      this.data[,all.vars(formula)[1]] <- this.data[,all.vars(formula)[1]][this.data$new.y]
+      this.data[,all.vars(as.formula(formula))[1]] <- this.data[,all.vars(as.formula(formula))[1]][this.data$new.y]
       iteration.formula <- formula
     }
     
