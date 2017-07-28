@@ -162,7 +162,7 @@ reduce.large.K <- function(large.K, impute.map){
 #' @export
 #' @examples run.threshold.scans()
 run.threshold.scans <- function(sim.threshold.object, outcome.type=c("outcome", "index"),
-                                keep.full.scans=TRUE,
+                                keep.full.scans=TRUE, scan.index=NULL,
                                 genomecache, data,
                                 use.multi.impute=TRUE, num.imp=11, chr="all", just.these.loci=NULL, 
                                 scan.seed=1, ...){
@@ -176,8 +176,8 @@ run.threshold.scans <- function(sim.threshold.object, outcome.type=c("outcome", 
   pheno.id <- names(sim.threshold.object$impute.map)[1]
   geno.id <- names(sim.threshold.object$impute.map)[2]
   
-  num.scans <- ncol(y.matrix)
-  
+  if(is.null(scan.index)){ scan.index <- 1:ncol(y.matrix) }
+
   h <- DiploprobReader$new(genomecache)
   loci <- h$getLoci()
   loci.chr <- h$getChromOfLocus(loci)
@@ -192,25 +192,25 @@ run.threshold.scans <- function(sim.threshold.object, outcome.type=c("outcome", 
   
   full.p <- full.lod <- these.chr <- these.pos <- NULL
   if(keep.full.scans){
-    full.p <- full.lod <- matrix(NA, nrow=num.scans, ncol=length(loci))
+    full.p <- full.lod <- matrix(NA, nrow=length(scan.index), ncol=length(loci))
     colnames(full.p) <- colnames(full.lod) <- loci
     these.chr <- h$getChromOfLocus(loci)
     these.pos <- list(Mb=h$getLocusStart(loci, scale="Mb"),
                       cM=h$getLocusStart(loci, scale="cM"))
   }
-  min.p <- max.lod <- rep(NA, num.scans)
+  min.p <- max.lod <- rep(NA, length(scan.index))
   
   iteration.formula <- formula(paste0("new_y ~ ", unlist(strsplit(formula, split="~"))[-1]))
-  for(i in 1:num.scans){
+  for(i in scan.index){
     new.y <- data.frame(y.matrix[,i], rownames(y.matrix))
     names(new.y) <- c("new_y", pheno.id)
     this.data <- merge(x=new.y, y=data, by=pheno.id, all.x=TRUE)
     ## Matrix of permutation indexes
     if(outcome.type == "index"){
-      this.data[,all.vars(as.formula(formula))[1]] <- this.data[,all.vars(as.formula(formula))[1]][this.data$new.y]
-      iteration.formula <- formula
+      this.data[,all.vars(as.formula(formula))[1]] <- this.data[,all.vars(as.formula(formula))[1]][this.data$new_y]
+      iteration.formula <- formula(formula)
     }
-    
+
     this.scan <- scan.h2lmm(genomecache=genomecache, data=this.data, 
                             formula=iteration.formula, K=K, model=model,
                             use.multi.impute=use.multi.impute, num.imp=num.imp, 
@@ -223,7 +223,7 @@ run.threshold.scans <- function(sim.threshold.object, outcome.type=c("outcome", 
     }
     min.p[i] <-  min(this.scan$p.value)
     max.lod[i] <- max(this.scan$LOD)
-    cat("threshold scan:", i, "\n")
+    cat("\n", "Threshold scan:", i, "complete", \n")
   }
   return(list(full.results=list(LOD=full.lod,
                                 p.value=full.p,
