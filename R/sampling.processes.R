@@ -292,19 +292,17 @@ run.simple.permutation.threshold.scans <- function(sim.threshold.object,
   }
   min.p <- max.lod <- rep(NA, length(scan.index))
   
-  iteration.formula <- formula(paste0("new_y ~ ", unlist(strsplit(formula, split="~"))[-1]))
+  formula.string <- Reduce(paste, deparse(formula))
+  perm.formula <- formula(paste0("new_y ~ ", unlist(strsplit(formula.string, split="~"))[-1]))
   for(i in scan.index){
     new.y <- data.frame(y.matrix[,i], rownames(y.matrix))
     names(new.y) <- c("new_y", pheno.id)
     this.data <- merge(x=new.y, y=data, by=pheno.id, all.x=TRUE)
     ## Matrix of permutation indexes
-    if(outcome.type == "index"){
-      this.data[,all.vars(as.formula(formula))[1]] <- this.data[,all.vars(as.formula(formula))[1]][this.data$new_y]
-      iteration.formula <- formula(formula)
-    }
-    
+    this.data[,all.vars(formula)[1]] <- this.data[,all.vars(formula)[1]][this.data$new_y]
+
     this.scan <- scan.h2lmm(genomecache=genomecache, data=this.data, 
-                            formula=iteration.formula, K=K, model=model,
+                            formula=perm.formula, K=K, model=model,
                             use.multi.impute=use.multi.impute, num.imp=num.imp, 
                             pheno.id=pheno.id, geno.id=geno.id, seed=scan.seed,
                             weights=weights, chr=chr,
