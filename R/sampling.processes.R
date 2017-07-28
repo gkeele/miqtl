@@ -140,10 +140,10 @@ reduce.large.K <- function(large.K, impute.map){
 
 #' Runs threshold scans from a matrix of outcomes, either parametric bootstraps from the null model or permutations
 #'
-#' This function takes an object produced from either generate.null.bootstrap.matrix() or generate.perm.matrix(), and 
+#' This function takes an object produced from generate.sample.outcomes.matrix(), and 
 #' runs genome scans on the outcomes contained in them.
 #'
-#' @param sim.threshold.object An object created by either generate.null.bootstrap.matrix() or generate.perm.matrix().
+#' @param sim.threshold.object An object created by either generate.sample.outcomes.matrix().
 #' @param keep.full.scans DEFAULT: TRUE. Returns full genome scans for every outcome sample in the sim.threshold.object. Can be used
 #' for visualization of the procedure, but greatly increases the size of the output object.
 #' @param genomecache The path to the genome cache directory. The genome cache is a particularly structured
@@ -232,6 +232,99 @@ run.threshold.scans <- function(sim.threshold.object, outcome.type=c("outcome", 
               max.statistics=list(LOD=max.lod,
                                   p.value=min.p)))
 }
+
+#' Runs threshold scans from a matrix of permutation indexes
+#'
+#' This function takes an object produced from generate.simple.permutation.index.matrix, and 
+#' runs genome scans based on the permutation indexes contained in them.
+#'
+#' @param sim.threshold.object An object created by generate.simple.permutation.index.matrix().
+#' @param keep.full.scans DEFAULT: TRUE. Returns full genome scans for every outcome sample in the sim.threshold.object. Can be used
+#' for visualization of the procedure, but greatly increases the size of the output object.
+#' @param genomecache The path to the genome cache directory. The genome cache is a particularly structured
+#' directory that stores the haplotype probabilities/dosages at each locus. It has an additive model
+#' subdirectory and a full model subdirectory. Each contains subdirectories for each chromosome, which then
+#' store .RData files for the probabilities/dosages of each locus.
+#' @param data A data frame with outcome and potential covariates. Should also have IDs
+#' that link to IDs in the genome cache, often the individual-level ID named "SUBJECT.NAME".
+#' @param use.multi.impute DEFAULT: TRUE. This option specifies whether to use ROP or multiple imputations.
+#' @param num.imp DEFAULT: 11. IF multiple imputations are used, this specifies the number of imputations to perform.
+#' @param chr DEFAULT: "all". The chromosomes to conduct scans over.
+#' @param just.these.loci DEFAULT: NULL. Specifies a reduced set of loci to fit. If loci is just one locus, the alternative model fit
+#' will also be output as fit1.
+#' @param scan.seed DEFAULT: 1. The sampling process is random, thus a seed must be set for samples to be consistent
+#' across machines.
+#' @export
+#' @examples run.threshold.scans()
+run.simple.permutation.threshold.scans <- function(sim.threshold.object,
+                                                   keep.full.scans=TRUE, scan.index=NULL,
+                                                   genomecache, formula, data, model=c("additive", "full"),
+                                                   use.multi.impute=TRUE, num.imp=11, chr="all", just.these.loci=NULL, 
+                                                   scan.seed=1, ...){
+  y.matrix <- sim.threshold.object$y.matrix
+  model <- model[1]
+  weights <- sim.threshold.object$weights
+  K <- sim.threshold.object$K
+  pheno.id <- names(sim.threshold.object$impute.map)[1]
+  geno.id <- names(sim.threshold.object$impute.map)[2]
+  
+  if(is.null(scan.index)){ scan.index <- 1:ncol(y.matrix) }
+  
+  h <- DiploprobReader$new(genomecache)
+  loci <- h$getLoci()
+  loci.chr <- h$getChromOfLocus(loci)
+  if(chr[1] != "all"){
+    loci.chr <- h$getChromOfLocus(loci)
+    loci <- loci[loci.chr %in% chr]
+  }
+  if(!is.null(just.these.loci)){
+    loci <- loci[loci %in% just.these.loci]
+    loci.chr <- loci.chr[loci %in% just.these.loci]
+  }
+  
+  full.p <- full.lod <- these.chr <- these.pos <- NULL
+  if(keep.full.scans){
+    full.p <- full.lod <- matrix(NA, nrow=length(scan.index), ncol=length(loci))
+    colnames(full.p) <- colnames(full.lod) <- loci
+    these.chr <- h$getChromOfLocus(loci)
+    these.pos <- list(Mb=h$getLocusStart(loci, scale="Mb"),
+                      cM=h$getLocusStart(loci, scale="cM"))
+  }
+  min.p <- max.lod <- rep(NA, length(scan.index))
+  
+  iteration.formula <- formula(paste0("new_y ~ ", unlist(strsplit(formula, split="~"))[-1]))
+  for(i in scan.index){
+    new.y <- data.frame(y.matrix[,i], rownames(y.matrix))
+    names(new.y) <- c("new_y", pheno.id)
+    this.data <- merge(x=new.y, y=data, by=pheno.id, all.x=TRUE)
+    ## Matrix of permutation indexes
+    if(outcome.type == "index"){
+      this.data[,all.vars(as.formula(formula))[1]] <- this.data[,all.vars(as.formula(formula))[1]][this.data$new_y]
+      iteration.formula <- formula(formula)
+    }
+    
+    this.scan <- scan.h2lmm(genomecache=genomecache, data=this.data, 
+                            formula=iteration.formula, K=K, model=model,
+                            use.multi.impute=use.multi.impute, num.imp=num.imp, 
+                            pheno.id=pheno.id, geno.id=geno.id, seed=scan.seed,
+                            weights=weights, chr=chr,
+                            ...)
+    if(keep.full.scans){
+      full.p[i,] <- this.scan$p.value
+      full.lod[i,] <- this.scan$LOD
+    }
+    min.p[i] <-  min(this.scan$p.value)
+    max.lod[i] <- max(this.scan$LOD)
+    cat("\n", "Threshold scan:", i, "complete", "\n")
+  }
+  return(list(full.results=list(LOD=full.lod,
+                                p.value=full.p,
+                                chr=these.chr, 
+                                pos=these.pos), 
+              max.statistics=list(LOD=max.lod,
+                                  p.value=min.p)))
+}
+
 
 ################# QTL CI methods
 
