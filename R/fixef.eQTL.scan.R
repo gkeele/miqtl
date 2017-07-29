@@ -79,7 +79,7 @@ get.allele.effects.from.fixef.eQTL <- function(qr.alt, y, founders,
 }
 
 #' @export
-qr.scan <- function(qr.object, 
+scan.qr <- function(qr.object, 
                     data, formula,
                     return.allele.effects=FALSE,
                     chr="all", pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NAME",
