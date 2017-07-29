@@ -10,10 +10,6 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
   loci <- h$getLoci()
   
   cache.subjects <- rownames(h$getLocusMatrix(loci[1], model="additive"))
-  data.and.K <- make.processed.data(formula=formula, data=data, 
-                                    cache.subjects=cache.subjects, K=K, 
-                                    pheno.id=pheno.id, geno.id=geno.id)
-  data <- data.and.K$data
   cache.subjects <- unique(as.character(data[,geno.id]))
   
   loci.chr <- h$getChromOfLocus(loci)
@@ -25,9 +21,8 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
     loci <- loci[loci %in% just.these.loci]
     loci.chr <- loci.chr[loci %in% just.these.loci]
   }
-  null.formula <- make.null.formula(formula=formula, do.augment=FALSE)
   subjects <- as.character(data[,geno.id])
-  X.0 <- model.matrix(null.formula, data=data)
+  X.0 <- model.matrix(formula, data=data)
   qr.0 <- qr(X.0)
   
   pb <- txtProgressBar(min=0, max=length(loci), style=3)
