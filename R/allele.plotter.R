@@ -102,12 +102,12 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
   chr.types <- levels(pre.chr)
   
   # Finding max and min of y for plot window
-  y.max <- ifelse(max(allele.effects) > 0, 
-                  ceiling(max(allele.effects, allele.effect.confint)), 
-                  floor(max(allele.effects, allele.effect.confint)))
-  y.min <- ifelse(min(allele.effects) > 0, 
-                  ceiling(min(allele.effects, allele.effect.confint)), 
-                  floor(min(allele.effects, allele.effect.confint)))
+  y.max <- ifelse(max(allele.effects, na.rm=TRUE) > 0, 
+                  ceiling(max(allele.effects, allele.effect.confint, na.rm=TRUE)), 
+                  floor(max(allele.effects, allele.effect.confint, na.rm=TRUE)))
+  y.min <- ifelse(min(allele.effects, na.rm=TRUE) > 0, 
+                  ceiling(min(allele.effects, allele.effect.confint, na.rm=TRUE)), 
+                  floor(min(allele.effects, allele.effect.confint, na.rm=TRUE)))
   if(!is.null(y.max.manual)){
     y.max <- y.max.manual
   }
