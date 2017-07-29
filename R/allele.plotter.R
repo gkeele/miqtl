@@ -121,17 +121,24 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
   locus.term <- paste("locus", locus.effect.type, sep=".")
   
   ### Handling the annoying differences between lmer and lm objects
-  if(class(scan.object$fit0) != "lmerMod"){
+  if(is.null(scan.object$fit0)){
     this.title <- c(main, 
                     paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"),
-                    paste("n =", round(ifelse(is.null(scan.object$fit0$weights), 
-                                              length(scan.object$fit0$y),
-                                              sum(scan.object$fit0$weights)), 2)))
+                    paste("n =", round(scan.object$n, 2)))
   }
   else{
-    this.title <- c(main, 
-                    paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"),
-                    paste("n =", round(sum(scan.object$fit0@resp$weights), 2)))
+    if(class(scan.object$fit0) != "lmerMod"){
+      this.title <- c(main, 
+                      paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"),
+                      paste("n =", round(ifelse(is.null(scan.object$fit0$weights), 
+                                                length(scan.object$fit0$y),
+                                                sum(scan.object$fit0$weights)), 2)))
+    }
+    else{
+      this.title <- c(main, 
+                      paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"),
+                      paste("n =", round(sum(scan.object$fit0@resp$weights), 2)))
+    }
   }
   if(no.title){ this.title <- NULL }
   if(!is.null(override.title)){ this.title <- override.title }
