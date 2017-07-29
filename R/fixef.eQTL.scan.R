@@ -77,7 +77,7 @@ get.allele.effects.from.fixef.eQTL <- function(qr.alt, y, founders,
 scan.qr <- function(qr.object, 
                     data, formula,
                     return.allele.effects=FALSE,
-                    chr="all", pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NAME",
+                    chr="all", id="SUBJECT.NAME",
                     just.these.loci=NULL,
                     debug.single.fit=FALSE,
                     ...){
@@ -94,7 +94,7 @@ scan.qr <- function(qr.object,
         "Setting return.allele.effects to FALSE\n")
   }
   
-  rownames(data) <- as.character(data[,geno.id])
+  rownames(data) <- as.character(data[,id])
   data <- data[subjects,]
   n <- nrow(data)
 
@@ -148,5 +148,70 @@ scan.qr <- function(qr.object,
   return(output)
 }
 
+#' @export
+generate.qr.permutation.index.matrix <- function(qr.scan.object, num.samples, seed=1){
+  n <- length(qr.scan.object$y)
+  
+  perm.ind.matrix <- replicate(n=num.samples, sample(1:n, replace=FALSE))
+  colnames(perm.ind.matrix) <- paste0("perm.", 1:num.samples)
+  rownames(perm.ind.matrix) <- names(qr.scan.object$y)
+  return(perm.ind.matrix)
+}
+
+#' @export
+run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
+                                               keep.full.scans=FALSE, scan.index=NULL, id="SUBJECT.NAMES",
+                                               genomecache, formula, data, model=c("additive", "full"),
+                                               chr="all", just.these.loci=NULL, 
+                                               ...){
+  model <- model[1]
+
+  if(is.null(scan.index)){ scan.index <- 1:ncol(perm.ind.matrix) }
+  
+  loci <- names(qr.object$qr.list)
+  loci.chr <- qr.object$chr
+  if(chr[1] != "all"){
+    loci <- loci[loci.chr %in% chr]
+  }
+  if(!is.null(just.these.loci)){
+    loci <- loci[loci %in% just.these.loci]
+    loci.chr <- loci.chr[loci %in% just.these.loci]
+  }
+  
+  full.p <- these.pos <- NULL
+  if(keep.full.scans){
+    full.p <- matrix(NA, nrow=length(scan.index), ncol=length(loci))
+    colnames(full.p) <- loci
+    these.pos <- list(Mb=h$getLocusStart(loci, scale="Mb"),
+                      cM=h$getLocusStart(loci, scale="cM"))
+  }
+  min.p <- rep(NA, length(scan.index))
+  
+  formula.string <- Reduce(paste, deparse(formula))
+  perm.formula <- formula(paste0("new_y ~ ", unlist(strsplit(formula.string, split="~"))[-1]))
+  for(i in scan.index){
+    new.y <- data.frame(perm.ind.matrix[,i], rownames(perm.ind.matrix))
+    names(new.y) <- c("new_y", id)
+    this.data <- merge(x=new.y, y=data, by=id, all.x=TRUE)
+    ## Matrix of permutation indexes
+    this.data[,all.vars(formula)[1]] <- this.data[,all.vars(formula)[1]][this.data$new_y]
+    
+    this.scan <- scan.qr(qr.object=qr.object, data=this.data, 
+                         formula=perm.formula, model=model,
+                         id=id, chr=chr,
+                         ...)
+    if(keep.full.scans){
+      full.p[i,] <- this.scan$p.value
+    }
+    min.p[i] <-  min(this.scan$p.value)
+    cat("\n", "Threshold scan:", i, "complete", "\n")
+  }
+  return(list(full.results=list(LOD=NULL,
+                                p.value=full.p,
+                                chr=these.chr, 
+                                pos=these.pos), 
+              max.statistics=list(LOD=NULL,
+                                  p.value=min.p)))
+}
 
 
