@@ -27,10 +27,12 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
   
   pb <- txtProgressBar(min=0, max=length(loci), style=3)
   qr.list <- list()
+  intercept.allele <- rep(NA, length(loci)) # For allele effects
   for(i in 1:length(loci)){
     X <- h$getLocusMatrix(loci[i], model=model, subjects=subjects)
     keep.col <- 1:ncol(X)
     max.column <- which.max(colSums(X, na.rm=TRUE))[1]
+    intercept.allele[i] <- founders[max.column]
     keep.col <- keep.col[keep.col != max.column]
     X <- cbind(X.0, X[,keep.col])
     qr.list[[i]] <- qr(X)
@@ -39,6 +41,7 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
   names(qr.list) <- loci
   
   qr.object <- list(qr.list=qr.list,
+                    intercept.allele=intercept.allele,
                     qr.0=qr.0,
                     chr=loci.chr,
                     pos=list(cM=h$getLocusStart(loci, scale="cM"),
@@ -61,7 +64,7 @@ get.f.stat.p.val <- function(qr.alt, qr.null, y, n){
   return(p.val)
 }
 
-get.allele.effects.from.fixef.eQTL <- function(qr.alt, y, founders, 
+get.allele.effects.from.fixef.eQTL <- function(qr.alt, y, founders, intercept.allele, 
                                                center=TRUE, scale=FALSE){
   regression.effects <- qr.coef(qr=qr.alt, y=y)
   effects <- regression.effects[founders]
@@ -69,7 +72,7 @@ get.allele.effects.from.fixef.eQTL <- function(qr.alt, y, founders,
   names(effects) <- founders
   
   effects <- effects + intercept
-  effects[which(is.na(effects))] <- intercept
+  effects[which(names(effects) == intercept.allele)] <- intercept
   return(as.vector(scale(effects, center=center, scale=scale)))
 }
 
@@ -124,7 +127,10 @@ scan.qr <- function(qr.object,
                                  qr.null=qr.object$qr.0, 
                                  y=y, n=n)
     if(return.allele.effects){
-      allele.effects[,i] <- get.allele.effects.from.fixef.eQTL(qr.alt=qr.object$qr.list[[i]], y=y, founders=founders)
+      allele.effects[,i] <- get.allele.effects.from.fixef.eQTL(qr.alt=qr.object$qr.list[[i]], 
+                                                               y=y, 
+                                                               founders=founders,
+                                                               intercept.allele=qr.object$intercept.allele[i])
     }
     if(debug.single.fit){ browser() }
     # Update progress bar
@@ -199,7 +205,7 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
     
     this.scan <- scan.qr(qr.object=qr.object, data=this.data, 
                          formula=perm.formula, model=model,
-                         id=id, chr=chr,
+                         id=id, chr=chr, return.allele.effects=FALSE,
                          ...)
     if(keep.full.scans){
       full.p[i,] <- this.scan$p.value
