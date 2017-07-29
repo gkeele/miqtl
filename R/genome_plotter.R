@@ -195,9 +195,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     this.ylab <- expression("-log"[10]*"P")
   }
   chr <- main.object$chr
-  
   pos <- ifelse(rep(scale=="Mb", length(outcome)), main.object$pos$Mb, main.object$pos$cM)
-  
   if(!is.null(just.these.chr)){
     keep.chr <- chr %in% just.these.chr
     chr <- chr[keep.chr]

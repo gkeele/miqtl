@@ -66,12 +66,6 @@ scan.h2lmm <- function(genomecache, data,
   model <- model[1]
   p.value.method <- p.value.method[1]
   
-  if(model == "full" & return.allele.effects){
-    return.allele.effects <- FALSE
-    cat("Allele effects from regression models currently only available in additive model", "\n",
-        "Setting return.allele.effects to FALSE", "\n")
-  }
-  
   h <- DiploprobReader$new(genomecache)
   founders <- h$getFounders()
   num.founders <- length(founders)
