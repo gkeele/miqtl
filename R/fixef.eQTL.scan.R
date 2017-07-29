@@ -209,7 +209,7 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
   }
   return(list(full.results=list(LOD=NULL,
                                 p.value=full.p,
-                                chr=these.chr, 
+                                chr=loci.chr, 
                                 pos=these.pos), 
               max.statistics=list(LOD=NULL,
                                   p.value=min.p)))
