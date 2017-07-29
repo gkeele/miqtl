@@ -162,7 +162,7 @@ generate.qr.permutation.index.matrix <- function(qr.scan.object, num.samples, se
 #' @export
 run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
                                                keep.full.scans=FALSE, scan.index=NULL, id="SUBJECT.NAMES",
-                                               genomecache, formula, data, model=c("additive", "full"),
+                                               formula, data, model=c("additive", "full"),
                                                chr="all", just.these.loci=NULL, 
                                                ...){
   model <- model[1]
@@ -183,8 +183,8 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
   if(keep.full.scans){
     full.p <- matrix(NA, nrow=length(scan.index), ncol=length(loci))
     colnames(full.p) <- loci
-    these.pos <- list(Mb=h$getLocusStart(loci, scale="Mb"),
-                      cM=h$getLocusStart(loci, scale="cM"))
+    these.pos <- list(Mb=qr.object$pos$Mb[loci],
+                      cM=qr.object$pos$cM[loci])
   }
   min.p <- rep(NA, length(scan.index))
   
