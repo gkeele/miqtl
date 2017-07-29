@@ -152,6 +152,7 @@ scan.qr <- function(qr.object,
 generate.qr.permutation.index.matrix <- function(qr.scan.object, num.samples, seed=1){
   n <- length(qr.scan.object$y)
   
+  set.seed(seed)
   perm.ind.matrix <- replicate(n=num.samples, sample(1:n, replace=FALSE))
   colnames(perm.ind.matrix) <- paste0("perm.", 1:num.samples)
   rownames(perm.ind.matrix) <- names(qr.scan.object$y)
