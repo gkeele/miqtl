@@ -143,7 +143,8 @@ scan.qr <- function(qr.object,
                  formula=formula.string,
                  model.type=model,
                  p.value.method="ANOVA",
-                 locus.effect.type="fixed")
+                 locus.effect.type="fixed",
+                 n=length(y))
   return(output)
 }
 
