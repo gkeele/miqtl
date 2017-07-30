@@ -35,6 +35,7 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
                                                rgb(240, 0, 0, maxColorValue=255), # red
                                                rgb(144, 0, 224, maxColorValue=255)), # purple,
                                  use.legend=TRUE, main="", my.bty="n", my.lwd=rep(1.25, 8),
+                                 set.plot.limit=c(-10, 10), # Null places no limit on y-axis
                                  my.legend.cex=0.6, my.legend.pos="topright", transparency=0.6,
                                  y.max.manual=NULL, y.min.manual=NULL, no.title=FALSE, override.title=NULL,
                                  add.chr.to.label=FALSE, alternative.labels=NULL)
@@ -108,6 +109,12 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
   y.min <- ifelse(min(allele.effects, na.rm=TRUE) > 0, 
                   ceiling(min(allele.effects, allele.effect.confint, na.rm=TRUE)), 
                   floor(min(allele.effects, allele.effect.confint, na.rm=TRUE)))
+  
+  if(!is.null(set.plot.limit)){
+    y.max <- min(y.max, set.plot.limit[2])
+    y.min <- max(y.min, set.plot.limit[1])
+  }
+  
   if(!is.null(y.max.manual)){
     y.max <- y.max.manual
   }
