@@ -177,7 +177,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.pos="topright",
                                  y.max.manual=NULL, no.title=FALSE, override.title=NULL,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
-                                 add.chr.to.label=FALSE)
+                                 add.chr.to.label=FALSE, axis.cram=TRUE)
 {
   # If list has no names, use.legend is set to FALSE
   if(is.null(names(scan.list))){ use.legend=FALSE }
@@ -271,8 +271,9 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   if(no.title){ this.title <- NULL }
   if(!is.null(override.title)){ this.title <- override.title }
   
+  x.max <- sum(max.pos)+(length(chr.types)-1)
   plot(pos[pre.chr==chr.types[1]], outcome[pre.chr==chr.types[1]], 
-       xlim=c(shift.left, sum(max.pos)+(length(chr.types)-1)), 
+       xlim=c(shift.left, x.max), 
        ylim=c(-0.1, y.max), 
        xaxt="n", yaxt="n", xlab="", ylab=this.ylab, main=this.title,
        frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], col=main.colors[1])
@@ -345,13 +346,31 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   if(has.X){
     axis.label <- c(chr.types[-length(chr.types)], "X")
   }
-  if(!has.X){
+  else{
     axis.label <- chr.types
   }
+  
   if(add.chr.to.label){
-    axis.label <- paste("chr", axis.label)
+    axis.label <- paste("Chr", axis.label)
   }
-  axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5)
+  else{
+    axis.label <- c("Chr", axis.label)
+    label.spots <- c(-0.05*x.max, label.spots)
+  }
+  
+  if(axis.cram){
+    odd.axis.label <- axis.label[(1:length(axis.label) %% 2) == 1]
+    odd.label.spots <- label.spots[(1:length(label.spots) %% 2) == 1]
+    
+    even.axis.label <- axis.label[(1:length(axis.label) %% 2) == 0]
+    even.label.spots <- label.spots[(1:length(label.spots) %% 2) == 0]
+    
+    axis(side=1, tick=FALSE, line=NA, at=odd.label.spots, labels=odd.axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+    axis(side=1, tick=FALSE, line=NA, at=even.label.spots, labels=even.axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+  }
+  else{
+    axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+  }
   if(use.legend){
     legend(my.legend.pos, legend=names(scan.list), 
            lty=rep(1, length(scan.list)), lwd=my.legend.lwd, 
@@ -389,7 +408,8 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
                                      scale="Mb",
                                      y.max.manual=NULL, title="", alt.col=NULL,
                                      hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL, thresholds.lty=2, thresholds.lwd=1,
-                                     my.legend.cex=0.6, my.legend.pos="topright", my.bty="n"){
+                                     my.legend.cex=0.6, my.legend.pos="topright", my.bty="n",
+                                     add.chr.to.label=FALSE, axis.cram=TRUE){
   
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
   main.object <- snp.scan
@@ -415,12 +435,6 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
     pos <- pos[keep.chr]
   }
   
-  has.X <- FALSE
-  if(any(chr=="X")){
-    has.X <- TRUE
-    chr[chr=="X"] <- length(unique(chr))
-  }
-  
   pre.chr <- as.factor(as.numeric(chr))
   order.i <- order(pre.chr, pos)
   
@@ -444,8 +458,9 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
                   paste0(main.object$formula, " + SNP (", main.object$model.type, ")"),
                   paste("n =", length(main.object$fit0$y)))
 
+  x.max <- sum(max.pos)+(length(chr.types)-1)
   plot(1,
-       xlim=c(shift.left, sum(max.pos)+(length(chr.types)-1)),
+       xlim=c(shift.left, x.max),
        ylim=c(-0.1, y.max),
        xaxt="n", yaxt="n", xlab="", ylab=this.ylab, main=this.title,
        frame.plot=FALSE, type="n")
@@ -486,8 +501,28 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
   if(!has.X){
     axis.label <- chr.types
   }
-  axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5)
+  if(add.chr.to.label){
+    axis.label <- paste("Chr", axis.label)
+  }
+  else{
+    axis.label <- c("Chr", axis.label)
+    label.spots <- c(-0.05*x.max, label.spots)
+  }
   
+  if(axis.cram){
+    odd.axis.label <- axis.label[(1:length(axis.label) %% 2) == 1]
+    odd.label.spots <- label.spots[(1:length(label.spots) %% 2) == 1]
+    
+    even.axis.label <- axis.label[(1:length(axis.label) %% 2) == 0]
+    even.label.spots <- label.spots[(1:length(label.spots) %% 2) == 0]
+    
+    axis(side=1, tick=FALSE, line=NA, at=odd.label.spots, labels=odd.axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+    axis(side=1, tick=FALSE, line=NA, at=even.label.spots, labels=even.axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+  }
+  else{
+    axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+  }
+    
   if(!is.null(hard.thresholds)){
     if(length(thresholds.lty) == 1 & length(hard.thresholds) > 1){
       thresholds.lty <- rep(thresholds.lty, length(hard.thresholds))
