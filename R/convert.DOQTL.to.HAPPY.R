@@ -22,7 +22,8 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
                                    map.locus_name.colname="SNP_ID", map.chr.colname="Chr", map.physical_dist.colname="Mb_NCBI38", map.genetic_dist.colname="cM",
                                    HAPPY.output.path,
                                    allele.labels=NULL,
-                                   chr=c(1:19, "X")){
+                                   chr=c(1:19, "X"),
+                                   in.log.scale=FALSE){
   
   #require(data.table)
   #----------------------------------
@@ -136,6 +137,9 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
     for(j in 1:length(samples)){
       cat(paste("Loading DOQTL output for individual", j, "for chr", chr[i]), "\n")
       load(paste0(DOQTL.recon.output.path, "/", samples[j], ".genotype.probs.Rdata"))
+      if(in.log.scale){
+        prsmth <- exp(prsmth)
+      }
       marker <- rownames(prsmth)
       subject <- rep(samples[j], nrow(prsmth))
       one.sample.data <- data.frame(marker, subject,  prsmth)
