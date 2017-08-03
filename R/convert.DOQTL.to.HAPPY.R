@@ -14,6 +14,11 @@
 #' @param allele.labels DEFAULT: NULL. Allows for specification of founder labels different from what is in the DO-QTL
 #' output. The DEFAULT of NULL leads to using the labels from the DO-QTL output.
 #' @param chr DEFAULT: c(1:19, "X"). Allows for specification of the chromosomes. DEFAULT is all the chromosomes from the mouse.
+#' @param in.log.scale DEFAULT: FALSE. If TRUE, probabilities are assumed to be log(p-value). Output in genomecache is p-value.
+#' @param samples DEFAULT: NULL. If founder.probs.Rdata is not available, input a vector with the DO identifiers. Can be pulled from 
+#' individual-level files with naming scheme [sample].genotype.probs.Rdata.
+#' @param simple.alleles DEFAULT: NULL. If founder.probs.Rdata is not available, input a vector with the simple allele labels. Standard is
+#' LETTERS[1:8].
 #' @export
 #' @import data.table
 #' @examples convert.DOQTL.to.HAPPY()
@@ -23,18 +28,19 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
                                    HAPPY.output.path,
                                    allele.labels=NULL,
                                    chr=c(1:19, "X"),
-                                   in.log.scale=FALSE){
+                                   in.log.scale=FALSE,
+                                   founder.probs.Rdata.available=TRUE, samples=NULL, simple.alleles=NULL){
   
-  #require(data.table)
   #----------------------------------
   # founder probs from DO-QTL
   #----------------------------------
-  load(paste(DOQTL.recon.output.path, "founder.probs.Rdata", sep="/"))
-  
-  samples <- dimnames(model.probs)[[1]]
-  simple.alleles <- dimnames(model.probs)[[2]]
-  rm(model.probs)
-  
+  if(founder.probs.Rdata.available){
+    load(paste(DOQTL.recon.output.path, "founder.probs.Rdata", sep="/"))
+    
+    samples <- dimnames(model.probs)[[1]]
+    simple.alleles <- dimnames(model.probs)[[2]]
+    rm(model.probs)
+  }
   
   #----------------------------------
   # Putting together strain labels
