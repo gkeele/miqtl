@@ -77,6 +77,13 @@ scan.h2lmm <- function(genomecache, data,
                                     pheno.id=pheno.id, geno.id=geno.id)
   data <- data.and.K$data
   K <- data.and.K$K
+  ## Check that some IDs are matching between data and K
+  if(!is.null(K)){
+    if(all(dim(K) == 0)){
+      stop("The colnames and rownames of K do not match the specified ID geno.id in the data", call.=FALSE)
+    }
+  }
+  
   cache.subjects <- unique(as.character(data[,geno.id]))
   if(!is.null(weights)){ weights <- weights[as.character(data[,pheno.id])] }
 
