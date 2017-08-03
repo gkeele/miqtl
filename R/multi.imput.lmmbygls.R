@@ -1,7 +1,8 @@
 #' @export
-multi.imput.lmmbygls <- function(num.imp, 
-                                 data, formula, pheno.id="SUBJECT.NAME",
-                                 founders=founders, diplotype.probs, K=NULL, fit0=NULL, return.allele.effects=FALSE,
+multi.imput.lmmbygls <- function(formula, data, pheno.id="SUBJECT.NAME",
+                                 y=NULL, fit0=NULL,
+                                 num.imp, founders=founders, X.probs, 
+                                 K=NULL, return.allele.effects=FALSE,
                                  use.par, fix.par=NULL, model=c("additive", "full"), p.value.method=c("LRT", "ANOVA"), locus.as.fixed=TRUE,
                                  use.lmer, impute.map,
                                  brute=TRUE, seed=1, do.augment,
@@ -34,20 +35,19 @@ multi.imput.lmmbygls <- function(num.imp,
   
   imp.logLik <- imp.h2 <- imp.df <- imp.LOD <- imp.p.value <- rep(0, num.imp)
 
-  null.data <- data
   set.seed(seed)
   for(i in 1:num.imp){
     if(model == "additive"){
-      if(any(diplotype.probs < 0)){
-        diplotype.probs[diplotype.probs < 0] <- 0
-        diplotype.probs <- t(apply(diplotype.probs, 1, function(x) x/sum(x)))
+      if(any(X.probs < 0)){
+        X.probs[X.probs < 0] <- 0
+        X.probs <- t(apply(X.probs, 1, function(x) x/sum(x)))
       }
-      X <- run.imputation(diplotype.probs=diplotype.probs, impute.map=impute.map) %*% full.to.dosages
+      X <- run.imputation(diplotype.probs=X.probs, impute.map=impute.map) %*% full.to.dosages
       colnames(X) <- gsub(pattern="/", replacement=".", x=founders, fixed=TRUE)
     }
     if(model == "full"){
-      X <- run.imputation(diplotype.probs=diplotype.probs, impute.map=impute.map)
-      colnames(X) <- gsub(pattern="/", replacement=".", x=colnames(diplotype.probs), fixed=TRUE)
+      X <- run.imputation(diplotype.probs=X.probs, impute.map=impute.map)
+      colnames(X) <- gsub(pattern="/", replacement=".", x=colnames(X.probs), fixed=TRUE)
     }
     keep.col <- 1:ncol(X)
     if(locus.as.fixed){
@@ -57,8 +57,8 @@ multi.imput.lmmbygls <- function(num.imp,
     }
 
     locus.formula <- make.alt.formula(formula=formula, X=X, do.augment=do.augment)
-    data <- cbind(null.data, X)
     if(use.lmer){
+      data <- cbind(null.data, X)
       fit1 <- lmmbylmer(formula=locus.formula, data=data, REML=FALSE, weights=weights)
       imp.logLik[i] <- as.numeric(logLik(fit1))
       imp.h2[i] <- NA
@@ -69,7 +69,9 @@ multi.imput.lmmbygls <- function(num.imp,
     }
     else{
       if(locus.as.fixed){
-        fit1 <- lmmbygls(formula=locus.formula, data=data, pheno.id=pheno.id, eigen.K=eigen.K, K=K,
+        X <- cbind(fit0$x, X)
+        fit1 <- lmmbygls(formula=locus.formula, pheno.id=pheno.id, eigen.K=eigen.K, K=K,
+                         y=y, X=X,
                          logDetV=logDetV, M=M, 
                          use.par="h2", fix.par=fix.par,
                          brute=brute, weights=weights)
@@ -86,7 +88,8 @@ multi.imput.lmmbygls <- function(num.imp,
       }
       else{
         null.formula <- make.null.formula(formula=formula, do.augment=do.augment)
-        fit1 <- lmmbygls.random(formula=null.formula, data=data, pheno.id=pheno.id, eigen.K=eigen.K, K=K, Z=X,
+        fit1 <- lmmbygls.random(formula=null.formula, pheno.id=pheno.id,  
+                                y=y, X=fit0$x, K=K, eigen.K=eigen.K, Z=X,
                                 use.par="h2", null.h2=fix.par,
                                 brute=brute, weights=weights)
         imp.logLik[i] <- fit1$REML.logLik

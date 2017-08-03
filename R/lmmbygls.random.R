@@ -1,5 +1,7 @@
 #' @export
-lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
+lmmbygls.random <- function(formula, data=NULL, 
+                            y=NULL, X=NULL,
+                            K=NULL, eigen.K=NULL, Z, null.h2,
                             weights=NULL, 
                             use.par="h2",
                             pheno.id="SUBJECT.NAME", brute=TRUE,
@@ -10,24 +12,28 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
                             verbose=FALSE,
                             ...) 
 {
-  call <- match.call()
-  m <- match.call(expand.dots = FALSE)
-  m$W <- m$Z <- m$K <- m$eigen.K <- m$null.h2 <- m$use.par <- NULL
-  m$method <- m$model <- m$weights <- m$pheno.id <- m$brute <- m$x <- m$y <- m$contrasts <- NULL
-  m$... <- NULL
-  
-  m[[1L]] <- quote(stats::model.frame)
-  m <- eval.parent(m)
-  if(method == "model.frame"){
-    return(m)    
+  if(!is.null(data) & is.null(y)){
+    call <- match.call()
+    m <- match.call(expand.dots = FALSE)
+    m$Z <- m$K <- m$eigen.K <- m$null.h2 <- m$use.par <- NULL
+    m$method <- m$model <- m$weights <- m$pheno.id <- m$brute <- m$contrasts <- NULL
+    m$... <- NULL
+    
+    m[[1L]] <- quote(stats::model.frame)
+    m <- eval.parent(m)
+    if(method == "model.frame"){
+      return(m)    
+    }
+    Terms <- attr(m, "terms")
+    y <- model.response(m)
+    X <- model.matrix(Terms, m, contrasts)
+    ids <- data[,pheno.id]
   }
-  Terms <- attr(m, "terms")
-  y <- model.response(m)
-  X <- model.matrix(Terms, m, contrasts)
+  else{
+    ids <- rownames(X)
+  }
   n <- nrow(X)
   q <- ncol(X)
-  
-  ids <- data[,pheno.id]
   
   if(is.null(K)){ ## No kinship effect setting: K - NULL, eigen.K - NULL
     d <- rep(1, n)
@@ -111,24 +117,28 @@ lmmbygls.random <- function(formula, data, K=NULL, eigen.K=NULL, Z, null.h2,
     }
   }
   fit$h2.optimized <- TRUE
-  fit$terms <- Terms
-  fit$call <- call
-  if(model){
-    fit$model <- m
+  if(!is.null(data)){
+    fit$terms <- Terms
+    fit$call <- call
+    if(model){
+      fit$model <- m
+    }
+    fit$na.action <- attr(m, "na.action")
+    fit$xlevels <- .getXlevels(Terms, m)
+    fit$contrasts <- attr(X, "contrasts")
   }
+  
   names(y) <- rownames(X) <- rownames(Z) <- ids
   fit$locus.h2 <- fit$h2
   fit$h2 <- null.h2
   fit$locus.effect.type <- "random"
-  fit$na.action <- attr(m, "na.action")
+  
   fit$weights <- weights
   fit$x <- original.X
   fit$z <- original.Z
   fit$y <- original.y
   fit$eigen.K <- eigen.K
   fit$K <- poly.K
-  fit$xlevels <- .getXlevels(Terms, m)
-  fit$contrasts <- attr(X, "contrasts")
   class(fit) <- "lmmbygls"
   return(fit)
 }

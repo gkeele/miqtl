@@ -23,7 +23,9 @@ gls.fit <- function(X, y, M, logDetV, ...){
 }
 
 #' @export
-lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
+lmmbygls <- function(formula, data=NULL, 
+                     y=NULL, X=NULL,
+                     K=NULL, eigen.K=NULL, fix.par=NULL,
                      M=NULL, logDetV=NULL, weights=NULL, pheno.id="SUBJECT.NAME",
                      use.par=c("h2", "h2.REML"), 
                      brute=TRUE,
@@ -34,25 +36,30 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
                      verbose = FALSE,
                      ...) 
 {
-  call <- match.call()
-  m <- match.call(expand.dots = FALSE)
-  m$W <- m$K <- m$eigen.K <- m$fix.par <- m$use.par <- NULL
-  m$M <- m$logDetV <- m$weights <- m$pheno.id <- NULL
-  m$method <- m$model <- m$x <- m$y <- m$contrasts <- m$verbose <- NULL
-  m$brute <- m$... <- NULL
-  
-  m[[1L]] <- quote(stats::model.frame)
-  m <- eval.parent(m)
-  if(method == "model.frame"){
-    return(m)    
+  if(!is.null(data) & is.null(y)){
+    call <- match.call()
+    m <- match.call(expand.dots = FALSE)
+    m$y <- m$X <- m$K <- m$eigen.K <- m$fix.par <- m$use.par <- NULL
+    m$M <- m$logDetV <- m$weights <- m$pheno.id <- NULL
+    m$method <- m$model <- m$contrasts <- m$verbose <- NULL
+    m$brute <- m$... <- NULL
+    
+    m[[1L]] <- quote(stats::model.frame)
+    m <- eval.parent(m)
+    if(method == "model.frame"){
+      return(m)    
+    }
+    Terms <- attr(m, "terms")
+    
+    y <- model.response(m)
+    X <- model.matrix(Terms, m, contrasts)
+    ids <- data[,pheno.id]
   }
-  Terms <- attr(m, "terms")
-  y <- model.response(m)
-  X <- model.matrix(Terms, m, contrasts)
+  else{
+    ids <- rownames(X)
+  }
   n <- nrow(X)
   q <- ncol(X)
-  
-  ids <- data[,pheno.id]
 
   if(is.null(fix.par)){
     if(is.null(K)){ ## No kinship effect setting: K - NULL, eigen.K - NULL
@@ -208,12 +215,16 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
   fit$sigma2.mle <- (1 - fit$h2)*fit$gls.sigma2.mle
   fit$tau2.mle <- fit$h2*fit$gls.sigma2.mle
 
-  fit$terms <- Terms
-  fit$call <- call
-  if(model){
-    fit$model <- m
+  if(!is.null(data)){ ## Not within a scan
+    fit$terms <- Terms
+    fit$call <- call
+    if(model){
+      fit$model <- m
+    }
+    fit$na.action <- attr(m, "na.action")
+    fit$xlevels <- .getXlevels(Terms, m)
+    fit$contrasts <- attr(X, "contrasts")
   }
-  fit$na.action <- attr(m, "na.action")
 
   fit$locus.effect.type <- "fixed"
   names(y) <- rownames(X) <- ids
@@ -222,8 +233,6 @@ lmmbygls <- function(formula, data, K=NULL, eigen.K=NULL, fix.par=NULL,
   fit$y <- y
   fit$eigen.K <- eigen.K
   fit$K <- K
-  fit$xlevels <- .getXlevels(Terms, m)
-  fit$contrasts <- attr(X, "contrasts")
   class(fit) <- "lmmbygls"
   return(fit)
 }

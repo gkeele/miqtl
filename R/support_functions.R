@@ -164,19 +164,24 @@ straineff.mapping.matrix <- function(M=8){
 }
 
 run.imputation <- function(diplotype.probs, impute.map){
-  pheno.id <- names(impute.map)[1]
-  geno.id <- names(impute.map)[2]
-  if(pheno.id == geno.id){ geno.id <- paste0(geno.id, "_2"); names(impute.map)[2] <- geno.id }
-  diplotype.probs <- data.frame(1:nrow(diplotype.probs), rownames(diplotype.probs), diplotype.probs, row.names=NULL, stringsAsFactors=FALSE)
-  names(diplotype.probs)[1:2] <- c("original.order", geno.id)
-  diplotype.probs <- merge(x=diplotype.probs, y=impute.map, by=geno.id)
-  diplotype.probs <- diplotype.probs[order(diplotype.probs$original.order),]
-  imputable.diplotype.probs <- as.matrix(diplotype.probs[!duplicated(diplotype.probs[,geno.id]),][,!(names(diplotype.probs) %in% c("original.order", names(impute.map)))])
-  rownames(imputable.diplotype.probs) <- diplotype.probs[,geno.id][!duplicated(diplotype.probs[,geno.id])]
-  
-  imputation <- t(apply(imputable.diplotype.probs, 1, function(x) rmultinom(1, 1, x)))
-  full.imputation <- imputation[as.character(impute.map[, geno.id]),]
-  rownames(full.imputation) <- impute.map[, pheno.id]
+  if(!all(impute.map[1] == impute.map[2])){
+    pheno.id <- names(impute.map)[1]
+    geno.id <- names(impute.map)[2]
+    if(pheno.id == geno.id){ geno.id <- paste0(geno.id, "_2"); names(impute.map)[2] <- geno.id }
+    diplotype.probs <- data.frame(1:nrow(diplotype.probs), rownames(diplotype.probs), diplotype.probs, row.names=NULL, stringsAsFactors=FALSE)
+    names(diplotype.probs)[1:2] <- c("original.order", geno.id)
+    diplotype.probs <- merge(x=diplotype.probs, y=impute.map, by=geno.id)
+    diplotype.probs <- diplotype.probs[order(diplotype.probs$original.order),]
+    imputable.diplotype.probs <- as.matrix(diplotype.probs[!duplicated(diplotype.probs[,geno.id]),][,!(names(diplotype.probs) %in% c("original.order", names(impute.map)))])
+    rownames(imputable.diplotype.probs) <- diplotype.probs[,geno.id][!duplicated(diplotype.probs[,geno.id])]
+    imputation <- t(apply(imputable.diplotype.probs, 1, function(x) rmultinom(1, 1, x)))
+    full.imputation <- imputation[as.character(impute.map[, geno.id]),]
+    rownames(full.imputation) <- impute.map[, pheno.id]
+  }
+  else{
+    full.imputation <- t(apply(diplotype.probs, 1, function(x) rmultinom(1, 1, x)))
+    rownames(full.imputation) <- impute.map[, 1]
+  }
   return(full.imputation)
 }
   

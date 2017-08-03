@@ -564,11 +564,12 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
 #' @export
 #' @examples snp.genome.plotter.w.r2()
 snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
-                                    scale="Mb",
+                                    scale="Mb", zoom.in=FALSE, zoom.in.by=0.1,
                                     y.max.manual=NULL, title="", alt.col=NULL, this.cex=1,
                                     hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                     my.legend.cex=0.6, my.legend.pos="topleft", thresholds.lty=2, thresholds.lwd=1, my.bty="n", 
-                                    r2.bounds=NULL, bounds.col="gray", high.color="red", low.color="blue", add.outline=FALSE){
+                                    r2.bounds=NULL, bounds.col="gray", high.color="red", low.color="blue", add.outline=FALSE,
+                                    include.ramp=TRUE){
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
   main.object <- snp.scan
 
@@ -619,11 +620,6 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
   
   r2.col <- these.colors[ceiling(r2.object$r2*999.1)]
   
-  plot(0, pch='',
-       xlim=c(min.pos, max.pos),
-       ylim=c(0, y.max+1),
-       yaxt="n", xlab=this.xlab, ylab=this.ylab, main=this.title,
-       frame.plot=FALSE)
   if(!is.null(r2.bounds)){
     r2.interval <- extract.r2.interval(scan.object=snp.scan, r2.scan.object=r2.object, r2.level=r2.bounds)
     if(scale == "cM"){
@@ -634,6 +630,20 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
       low.locus.pos <- r2.interval$lb.Mb
       high.locus.pos <- r2.interval$ub.Mb
     }
+    if(zoom.in){
+      span <- high.locus.pos - low.locus.pos
+      min.pos <- floor(low.locus.pos - zoom.in.by*span)
+      max.pos <- ceiling(high.locus.pos + zoom.in.by*span)
+      cat(min.pos, "\n", max.pos, "\n")
+    }
+  }
+  
+  plot(0, pch='',
+       xlim=c(min.pos, max.pos),
+       ylim=c(0, y.max+1),
+       yaxt="n", xlab=this.xlab, ylab=this.ylab, main=this.title,
+       frame.plot=FALSE)
+  if(!is.null(r2.bounds)){
     polygon(c(rep(low.locus.pos, 2), rep(high.locus.pos, 2)), c(0, rep(y.max, 2), 0), col=bounds.col, border=NA)
   }
   if(add.outline){
@@ -657,10 +667,12 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
            lwd=rep(thresholds.lwd, length(thresholds.legend)), bty=my.bty, cex=my.legend.cex)
   }
   
-  plotrix::color.legend(xl=floor(0.75*max.pos), yb=y.max, xr=max.pos, yt=y.max+0.5, legend=c(0, 0.25, 0.5, 0.75, 1), rect.col=these.colors, align="rb", gradient="x")  
-  text(x=(max.pos - floor(0.75*max.pos))/2 + floor(0.75*max.pos),
-       y=y.max+0.75,
-       labels="r2 with peak SNP")
+  if(include.ramp){
+    plotrix::color.legend(xl=floor(0.75*max.pos), yb=y.max, xr=max.pos, yt=y.max+0.5, legend=c(0, 0.25, 0.5, 0.75, 1), rect.col=these.colors, align="rb", gradient="x")  
+    text(x=(max.pos - floor(0.75*max.pos))/2 + floor(0.75*max.pos),
+         y=y.max+0.75,
+         labels="r2 with peak SNP")
+  }
 }
 
 #' Plot whole genome and single chromosome windows of haplotype-based genome scan in a PDF output document

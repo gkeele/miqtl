@@ -156,7 +156,6 @@ scan.h2lmm <- function(genomecache, data,
   if(!locus.as.fixed & p.value.method == "LRT"){
     p.value.method <- "LRT.random.locus"
   }
-  
   ###### Null model fits
   if(use.lmer){
     fit0 <- lmmbylmer(formula=null.formula, data=data, REML=FALSE, weights=weights)
@@ -219,9 +218,12 @@ scan.h2lmm <- function(genomecache, data,
   names(impute.map) <- c(pheno.id, geno.id)
   non.augment.subjects <- as.character(data[,geno.id])[grep(pattern="augment", x=as.character(data[,geno.id]), invert=TRUE)]
 
-  
+  y <- data$y
+
   # Progress bar
-  pb <- txtProgressBar(min=0, max=length(loci), style=3)
+  if(!print.locus.fit){
+    pb <- txtProgressBar(min=0, max=length(loci), style=3)
+  }
   for(i in 1:length(loci)){
     if(use.multi.impute){
       if(i == 1){ # only at the beginning
@@ -244,8 +246,10 @@ scan.h2lmm <- function(genomecache, data,
       }
       if(locus.as.fixed){ fit0.for.mi <- fit0 }
       else{ fit0.for.mi <- fit0.REML }
-      fit1 <- multi.imput.lmmbygls(num.imp=num.imp, data=data, formula=formula, weights=weights, locus.as.fixed=locus.as.fixed, return.allele.effects=return.allele.effects,
-                                   model=model, p.value.method=p.value.method, founders=founders, diplotype.probs=diplotype.prob.matrix, pheno.id=pheno.id, 
+      fit1 <- multi.imput.lmmbygls(formula=formula,
+                                   y=y, X.probs=diplotype.prob.matrix,
+                                   weights=weights, locus.as.fixed=locus.as.fixed, return.allele.effects=return.allele.effects,
+                                   model=model, p.value.method=p.value.method, founders=founders, pheno.id=pheno.id, num.imp=num.imp,
                                    use.lmer=use.lmer, impute.map=impute.map,
                                    use.par=use.par, fix.par=fix.par, fit0=fit0.for.mi, do.augment=do.augment, 
                                    brute=brute, seed=seed) 
@@ -278,16 +282,17 @@ scan.h2lmm <- function(genomecache, data,
         }
         rownames(X) <- c(X.names, paste0("augment.obs", 1:augment.n))
       }
-      
-      data <- cbind(null.data, X)
       if(use.lmer){
+        data <- cbind(null.data, X)
         fit1 <- lmmbylmer(formula=locus.formula, data=data, REML=FALSE, weights=weights)
         LOD.vec[i] <- log10(exp(as.numeric(logLik(fit1)) - as.numeric(logLik(fit0))))
         p.vec[i] <- pchisq(q=-2*(as.numeric(logLik(fit0)) - as.numeric(logLik(fit1))), df=length(fixef(fit1))-length(fixef(fit0)), lower.tail=FALSE)
       }
       else{
         if(locus.as.fixed){
-          fit1 <- lmmbygls(formula=locus.formula, data=data, pheno.id=pheno.id,
+          X <- cbind(fit0$x, X)
+          fit1 <- lmmbygls(formula=locus.formula, 
+                           y=y, X=X,
                            eigen.K=fit0$eigen.K, K=fit0$K, weights=weights,
                            use.par="h2", fix.par=fix.par, M=fit0$M, logDetV=fit0$logDetV,
                            brute=brute)
@@ -300,7 +305,8 @@ scan.h2lmm <- function(genomecache, data,
           }
         }
         else{
-          fit1 <- lmmbygls.random(formula=null.formula, data=data, pheno.id=pheno.id,
+          fit1 <- lmmbygls.random(formula=null.formula, pheno.id=pheno.id,
+                                  y=y, X=fit0$x,
                                   eigen.K=fit0$eigen.K, K=fit0$K, Z=X, weights=weights,
                                   use.par="h2", null.h2=fix.par,
                                   brute=brute)
@@ -333,7 +339,7 @@ scan.h2lmm <- function(genomecache, data,
                  fit0=fit0,
                  fit0.REML=fit0.REML,
                  allele.effects=allele.effects,
-                 y=data$y,
+                 y=fit0$y,
                  formula=formula.string,
                  model.type=model,
                  p.value.method=p.value.method,
