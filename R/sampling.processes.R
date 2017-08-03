@@ -70,7 +70,7 @@ generate.sample.outcomes.matrix <- function(scan.object, model.type=c("null", "a
     
     set.seed(seed)
     for(i in 1:num.samples){
-      if(!is.null(K)){
+      if(tau2 != 0){
         ## Handling potential replicates
         if(use.BLUP){
           u <- u.BLUP
@@ -80,6 +80,9 @@ generate.sample.outcomes.matrix <- function(scan.object, model.type=c("null", "a
         }
         names(u) <- unique(impute.map[,2])
         u <- u[impute.map[,2]]
+      }
+      else{
+        u <- rep(0, n)
       }
       if(is.null(weights)){
         e <- rnorm(n=n, mean=0, sd=sqrt(sigma2))
