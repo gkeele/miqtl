@@ -3,7 +3,7 @@ collapse.genomecache <- function(original.cache,
                                  new.cache, subjects=NULL,
                                  criterion=c("l2.norm", "max.category"),
                                  model=c("full", "additive"),
-                                 tol=1e-6){
+                                 proportion.tol=0.01){
   criterion <- criterion[1]
   model <- model[1]
   
@@ -46,10 +46,10 @@ collapse.genomecache <- function(original.cache,
       
       ## Check to see if X changes between markers
       if(criterion == "l2.norm"){
-        test <- check.l2.norm(locus1.matrix=locus1, locus2.matrix=locus2, tol=tol)
+        test <- check.l2.norm(locus1.matrix=locus1, locus2.matrix=locus2, proportion.tol=proportion.tol, model=model)
       }
       else if(criterion == "max.category"){
-        test <- check.max.category(locus1.matrix=locus1, locus2.matrix=locus2, tol=tol)
+        test <- check.max.category(locus1.matrix=locus1, locus2.matrix=locus2, proportion.tol=proportion.tol)
       }
 
       ## Extend bin
@@ -175,22 +175,25 @@ collapse.genomecache <- function(original.cache,
 }
 
 ## Returns TRUE if l2norm for all individuals is below some tolerance level
-check.l2.norm <- function(locus1.matrix, locus2.matrix, tol){
+check.l2.norm <- function(locus1.matrix, locus2.matrix, proportion.tol, model){
   dif.matrix <- locus1.matrix - locus2.matrix
   
-  l2.norm <- apply(dif.matrix, 1, function(x) sqrt(sum(x^2)))
+  max.l2 <- ifelse(model=="additive", sqrt(8), sqrt(2))
   
-  return(ifelse(any(l2.norm > tol), FALSE, TRUE))
+  l2.norm <- apply(dif.matrix, 1, function(x) sqrt(sum(x^2))/max.l2)
+  
+  return(ifelse(any(l2.norm > proportion.tol), FALSE, TRUE))
 }
 
 ## Returns TRUE if difference in max category for all individuals is below some tolerance level
 ## In practice, a max haplotype dosage or max diplotype
-check.max.category <- function(locus1.matrix, locus2.matrix, tol){
+check.max.category <- function(locus1.matrix, locus2.matrix, proportion.tol){
   max.category <- apply(locus1.matrix, 1, function(x) which.max(x))
   
-  cat.dif <- sapply(1:length(max.category), function(x) abs(locus1.matrix[x, max.category[x]] - locus2.matrix[x, max.category[x]]))
+  cat.dif <- sapply(1:length(max.category), 
+                    function(x) abs(locus1.matrix[x, max.category[x]] - locus2.matrix[x, max.category[x]]))
   
-  return(ifelse(any(cat.dif > tol), FALSE, TRUE))
+  return(ifelse(any(cat.dif > proportion.tol), FALSE, TRUE))
 }
 
 
