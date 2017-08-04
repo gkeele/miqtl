@@ -8,7 +8,9 @@ convert.DOQTL.to.HAPPY(DOQTL.recon.output.path, map,
   physical_dist.is.Mb = TRUE, map.locus_name.colname = "SNP_ID",
   map.chr.colname = "Chr", map.physical_dist.colname = "Mb_NCBI38",
   map.genetic_dist.colname = "cM", HAPPY.output.path, allele.labels = NULL,
-  chr = c(1:19, "X"))
+  chr = c(1:19, "X"), in.log.scale = FALSE,
+  founder.probs.Rdata.available = TRUE, samples = NULL,
+  simple.alleles = NULL)
 }
 \arguments{
 \item{DOQTL.recon.output.path}{The path to the directory containing DO-QTL founder haplotype output files.}
@@ -31,6 +33,14 @@ convert.DOQTL.to.HAPPY(DOQTL.recon.output.path, map,
 output. The DEFAULT of NULL leads to using the labels from the DO-QTL output.}
 
 \item{chr}{DEFAULT: c(1:19, "X"). Allows for specification of the chromosomes. DEFAULT is all the chromosomes from the mouse.}
+
+\item{in.log.scale}{DEFAULT: FALSE. If TRUE, probabilities are assumed to be log(p-value). Output in genomecache is p-value.}
+
+\item{samples}{DEFAULT: NULL. If founder.probs.Rdata is not available, input a vector with the DO identifiers. Can be pulled from 
+individual-level files with naming scheme [sample].genotype.probs.Rdata.}
+
+\item{simple.alleles}{DEFAULT: NULL. If founder.probs.Rdata is not available, input a vector with the simple allele labels. Standard is
+LETTERS[1:8].}
 }
 \description{
 This function produces a HAPPY-format genome cache from DO-QTL founder haplotype reconstruction output files.

@@ -4,13 +4,14 @@
 \alias{snp.genome.plotter.w.r2}
 \title{Plot a single chromosome window of a SNP-based genome scan overlayed with r^2 information}
 \usage{
-snp.genome.plotter.w.r2(snp.scan, r2.object, scale = "Mb",
-  y.max.manual = NULL, title = "", alt.col = NULL, this.cex = 1,
-  hard.thresholds = NULL, thresholds.col = "red",
+snp.genome.plotter.w.r2(snp.scan, r2.object, scale = "Mb", zoom.in = FALSE,
+  zoom.in.by = 0.1, y.max.manual = NULL, title = "", alt.col = NULL,
+  this.cex = 1, hard.thresholds = NULL, thresholds.col = "red",
   thresholds.legend = NULL, my.legend.cex = 0.6,
   my.legend.pos = "topleft", thresholds.lty = 2, thresholds.lwd = 1,
   my.bty = "n", r2.bounds = NULL, bounds.col = "gray",
-  high.color = "red", low.color = "blue", add.outline = FALSE)
+  high.color = "red", low.color = "blue", add.outline = FALSE,
+  include.ramp = TRUE)
 }
 \arguments{
 \item{snp.scan}{An imputed.snp.scan.h2lmm() object.}

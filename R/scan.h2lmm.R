@@ -19,6 +19,9 @@
 #' diplotype probabilities.
 #' @param locus.as.fixed DEFAULT: TRUE. If TRUE, the locus effect is fit as fixed effect. If FALSE, it is
 #' fit as a random effect.
+#' @param return.allele.effects DEFAULT: FALSE. If true, output scan object contains regression coefficients as
+#' allele effects, which can be plotted with allele.plotter.whole(). The output object will be larger, particularly
+#' with multiple imputations.
 #' @param p.value.method DEFAULT: "LRT". "LRT" specifies a likelihood ratio test, which is flexible to testing fixed
 #' effects in fixed and mixed effect models. "ANOVA" specifies an F-test, which is only valid in fixed effect models.
 #' ANOVA is more conservative in models with low sample sizes, where the asymptotic theory underlying the LRT does not

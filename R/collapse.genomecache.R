@@ -1,8 +1,29 @@
+#' Reduce genome caches by averaging together loci that are very similar up to some set
+#' tolerance level of a specified criterion
+#'
+#' This function takes an inpute genome cache directory, and produces a smaller version
+#' with similar information. It is particularly useful for large, dense genome caches, with
+#' redundant loci.
+#' 
+#' @param original.cache The path of the genome cache to be reduced.
+#' @param new.cache The path of the new genome cache to be created.
+#' @param subjects DEFAULT: NULL. Allows for the specification of a reduced set of individuals from
+#' the original genome cache to be included in the new one. The default includes all individuals.
+#' @param criterion DEFAULT: "l2.norm". Option to specify criterion for collapsing loci founder 
+#' probabilities/dosages. "l2.norm" means that max l2 norm or Euclidean distance is used, which means
+#' changes across all categories count. "max.category" means only changes in the max category (founder
+#' dosage or diplotype) are used.
+#' @param model DEFAULT: "additive". If "additive" is specified, criteria are based on dosages. If 
+#' "full", probabilities of diplotypes are used.
+#' @param proportion.tol DEFAULT: 0.01. If the maximum criterion value at a pair of loci in a data set 
+#' exceeds this value, the loci are not averaged. When all criterion values are below it, the two loci
+#' get averaged.
 #' @export
+#' @examples collapse.genomecache()
 collapse.genomecache <- function(original.cache, 
                                  new.cache, subjects=NULL,
                                  criterion=c("l2.norm", "max.category"),
-                                 model=c("full", "additive"),
+                                 model=c("additive", "full"),
                                  proportion.tol=0.01){
   criterion <- criterion[1]
   model <- model[1]
