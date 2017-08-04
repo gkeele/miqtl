@@ -27,7 +27,7 @@ dosage or diplotype) are used.}
 
 \item{proportion.tol}{DEFAULT: 0.01. If the maximum criterion value at a pair of loci in a data set 
 exceeds this value, the loci are not averaged. When all criterion values are below it, the two loci
-get averaged.}
+get averaged. The scale of the parameter is in terms of a proportion, regardless of criteria.}
 }
 \description{
 This function takes an inpute genome cache directory, and produces a smaller version
