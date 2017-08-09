@@ -37,7 +37,8 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
 #' @export
 prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="additive",
                                     phenotype, phenotype.data, merge.by="SUBJECT.NAME", founder.labels=NULL, 
-                                    founder.cex=1, phenotype.lab.cex=1, phenotype.num.cex=1,
+                                    founder.cex=1, phenotype.lab.cex=1, phenotype.num.cex=1, 
+                                    phenotype.line=NA, phenotype.num.line=NA,
                                     include.ramp=TRUE, include.marker=TRUE,
                                     alternative.phenotype.label=NULL){
   if(!is.null(p.value)){
@@ -83,8 +84,8 @@ prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="ad
        labels=rev(founder.labels), cex.axis=founder.cex,
        lty=0, srt=90, las=2) # add txt on the strain 
   phenotype <- ifelse(is.null(alternative.phenotype.label), phenotype, alternative.phenotype.label)
-  axis(1, at=0.5, labels=phenotype, tick=FALSE, cex.axis=phenotype.lab.cex)
-  axis(3, at=c(0, 0.25, 0.5, 0.75, 1), labels=c(s1, s2, s3, s5, s6), cex.axis=phenotype.num.cex)
+  axis(1, at=0.5, labels=phenotype, tick=FALSE, cex.axis=phenotype.lab.cex, line=phenotype.line)
+  axis(3, at=c(0, 0.25, 0.5, 0.75, 1), labels=c(s1, s2, s3, s5, s6), cex.axis=phenotype.num.cex, line=phenotype.num.line)
   if(include.marker){
     this.title <- ifelse(is.null(p.value), marker, paste0(marker, ": -log10P=", p.value))
     title(this.title, line=2.5)
