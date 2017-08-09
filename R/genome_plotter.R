@@ -175,10 +175,11 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  scale="Mb", main.colors=c("black", "gray48", "blue"),
                                  use.legend=TRUE, main="",
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.pos="topright",
-                                 y.max.manual=NULL, no.title=FALSE, override.title=NULL,
+                                 y.max.manual=NULL, no.title=FALSE, override.title=NULL, 
+                                 my.title.line=NA, my.y.line=NA,
+                                 my.y.axis.cex=1,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
-                                 add.chr.to.label=FALSE, axis.cram=TRUE)
-{
+                                 add.chr.to.label=FALSE, axis.cram=TRUE){
   # If list has no names, use.legend is set to FALSE
   if(is.null(names(scan.list))){ use.legend=FALSE }
   if(is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
@@ -275,9 +276,11 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   plot(pos[pre.chr==chr.types[1]], outcome[pre.chr==chr.types[1]], 
        xlim=c(shift.left, x.max), 
        ylim=c(-0.1, y.max), 
-       xaxt="n", yaxt="n", xlab="", ylab=this.ylab, main=this.title,
+       xaxt="n", yaxt="n", ylab="", xlab="", main=NA,
        frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], col=main.colors[1])
-  axis(side=2, at=0:y.max, las=2)
+  title(main=this.title, line=my.title.line)
+  axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
+  mtext(text=this.ylab, side=2, line=my.y.line)
   
   label.spots <- min.pos[1] + (max.pos[1] - min.pos[1])/2
   shift <- max.pos[1]
