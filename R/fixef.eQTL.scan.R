@@ -194,15 +194,14 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
   }
   min.p <- rep(NA, length(scan.index))
   
+  y <- model.frame(formula, data=data)[,1]
   formula.string <- Reduce(paste, deparse(formula))
   perm.formula <- formula(paste0("new_y ~ ", unlist(strsplit(formula.string, split="~"))[-1]))
   for(i in scan.index){
-    new.y <- data.frame(perm.ind.matrix[,i], rownames(perm.ind.matrix))
+    new.y <- data.frame(y[perm.ind.matrix[,i]], rownames(perm.ind.matrix))
     names(new.y) <- c("new_y", id)
     this.data <- merge(x=new.y, y=data, by=id, all.x=TRUE)
-    ## Matrix of permutation indexes
-    this.data[,all.vars(formula)[1]] <- this.data[,all.vars(formula)[1]][this.data$new_y]
-    
+
     this.scan <- scan.qr(qr.object=qr.object, data=this.data, 
                          formula=perm.formula, model=model,
                          id=id, chr=chr, return.allele.effects=FALSE, use.progress.bar=use.progress.bar,
