@@ -278,7 +278,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
        ylim=c(-0.1, y.max), 
        xaxt="n", yaxt="n", ylab="", xlab="", main=NA,
        frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], col=main.colors[1])
-  title(main=this.title, line=my.title.line, cex=title.cex)
+  title(main=this.title, line=my.title.line, cex.main=title.cex)
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line)
   
