@@ -82,7 +82,7 @@ scan.qr <- function(qr.object,
                     return.allele.effects=FALSE,
                     chr="all", id="SUBJECT.NAME",
                     just.these.loci=NULL,
-                    debug.single.fit=FALSE,
+                    debug.single.fit=FALSE, use.progress.bar=TRUE,
                     ...){
   model <- qr.object$model
   subjects <- qr.object$subjects
@@ -121,7 +121,7 @@ scan.qr <- function(qr.object,
   y <- model.frame(formula, data=data)[,1]
   names(y) <- subjects
   # Progress bar
-  pb <- txtProgressBar(min=0, max=length(loci), style=3)
+  if(use.progress.bar){ pb <- txtProgressBar(min=0, max=length(loci), style=3) }
   for(i in 1:length(loci)){
     p.vec[i] <- get.f.stat.p.val(qr.alt=qr.object$qr.list[[i]], 
                                  qr.null=qr.object$qr.0, 
@@ -134,7 +134,7 @@ scan.qr <- function(qr.object,
     }
     if(debug.single.fit){ browser() }
     # Update progress bar
-    setTxtProgressBar(pb, i)
+    if(use.progress.bar){ setTxtProgressBar(pb, i) }
   }
   names(p.vec) <- loci
   output <- list(LOD=NULL,
