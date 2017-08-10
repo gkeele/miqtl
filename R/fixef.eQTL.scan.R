@@ -210,7 +210,7 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
       full.p[i,] <- this.scan$p.value
     }
     min.p[i] <-  min(this.scan$p.value)
-    cat("\n", "Threshold scan:", i, "complete", "\n")
+    cat("\n", "Threshold scan: index", scan.index[i], "complete, final index ", scan.index[length(scan.index)], "\n")
   }
   return(list(full.results=list(LOD=NULL,
                                 p.value=full.p,
