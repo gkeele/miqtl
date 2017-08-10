@@ -176,8 +176,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  use.legend=TRUE, main="",
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.pos="topright",
                                  y.max.manual=NULL, no.title=FALSE, override.title=NULL, 
-                                 my.title.line=NA, my.y.line=NA,
-                                 my.y.axis.cex=1,
+                                 my.title.line=NA, title.cex=1,
+                                 my.y.line=NA, my.y.axis.cex=1,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                  add.chr.to.label=FALSE, axis.cram=TRUE){
   # If list has no names, use.legend is set to FALSE
@@ -278,7 +278,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
        ylim=c(-0.1, y.max), 
        xaxt="n", yaxt="n", ylab="", xlab="", main=NA,
        frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], col=main.colors[1])
-  title(main=this.title, line=my.title.line)
+  title(main=this.title, line=my.title.line, cex=title.cex)
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line)
   
