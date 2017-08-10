@@ -1,7 +1,7 @@
 #' @export
 extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NAME",
                        data, formula, model=c("additive", "full"),
-                       chr="all", just.these.loci=NULL){
+                       chr="all", just.these.loci=NULL, use.progress.bar=TRUE){
   K <- NULL
   
   h <- DiploprobReader$new(genomecache)
@@ -25,7 +25,7 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
   X.0 <- model.matrix(formula, data=data)
   qr.0 <- qr(X.0)
   
-  pb <- txtProgressBar(min=0, max=length(loci), style=3)
+  if(use.progress.bar){ pb <- txtProgressBar(min=0, max=length(loci), style=3) }
   qr.list <- list()
   intercept.allele <- rep(NA, length(loci)) # For allele effects
   for(i in 1:length(loci)){
@@ -36,7 +36,7 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
     keep.col <- keep.col[keep.col != max.column]
     X <- cbind(X.0, X[,keep.col])
     qr.list[[i]] <- qr(X)
-    setTxtProgressBar(pb, i)
+    if(use.progress.bar){ setTxtProgressBar(pb, i) }
   }
   names(qr.list) <- loci
   
@@ -169,7 +169,7 @@ generate.qr.permutation.index.matrix <- function(qr.scan.object, num.samples, se
 run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
                                                keep.full.scans=FALSE, scan.index=NULL, id="SUBJECT.NAME",
                                                formula, data, model=c("additive", "full"),
-                                               chr="all", just.these.loci=NULL, 
+                                               chr="all", just.these.loci=NULL, use.progress.bar=TRUE,
                                                ...){
   model <- model[1]
 
@@ -205,7 +205,7 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
     
     this.scan <- scan.qr(qr.object=qr.object, data=this.data, 
                          formula=perm.formula, model=model,
-                         id=id, chr=chr, return.allele.effects=FALSE,
+                         id=id, chr=chr, return.allele.effects=FALSE, use.progress.bar=use.progress.bar,
                          ...)
     if(keep.full.scans){
       full.p[i,] <- this.scan$p.value
