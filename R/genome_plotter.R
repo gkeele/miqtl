@@ -12,6 +12,8 @@
 #' @param main.colors DEFAULT: "black". The color of the main association score to be plotted.
 #' @param median.band.col DEFAULT: "gray88". The color of the 95\% confident band plotted around the median.
 #' @param main DEFAULT: "". Adds a title above the model.
+#' @param no.title DEFAULT: FALSE. If TRUE, no title is printed.
+#' @param override.title DEFAULT: NULL. If a string is specified, it is included on plot without any of the default automated title.
 #' @param y.max.manual DEFAULT: NULL. Manually adds a max y-value. Allows multiple genome scans to easily be on the same scale.
 #' @param hard.thresholds DEFAULT: NULL. Specify one or more horizontal threshold lines.
 #' @param thresholds.col DEFAULT: "red". Set the colors of the specified thresholds.
@@ -23,20 +25,23 @@
 #' @export
 #' @examples genome.plotter.to.pdf()
 genome.plotter.to.pdf <- function(scan.object, chr=c(1:19, "X"), use.lod=FALSE,
-                                  scale=c("Mb", "cM"), main.col="black", median.band.col="gray88", main="", y.max.manual=NULL,
+                                  scale=c("Mb", "cM"), main.col="black", median.band.col="gray88", 
+                                  main="", no.title=FALSE, override.title=NULL,
+                                  y.max.manual=NULL,
                                   hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                   pdf.output.path, pdf.height=5, pdf.width=9, ...){
   scale <- scale[1]
   pdf(pdf.output.path, height=pdf.height, width=pdf.width)
   genome.plotter.whole(scan.list=list(scan.object), use.lod=use.lod,
                        scale=scale, main.colors=main.col, use.legend=FALSE,
-                       main=main,
+                       main=main, no.title=no.title, override.title=override.title,
                        y.max.manual=y.max.manual,
                        hard.thresholds=hard.thresholds, thresholds.col=thresholds.col, thresholds.legend=thresholds.legend, ...)
   for(i in 1:length(chr)){
     genome.plotter.chr(scan.object=scan.object, chr=chr[i], use.lod=use.lod,
                        scale=scale, main.col=main.col, median.band.col=median.band.col,
-                       main=main, y.max.manual=y.max.manual, 
+                       main=main, no.title=no.title, override.title=override.title,
+                       y.max.manual=y.max.manual, 
                        hard.thresholds=hard.thresholds, thresholds.col=thresholds.col, thresholds.legend=thresholds.legend, ...)
   }
   dev.off()
@@ -55,6 +60,8 @@ genome.plotter.to.pdf <- function(scan.object, chr=c(1:19, "X"), use.lod=FALSE,
 #' @param main.colors DEFAULT: "black". The color of the main association score to be plotted.
 #' @param median.band.col DEFAULT: "gray88". The color of the 95\% confident band plotted around the median.
 #' @param main DEFAULT: "". Adds a title above the model.
+#' @param no.title DEFAULT: FALSE. If TRUE, no title is printed.
+#' @param override.title DEFAULT: NULL. If a string is specified, it is included on plot without any of the default automated title.
 #' @param y.max.manual DEFAULT: NULL. Manually adds a max y-value. Allows multiple genome scans to easily be on the same scale.
 #' @param my.legend.cex DEFAULT: 0.6. Specifies the size of the text in the legend.
 #' @param hard.thresholds DEFAULT: NULL. Specify one or more horizontal threshold lines.
@@ -65,7 +72,7 @@ genome.plotter.to.pdf <- function(scan.object, chr=c(1:19, "X"), use.lod=FALSE,
 #' @examples genome.plotter.chr()
 genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
                                scale=c("Mb", "cM"), main.col="black", median.band.col="gray88",
-                               main="",
+                               main="", no.title=FALSE, override.title=NULL,
                                y.max.manual=NULL, my.legend.cex=0.6,
                                hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL){
   scale <- scale[1]
@@ -127,6 +134,8 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
     locus.term <- "locus"
   }
   this.title <- c(main, paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"))
+  if(no.title){ this.title <- NULL }
+  if(!is.null(override.title)){ this.title <- override.title }
   
   plot(pos, outcome, 
        xlim=c(0, max.pos), 
@@ -164,6 +173,8 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
 #' @param my.legend.cex DEFAULT: 0.6. Specifies the size of the text in the legend.
 #' @param my.legend.lwd DEFAULT: NULL. If NULL, all lines have lwd=1.5. If not, option specifies the lwds.
 #' @param my.legend.pos DEFAULT: "topright". Specifies where to put the legend, if specified in use.legend.
+#' @param no.title DEFAULT: FALSE. If TRUE, no title is printed.
+#' @param override.title DEFAULT: NULL. If a string is specified, it is included on plot without any of the default automated title.
 #' @param y.max.manual DEFAULT: NULL. Manually adds a max y-value. Allows multiple genome scans to easily be on the same scale.
 #' @param hard.thresholds DEFAULT: NULL. Specify one or more horizontal threshold lines.
 #' @param thresholds.col DEFAULT: "red". Set the colors of the specified thresholds.
@@ -175,9 +186,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  scale="Mb", main.colors=c("black", "gray48", "blue"),
                                  use.legend=TRUE, main="",
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.pos="topright",
-                                 y.max.manual=NULL, no.title=FALSE, override.title=NULL, 
-                                 my.title.line=NA, title.cex=1,
-                                 my.y.line=NA, my.y.axis.cex=1,
+                                 y.max.manual=NULL, my.y.line=NA, my.y.axis.cex=1,
+                                 no.title=FALSE, override.title=NULL, my.title.line=NA, title.cex=1,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                  add.chr.to.label=FALSE, axis.cram=TRUE){
   # If list has no names, use.legend is set to FALSE
@@ -268,7 +278,6 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                       paste("n =", round(sum(scan.list[[1]]$fit0@resp$weights), 2)))
     }
   }
-
   if(no.title){ this.title <- NULL }
   if(!is.null(override.title)){ this.title <- override.title }
   

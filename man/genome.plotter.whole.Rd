@@ -8,9 +8,10 @@ genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
   scale = "Mb", main.colors = c("black", "gray48", "blue"),
   use.legend = TRUE, main = "", my.legend.cex = 0.6,
   my.legend.lwd = NULL, my.legend.pos = "topright", y.max.manual = NULL,
-  no.title = FALSE, override.title = NULL, hard.thresholds = NULL,
-  thresholds.col = "red", thresholds.legend = NULL,
-  add.chr.to.label = FALSE, axis.cram = TRUE)
+  my.y.line = NA, my.y.axis.cex = 1, no.title = FALSE,
+  override.title = NULL, my.title.line = NA, title.cex = 1,
+  hard.thresholds = NULL, thresholds.col = "red",
+  thresholds.legend = NULL, add.chr.to.label = FALSE, axis.cram = TRUE)
 }
 \arguments{
 \item{scan.list}{A list of scan.h2lmm() objects that are to be plotted within the same genome scan plot.}
@@ -34,6 +35,10 @@ genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
 \item{my.legend.pos}{DEFAULT: "topright". Specifies where to put the legend, if specified in use.legend.}
 
 \item{y.max.manual}{DEFAULT: NULL. Manually adds a max y-value. Allows multiple genome scans to easily be on the same scale.}
+
+\item{no.title}{DEFAULT: FALSE. If TRUE, no title is printed.}
+
+\item{override.title}{DEFAULT: NULL. If a string is specified, it is included on plot without any of the default automated title.}
 
 \item{hard.thresholds}{DEFAULT: NULL. Specify one or more horizontal threshold lines.}
 

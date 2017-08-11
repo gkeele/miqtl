@@ -6,8 +6,9 @@
 \usage{
 genome.plotter.chr(scan.object, chr, use.lod = FALSE, scale = c("Mb", "cM"),
   main.col = "black", median.band.col = "gray88", main = "",
-  y.max.manual = NULL, my.legend.cex = 0.6, hard.thresholds = NULL,
-  thresholds.col = "red", thresholds.legend = NULL)
+  no.title = FALSE, override.title = NULL, y.max.manual = NULL,
+  my.legend.cex = 0.6, hard.thresholds = NULL, thresholds.col = "red",
+  thresholds.legend = NULL)
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object (ROP or multiple imputations). If multiple imputations, median and confidence interval 
@@ -22,6 +23,10 @@ on median are plotted.}
 \item{median.band.col}{DEFAULT: "gray88". The color of the 95\% confident band plotted around the median.}
 
 \item{main}{DEFAULT: "". Adds a title above the model.}
+
+\item{no.title}{DEFAULT: FALSE. If TRUE, no title is printed.}
+
+\item{override.title}{DEFAULT: NULL. If a string is specified, it is included on plot without any of the default automated title.}
 
 \item{y.max.manual}{DEFAULT: NULL. Manually adds a max y-value. Allows multiple genome scans to easily be on the same scale.}
 
