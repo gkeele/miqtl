@@ -20,7 +20,10 @@
 #' @export
 #' @examples prob.heatmap()
 prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
-                        phenotype, phenotype.data, merge.by="SUBJECT.NAME", founder.labels=NULL, founder.cex=1,
+                        phenotype, phenotype.data, merge.by="SUBJECT.NAME", 
+                        founder.labels=NULL, founder.cex=1,
+                        phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
+                        phenotype.line=NA, phenotype.num.line=NA,
                         include.ramp=TRUE, include.marker=TRUE,
                         alternative.phenotype.label=NULL){
   h <- DiploprobReader$new(genomecache)
@@ -29,15 +32,19 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
   rownames(X) <- subjects
   
   prob.heatmap.from.matrix(geno.matrix=X, marker=marker, p.value=p.value, model=model, phenotype=phenotype,
-                           phenotype.data, merge.by=merge.by, founder.labels=founder.labels, founder.cex=founder.cex,
+                           phenotype.data, merge.by=merge.by, 
+                           founder.labels=founder.labels, founder.cex=founder.cex,
+                           phenotype.lab.cex=phenotype.lab.cex, phenotype.num.cex=phenotype.num.cex, phenotype.num.padj=Nphenotype.num.padj,
+                           phenotype.line=phenotype.line, phenotype.num.line=phenotype.num.line,
                            include.ramp=include.ramp, include.marker=include.marker,
                            alternative.phenotype.label=alternative.phenotype.label)
 }
 
 #' @export
 prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="additive",
-                                    phenotype, phenotype.data, merge.by="SUBJECT.NAME", founder.labels=NULL, 
-                                    founder.cex=1, phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
+                                    phenotype, phenotype.data, merge.by="SUBJECT.NAME", 
+                                    founder.labels=NULL, founder.cex=1, 
+                                    phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
                                     phenotype.line=NA, phenotype.num.line=NA,
                                     include.ramp=TRUE, include.marker=TRUE,
                                     alternative.phenotype.label=NULL){
