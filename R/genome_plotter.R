@@ -367,8 +367,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   }
   else{
     axis.label <- c("Chr", axis.label)
-    #label.spots <- c(-0.05*x.max, label.spots)
-    label.spots <- c(-0.04*(x.max - shift.left), label.spots)
+    label.spots <- c(shift.left - 0.04*(x.max - shift.left), label.spots)
   }
   
   if(axis.cram){
