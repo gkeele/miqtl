@@ -6,7 +6,7 @@
 \usage{
 generate.sample.outcomes.matrix(scan.object, model.type = c("null", "alt"),
   method = c("bootstrap", "permutation"), use.REML = TRUE,
-  use.BLUP = FALSE, num.samples, seed = 1)
+  match.NA = TRUE, use.BLUP = FALSE, num.samples, seed = 1)
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object.}
@@ -20,6 +20,8 @@ influential data points.}
 
 \item{use.REML}{DEFAULT: TRUE. Determines whether the variance components for the parametric sampling are 
 based on maximizing the likelihood (ML) or the residual likelihood (REML).}
+
+\item{match.NA}{DEFAULT: TRUE. This option places NAs on bootstrap samples that}
 
 \item{use.BLUP}{DEFAULT: FALSE.This results in the BLUP value of the polgyene effect (assuming a GRM has been given) is used,
 rather than sampled. This reduces the variation seen across sampling, which can result in narrower positional confidence 
