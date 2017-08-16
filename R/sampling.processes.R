@@ -31,7 +31,7 @@ generate.sample.outcomes.matrix <- function(scan.object, model.type=c("null", "a
   fit0.REML <- scan.object$fit0.REML
   if(class(fit) != "lmerMod"){
     na.coefficients <- is.na(fit$coefficients) ## Resolve an issue if one of the coefficients is NA - generally resulting from a variable that does not vary
-    Xb <- fit$x[,!na.coefficients] %*% fit$coefficients[!na.coefficients]
+    Xb <- fit$x[,!na.coefficients, drop=FALSE] %*% fit$coefficients[!na.coefficients, drop=FALSE]
     n <- nrow(fit$x)
     K <- fit$K
     weights <- fit$weights
