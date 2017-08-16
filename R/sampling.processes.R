@@ -11,6 +11,7 @@
 #' influential data points.
 #' @param use.REML DEFAULT: TRUE. Determines whether the variance components for the parametric sampling are 
 #' based on maximizing the likelihood (ML) or the residual likelihood (REML).
+#' @param match.NA DEFAULT: TRUE. This option places NAs on bootstrap samples that 
 #' @param use.BLUP DEFAULT: FALSE.This results in the BLUP value of the polgyene effect (assuming a GRM has been given) is used,
 #' rather than sampled. This reduces the variation seen across sampling, which can result in narrower positional confidence 
 #' intervals.
@@ -20,7 +21,7 @@
 #' @export
 #' @examples generate.sample.outcomes.matrix()
 generate.sample.outcomes.matrix <- function(scan.object, model.type=c("null", "alt"), 
-                                            method=c("bootstrap", "permutation"), use.REML=TRUE, 
+                                            method=c("bootstrap", "permutation"), use.REML=TRUE, match.NA=TRUE,
                                             use.BLUP=FALSE, num.samples, seed=1){
   model.type <- model.type[1]
   method <- method[1]
@@ -29,7 +30,8 @@ generate.sample.outcomes.matrix <- function(scan.object, model.type=c("null", "a
   if(model.type == "alt"){ fit <- scan.object$fit1; locus <- scan.object$loci }
   fit0.REML <- scan.object$fit0.REML
   if(class(fit) != "lmerMod"){
-    Xb <- fit$x %*% fit$coefficients
+    na.coefficients <- is.na(fit$coefficients) ## Resolve an issue if one of the coefficients is NA - generally resulting from a variable that does not vary
+    Xb <- fit$x[,!na.coefficients] %*% fit$coefficients[!na.coefficients]
     n <- nrow(fit$x)
     K <- fit$K
     weights <- fit$weights
@@ -214,6 +216,7 @@ run.threshold.scans <- function(sim.threshold.object, outcome.type=c("outcome", 
       iteration.formula <- formula(formula)
     }
 
+    browser()
     this.scan <- scan.h2lmm(genomecache=genomecache, data=this.data, 
                             formula=iteration.formula, K=K, model=model,
                             use.multi.impute=use.multi.impute, num.imp=num.imp, 
