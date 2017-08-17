@@ -180,6 +180,11 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
 #' @param thresholds.col DEFAULT: "red". Set the colors of the specified thresholds.
 #' @param thresholds.legend DEFAULT: NULL. If non-NULL, string arguments used as labels in thresholds legend. If NULL,
 #' no threshols legend is used.
+#' @param add.chr.to.label DEFAULT: FALSE. If TRUE, adds "Chr" before every chromosome label. If FALSE, "Chr" is added as an axis
+#' label under the y-axis.
+#' @param axis.cram DEFAULT: TRUE. This makes the plot much more likely to include all chromosome labels. With small plots, this could
+#' lead to overlapping labels.
+#' @param include.x.axis.line DEFAULT: TRUE. IF TRUE, this option adds an x-axis line with ticks between chromosomes.
 #' @export
 #' @examples genome.plotter.whole()
 genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
@@ -189,7 +194,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  y.max.manual=NULL, my.y.line=NA, my.y.axis.cex=1,
                                  no.title=FALSE, override.title=NULL, my.title.line=NA, title.cex=1,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
-                                 add.chr.to.label=FALSE, axis.cram=TRUE){
+                                 add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE){
   # If list has no names, use.legend is set to FALSE
   if(is.null(names(scan.list))){ use.legend=FALSE }
   if(is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
@@ -247,8 +252,6 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     y.max <- y.max.manual
   }
   
-  shift.left <- min(pos[chr==chr.types[1]], na.rm=TRUE)
-  
   ### Fixef or ranef
   if(length(scan.list) == 1 & !is.null(scan.list[[1]]$locus.effect.type)){
     locus.effect.type <- ifelse(scan.list[[1]]$locus.effect.type == "fixed", "fixef", "ranef")
@@ -283,7 +286,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   
   x.max <- sum(max.pos)+(length(chr.types)-1)
   plot(pos[pre.chr==chr.types[1]], outcome[pre.chr==chr.types[1]], 
-       xlim=c(shift.left, x.max), 
+       xlim=c(0, x.max), 
        ylim=c(-0.1, y.max), 
        xaxt="n", yaxt="n", ylab="", xlab="", main=NA,
        frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], col=main.colors[1])
@@ -292,6 +295,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   mtext(text=this.ylab, side=2, line=my.y.line)
   
   label.spots <- min.pos[1] + (max.pos[1] - min.pos[1])/2
+  x.tick.spots <- c(0, max.pos[1])
   shift <- max.pos[1]
   if(length(chr.types) > 1){
     for(i in 2:length(chr.types)){
@@ -301,8 +305,15 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                 y=c(0, rep(y.max, length(min(this.pos, na.rm=TRUE):max(this.pos, na.rm=TRUE))), 0), border=NA, col="gray88")
       }
       label.spots <- c(label.spots, min.pos[i] + shift + (max.pos[i] - min.pos[i])/2)
+      x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
       points(this.pos, outcome[pre.chr==chr.types[i]], type="l", lwd=my.legend.lwd[1], col=main.colors[1])
       shift <- shift + max.pos[i]
+      
+      # if(include.x.axis.line){
+      #   axis(side=1, tick=TRUE, line=NA, at=c(min(this.pos, na.rm=TRUE), 
+      #                                        max(this.pos, na.rm=TRUE)), 
+      #        labels=NA, xpd=TRUE)
+      #}
     }
   }
   
@@ -362,12 +373,17 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     axis.label <- chr.types
   }
   
+  if(include.x.axis.line){
+    axis(side=1, tick=TRUE, line=NA, at=x.tick.spots, 
+         labels=NA, xpd=TRUE)
+  }
+  
   if(add.chr.to.label){
     axis.label <- paste("Chr", axis.label)
   }
   else{
     axis.label <- c("Chr", axis.label)
-    label.spots <- c(shift.left - 0.04*(x.max - shift.left), label.spots)
+    label.spots <- c(-0.04*x.max, label.spots)
   }
   
   if(axis.cram){

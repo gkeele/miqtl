@@ -11,7 +11,8 @@ genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
   my.y.line = NA, my.y.axis.cex = 1, no.title = FALSE,
   override.title = NULL, my.title.line = NA, title.cex = 1,
   hard.thresholds = NULL, thresholds.col = "red",
-  thresholds.legend = NULL, add.chr.to.label = FALSE, axis.cram = TRUE)
+  thresholds.legend = NULL, add.chr.to.label = FALSE, axis.cram = TRUE,
+  include.x.axis.line = TRUE)
 }
 \arguments{
 \item{scan.list}{A list of scan.h2lmm() objects that are to be plotted within the same genome scan plot.}
@@ -46,6 +47,14 @@ genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
 
 \item{thresholds.legend}{DEFAULT: NULL. If non-NULL, string arguments used as labels in thresholds legend. If NULL,
 no threshols legend is used.}
+
+\item{add.chr.to.label}{DEFAULT: FALSE. If TRUE, adds "Chr" before every chromosome label. If FALSE, "Chr" is added as an axis
+label under the y-axis.}
+
+\item{axis.cram}{DEFAULT: TRUE. This makes the plot much more likely to include all chromosome labels. With small plots, this could
+lead to overlapping labels.}
+
+\item{include.x.axis.line}{DEFAULT: TRUE. IF TRUE, this option adds an x-axis line with ticks between chromosomes.}
 }
 \description{
 This function takes the genome scan output from scan.h2lmm() and flexibly plots out the genome scan.
