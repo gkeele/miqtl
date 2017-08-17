@@ -301,19 +301,14 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     for(i in 2:length(chr.types)){
       this.pos <- pos[pre.chr==chr.types[i]] + shift
       if(i %% 2 == 0){
-        polygon(x=c(min(this.pos, na.rm=TRUE), min(this.pos, na.rm=TRUE):max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE)), 
-                y=c(0, rep(y.max, length(min(this.pos, na.rm=TRUE):max(this.pos, na.rm=TRUE))), 0), border=NA, col="gray88")
+        polygon(x=c(shift, shift:max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE)), 
+                y=c(0, rep(y.max, length(shift:max(this.pos, na.rm=TRUE))), 0), border=NA, col="gray88")
+        
       }
       label.spots <- c(label.spots, min.pos[i] + shift + (max.pos[i] - min.pos[i])/2)
       x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
       points(this.pos, outcome[pre.chr==chr.types[i]], type="l", lwd=my.legend.lwd[1], col=main.colors[1])
       shift <- shift + max.pos[i]
-      
-      # if(include.x.axis.line){
-      #   axis(side=1, tick=TRUE, line=NA, at=c(min(this.pos, na.rm=TRUE), 
-      #                                        max(this.pos, na.rm=TRUE)), 
-      #        labels=NA, xpd=TRUE)
-      #}
     }
   }
   
