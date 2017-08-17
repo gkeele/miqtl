@@ -11,7 +11,6 @@
 #' influential data points.
 #' @param use.REML DEFAULT: TRUE. Determines whether the variance components for the parametric sampling are 
 #' based on maximizing the likelihood (ML) or the residual likelihood (REML).
-#' @param match.NA DEFAULT: TRUE. This option places NAs on bootstrap samples that 
 #' @param use.BLUP DEFAULT: FALSE.This results in the BLUP value of the polgyene effect (assuming a GRM has been given) is used,
 #' rather than sampled. This reduces the variation seen across sampling, which can result in narrower positional confidence 
 #' intervals.
@@ -21,7 +20,7 @@
 #' @export
 #' @examples generate.sample.outcomes.matrix()
 generate.sample.outcomes.matrix <- function(scan.object, model.type=c("null", "alt"), 
-                                            method=c("bootstrap", "permutation"), use.REML=TRUE, match.NA=TRUE,
+                                            method=c("bootstrap", "permutation"), use.REML=TRUE,
                                             use.BLUP=FALSE, num.samples, seed=1){
   model.type <- model.type[1]
   method <- method[1]
