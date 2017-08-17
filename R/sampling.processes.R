@@ -215,7 +215,6 @@ run.threshold.scans <- function(sim.threshold.object, outcome.type=c("outcome", 
       iteration.formula <- formula(formula)
     }
 
-    browser()
     this.scan <- scan.h2lmm(genomecache=genomecache, data=this.data, 
                             formula=iteration.formula, K=K, model=model,
                             use.multi.impute=use.multi.impute, num.imp=num.imp, 
