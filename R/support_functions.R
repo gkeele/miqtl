@@ -72,9 +72,10 @@ ci.median <- function(x, conf=0.95){ # from R/asbio
 }
 
 #' @export
-ci.mean <- function(x, alpha=0.05){
-  n <- length(x)
-  sd <- sd(x)
+ci.mean <- function(x, alpha=0.05, na.rm=TRUE){
+  n <- sum(!is.na(x))
+  n <- ifelse(n != 0, n, NA)
+  sd <- sd(x, na.rm=na.rm)
   se <- sd/sqrt(n)
   er <- qt(1-alpha/2, df=n-1)*se
   ci <- c(mean(x)-er, mean(x)+er)

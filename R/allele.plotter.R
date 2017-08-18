@@ -160,7 +160,7 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
        ylim=c(y.min, y.max), 
        xaxt="n", yaxt="n", xlab="", ylab="Additive allele effects", main=this.title,
        frame.plot=FALSE, type="l", cex=0.5, lwd=1.5, col=main.colors[1])
-  axis(side=2, at=y.min:y.max, las=2)
+  axis(side=2, at=sort(unique(c(0, y.min, y.min:y.max, y.max))), las=2)
   label.spots <- min.pos[1] + (max.pos[1] - min.pos[1])/2
   x.tick.spots <- c(0, max.pos[1])
   
