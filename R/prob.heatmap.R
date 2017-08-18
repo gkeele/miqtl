@@ -17,6 +17,7 @@
 #' @param include.ramp DEFAULT: TRUE. If TRUE, spectrum ramp for dosages or probabilities is included.
 #' @param include.marker DEFAULT: TRUE. If TRUE, the marker name is included in the title.
 #' @param alternative.phenotype.label DEFAULT: NULL. Allows for an alternative label for the phenotype.
+#' @param alternative.marker.label DEFAULT: NULL. Allows for an alternative label for the marker.
 #' @export
 #' @examples prob.heatmap()
 prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
@@ -24,29 +25,36 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
                         founder.labels=NULL, founder.cex=1,
                         phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
                         phenotype.line=NA, phenotype.num.line=NA,
-                        include.ramp=TRUE, include.marker=TRUE,
-                        alternative.phenotype.label=NULL){
+                        include.ramp=TRUE, prob.axis.cex=1,
+                        include.marker=TRUE,
+                        alternative.phenotype.label=NULL, alternative.marker.label=NULL){
   h <- DiploprobReader$new(genomecache)
   X <- h$getLocusMatrix(locus=marker, model=model)
   subjects <- h$getSubjects()
   rownames(X) <- subjects
+  
+  if(!is.null(alternative.marker.label)){ marker <- alternative.marker.label }
   
   prob.heatmap.from.matrix(geno.matrix=X, marker=marker, p.value=p.value, model=model, phenotype=phenotype,
                            phenotype.data, merge.by=merge.by, 
                            founder.labels=founder.labels, founder.cex=founder.cex,
                            phenotype.lab.cex=phenotype.lab.cex, phenotype.num.cex=phenotype.num.cex, phenotype.num.padj=phenotype.num.padj,
                            phenotype.line=phenotype.line, phenotype.num.line=phenotype.num.line,
-                           include.ramp=include.ramp, include.marker=include.marker,
+                           include.ramp=include.ramp, prob.axis.cex=prob.axis.cex,
+                           include.marker=include.marker,
                            alternative.phenotype.label=alternative.phenotype.label)
 }
 
 #' @export
-prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="additive",
-                                    phenotype, phenotype.data, merge.by="SUBJECT.NAME", 
+prob.heatmap.from.matrix = function(geno.matrix, marker,
+                                    p.value=NULL, model="additive",
+                                    phenotype, phenotype.data,
+                                    merge.by="SUBJECT.NAME", 
                                     founder.labels=NULL, founder.cex=1, 
                                     phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
                                     phenotype.line=NA, phenotype.num.line=NA,
-                                    include.ramp=TRUE, include.marker=TRUE,
+                                    include.ramp=TRUE, prob.axis.cex=1,
+                                    include.marker=TRUE,
                                     alternative.phenotype.label=NULL){
   if(!is.null(p.value)){
     p.value <- round(-log10(p.value), 4)
@@ -94,14 +102,14 @@ prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="ad
   axis(1, at=0.5, labels=parse(text=paste('"" %<-%', phenotype, '%->% ""')), tick=FALSE, cex.axis=phenotype.lab.cex, line=phenotype.line)
   axis(3, at=c(0, 0.25, 0.5, 0.75, 1), labels=c(s1, s2, s3, s5, s6), cex.axis=phenotype.num.cex, line=phenotype.num.line, padj=phenotype.num.padj)
   if(include.marker){
-    this.title <- ifelse(is.null(p.value), marker, paste0(marker, ": -log10P=", p.value))
+    this.title <- ifelse(is.null(p.value), marker, paste0(marker, ": ", expression("-log"[10]*"P"), " = ", p.value))
     title(this.title, line=2.5)
   }
   
   if(include.ramp){
     ramp.label <- c(ifelse(model == "additive", "Hap", "Dip"),
                     ifelse(model == "additive", "Dose", "Prob"))
-    par(fig=c(0.9, 0.95, 0.33, 0.66), 
+    par(fig=c(0.89, 0.92, 0.33, 0.66), 
         mai=c(0.1, 0.05, 0.5, 0.05), 
         new=TRUE)
     if(model == "additive"){ image(y=seq(from=0, to=2, length.out=length(cols)), z=matrix(seq(from=0, to=2, length.out=length(cols)), nrow=1), 
@@ -109,7 +117,7 @@ prob.heatmap.from.matrix = function(geno.matrix, marker, p.value=NULL, model="ad
     if(model == "full"){ image(y=seq(from=0, to=1, length.out=length(cols)), z=matrix(seq(from=0, to=1, length.out=length(cols)), nrow=1), 
                                zlim=c(0, 1), ylim=c(0, 1), axes=FALSE, col=rev(cols), main=ramp.label, cex.main=0.77) }
     box()
-    axis(2, las=1)
+    axis(4, las=1, cex.axis=prob.axis.cex)
     par(op)
   }
   else{ par(plt <- oplt) }
