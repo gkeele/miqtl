@@ -8,9 +8,9 @@ prob.heatmap(marker, p.value = NULL, genomecache, model = "additive",
   phenotype, phenotype.data, merge.by = "SUBJECT.NAME",
   founder.labels = NULL, founder.cex = 1, phenotype.lab.cex = 1,
   phenotype.num.cex = 1, phenotype.num.padj = NA, phenotype.line = NA,
-  phenotype.num.line = NA, include.ramp = TRUE, prob.axis.cex = 1,
-  include.marker = TRUE, alternative.phenotype.label = NULL,
-  alternative.marker.label = NULL)
+  phenotype.num.line = NA, include.ramp = TRUE, ramp.label.cex = 0.7,
+  ramp.label.line = 0.5, prob.axis.cex = 1, include.marker = TRUE,
+  alternative.phenotype.label = NULL, alternative.marker.label = NULL)
 }
 \arguments{
 \item{marker}{A marker that is contained in the genome cache. In general this should be a marker of interest, such as one
@@ -34,6 +34,12 @@ genomes in the genome cache.}
 \item{founder.cex}{DEFAULT: 1. Defines the text size of the founder labels.}
 
 \item{include.ramp}{DEFAULT: TRUE. If TRUE, spectrum ramp for dosages or probabilities is included.}
+
+\item{ramp.label.cex}{DEFAULT: 0.7. Specifies the size of the dosage/probability spectrum label.}
+
+\item{ramp.label.line}{DEFAULT: 0.5. Specifies the number of margin lines that separates the spectrum label from the bottom axis.}
+
+\item{prob.axis.cex}{DEFAULT: 1. Specifies the size of the dosage/probability tick labels.}
 
 \item{include.marker}{DEFAULT: TRUE. If TRUE, the marker name is included in the title.}
 

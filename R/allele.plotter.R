@@ -22,6 +22,9 @@
 #' @param add.chr.to.label DEFAULT: FALSE. If TRUE, "chr" precedes integers on the x-axis.
 #' @param alternative.labels DEFAULT: NULL. If non-null, specifies alternative labels for the
 #' founder alleles.
+#' @param axis.cram DEFAULT: TRUE. This makes the plot much more likely to include all chromosome labels. With small plots, this could
+#' lead to overlapping labels.
+#' @param include.x.axis.line DEFAULT: TRUE. IF TRUE, this option adds an x-axis line with ticks between chromosomes.
 #' @export
 #' @examples allele.plotter.whole()
 allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
@@ -38,7 +41,8 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
                                  set.plot.limit=c(-10, 10), # Null places no limit on y-axis
                                  my.legend.cex=0.6, my.legend.pos="topright", transparency=0.6,
                                  y.max.manual=NULL, y.min.manual=NULL, no.title=FALSE, override.title=NULL,
-                                 add.chr.to.label=FALSE, alternative.labels=NULL)
+                                 add.chr.to.label=FALSE, alternative.labels=NULL,
+                                 axis.cram=TRUE, include.x.axis.line=TRUE)
 {
   allele.effects <- scan.object$allele.effects
   
@@ -150,13 +154,15 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
   if(no.title){ this.title <- NULL }
   if(!is.null(override.title)){ this.title <- override.title }
   
+  x.max <- sum(max.pos)+(length(chr.types)-1)
   plot(0, pch="",
-       xlim=c(shift.left, sum(max.pos)+(length(chr.types)-1)), 
+       xlim=c(0, x.max), 
        ylim=c(y.min, y.max), 
        xaxt="n", yaxt="n", xlab="", ylab="Additive allele effects", main=this.title,
        frame.plot=FALSE, type="l", cex=0.5, lwd=1.5, col=main.colors[1])
   axis(side=2, at=y.min:y.max, las=2)
   label.spots <- min.pos[1] + (max.pos[1] - min.pos[1])/2
+  x.tick.spots <- c(0, max.pos[1])
   
   ## Confint for first chr
   if(!is.null(imp.confint.alpha)){
@@ -176,8 +182,8 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
     for(i in 2:length(chr.types)){
       this.pos <- pos[pre.chr==chr.types[i]] + shift
       if(i %% 2 == 0){
-        polygon(x=c(min(this.pos, na.rm=TRUE), min(this.pos, na.rm=TRUE):max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE)), 
-                y=c(y.min, rep(y.max, length(min(this.pos, na.rm=TRUE):max(this.pos, na.rm=TRUE))), y.min), border=NA, col="gray88")
+        polygon(x=c(shift, shift:max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE)), 
+                y=c(y.min, rep(y.max, length(shift:max(this.pos, na.rm=TRUE))), y.min), border=NA, col="gray88")
       }
       
       ## Confint for later chr
@@ -194,20 +200,43 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
                type="l", lwd=my.lwd[j], col=main.colors[j])
       }
       label.spots <- c(label.spots, min.pos[i] + shift + (max.pos[i] - min.pos[i])/2)
-      #points(this.pos, allele.effects[1, pre.chr==chr.types[i]], type="l", lwd=1.5, col=main.colors[1])
+      x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
       shift <- shift + max.pos[i]
     }
   }
   if(has.X){
     axis.label <- c(chr.types[-length(chr.types)], "X")
   }
-  if(!has.X){
+  else{
     axis.label <- chr.types
   }
-  if(add.chr.to.label){
-    axis.label <- paste("chr", axis.label)
+  
+  if(include.x.axis.line){
+    axis(side=1, tick=TRUE, line=NA, at=x.tick.spots, 
+         labels=NA, xpd=TRUE)
   }
-  axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5)
+  
+  if(add.chr.to.label){
+    axis.label <- paste("Chr", axis.label)
+  }
+  else{
+    axis.label <- c("Chr", axis.label)
+    label.spots <- c(-0.04*x.max, label.spots)
+  }
+  
+  if(axis.cram){
+    odd.axis.label <- axis.label[(1:length(axis.label) %% 2) == 1]
+    odd.label.spots <- label.spots[(1:length(label.spots) %% 2) == 1]
+    
+    even.axis.label <- axis.label[(1:length(axis.label) %% 2) == 0]
+    even.label.spots <- label.spots[(1:length(label.spots) %% 2) == 0]
+    
+    axis(side=1, tick=FALSE, line=NA, at=odd.label.spots, labels=odd.axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+    axis(side=1, tick=FALSE, line=NA, at=even.label.spots, labels=even.axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+  }
+  else{
+    axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+  }
   if(use.legend){
     if(!is.null(alternative.labels)){ these.labels <- alternative.labels }
     else{ these.labels <- rownames(allele.effects) }

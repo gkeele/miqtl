@@ -15,6 +15,9 @@
 #' @param founder.labels DEFAULT: "NULL". If NULL, will default to the labels in the genome cache.
 #' @param founder.cex DEFAULT: 1. Defines the text size of the founder labels.
 #' @param include.ramp DEFAULT: TRUE. If TRUE, spectrum ramp for dosages or probabilities is included.
+#' @param ramp.label.cex DEFAULT: 0.7. Specifies the size of the dosage/probability spectrum label.
+#' @param ramp.label.line DEFAULT: 0.5. Specifies the number of margin lines that separates the spectrum label from the bottom axis.
+#' @param prob.axis.cex DEFAULT: 1. Specifies the size of the dosage/probability tick labels.
 #' @param include.marker DEFAULT: TRUE. If TRUE, the marker name is included in the title.
 #' @param alternative.phenotype.label DEFAULT: NULL. Allows for an alternative label for the phenotype.
 #' @param alternative.marker.label DEFAULT: NULL. Allows for an alternative label for the marker.
@@ -25,7 +28,7 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
                         founder.labels=NULL, founder.cex=1,
                         phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
                         phenotype.line=NA, phenotype.num.line=NA,
-                        include.ramp=TRUE, prob.axis.cex=1,
+                        include.ramp=TRUE, ramp.label.cex=0.7, ramp.label.line=0.5, prob.axis.cex=1,
                         include.marker=TRUE,
                         alternative.phenotype.label=NULL, alternative.marker.label=NULL){
   h <- DiploprobReader$new(genomecache)
@@ -40,7 +43,7 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
                            founder.labels=founder.labels, founder.cex=founder.cex,
                            phenotype.lab.cex=phenotype.lab.cex, phenotype.num.cex=phenotype.num.cex, phenotype.num.padj=phenotype.num.padj,
                            phenotype.line=phenotype.line, phenotype.num.line=phenotype.num.line,
-                           include.ramp=include.ramp, prob.axis.cex=prob.axis.cex,
+                           include.ramp=include.ramp, ramp.label.cex=ramp.label.cex, ramp.label.line=ramp.label.line, prob.axis.cex=prob.axis.cex,
                            include.marker=include.marker,
                            alternative.phenotype.label=alternative.phenotype.label)
 }
@@ -53,7 +56,7 @@ prob.heatmap.from.matrix = function(geno.matrix, marker,
                                     founder.labels=NULL, founder.cex=1, 
                                     phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
                                     phenotype.line=NA, phenotype.num.line=NA,
-                                    include.ramp=TRUE, prob.axis.cex=1,
+                                    include.ramp=TRUE, ramp.label.cex=0.7, ramp.label.line=0.5, prob.axis.cex=1,
                                     include.marker=TRUE,
                                     alternative.phenotype.label=NULL){
   if(!is.null(p.value)){
@@ -90,7 +93,8 @@ prob.heatmap.from.matrix = function(geno.matrix, marker,
   op <- par(no.readonly=TRUE)
   oplt <- par()$plt
   cols <- rev(gray(10000:1/10000))
-  par(plt=c(0.15, 0.85, 0.15, 0.8))    ##set the margin  
+  par(fig=c(0.15, 0.85, 0.15, 0.95),
+      mai=c(0.1, 0.05, 1, 0.05))    ##set the margin  
   if(model == "additive"){ z.val <- 2 - probs; z.lim <- c(0, 2) }
   else{ z.val <- 1 - probs; z.lim <- c(0, 1) }
   image(z=z.val, axes=FALSE, col=cols, zlim=z.lim)
@@ -112,18 +116,17 @@ prob.heatmap.from.matrix = function(geno.matrix, marker,
   }
   
   if(include.ramp){
-    ramp.label <- c(ifelse(model == "additive", "Hap", "Dip"),
-                    ifelse(model == "additive", "Dose", "Prob"))
+    ramp.label <- ifelse(model == "additive", "Haplotype Dose", "Diplotype Prob")
     par(fig=c(0.89, 0.92, 0.33, 0.66), 
         mai=c(0.1, 0.05, 0.5, 0.05), 
         new=TRUE)
     if(model == "additive"){ image(y=seq(from=0, to=2, length.out=length(cols)), z=matrix(seq(from=0, to=2, length.out=length(cols)), nrow=1), 
-                                   zlim=c(0, 2), ylim=c(0, 2), axes=FALSE, col=rev(cols), main=ramp.label, cex.main=0.77) } #for the legend 
+                                   zlim=c(0, 2), ylim=c(0, 2), axes=FALSE, col=rev(cols), main="", cex.main=0.77) } #for the legend 
     if(model == "full"){ image(y=seq(from=0, to=1, length.out=length(cols)), z=matrix(seq(from=0, to=1, length.out=length(cols)), nrow=1), 
-                               zlim=c(0, 1), ylim=c(0, 1), axes=FALSE, col=rev(cols), main=ramp.label, cex.main=0.77) }
+                               zlim=c(0, 1), ylim=c(0, 1), axes=FALSE, col=rev(cols), main="", cex.main=0.77) }
     box()
     axis(4, las=1, cex.axis=prob.axis.cex)
-    axis(3, las=1, tick=FALSE, labels="dinosaurs", at=0)
+    mtext(text=ramp.label, side=1, line=ramp.label.line, cex=ramp.label.cex)
     par(op)
   }
   else{ par(plt <- oplt) }

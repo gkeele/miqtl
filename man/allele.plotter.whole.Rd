@@ -14,7 +14,8 @@ allele.plotter.whole(scan.object, just.these.chr = NULL, scale = "Mb",
   set.plot.limit = c(-10, 10), my.legend.cex = 0.6,
   my.legend.pos = "topright", transparency = 0.6, y.max.manual = NULL,
   y.min.manual = NULL, no.title = FALSE, override.title = NULL,
-  add.chr.to.label = FALSE, alternative.labels = NULL)
+  add.chr.to.label = FALSE, alternative.labels = NULL, axis.cram = TRUE,
+  include.x.axis.line = TRUE)
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object that had return.allele.effects=TRUE.}
@@ -51,6 +52,11 @@ formula and sample size.}
 
 \item{alternative.labels}{DEFAULT: NULL. If non-null, specifies alternative labels for the
 founder alleles.}
+
+\item{axis.cram}{DEFAULT: TRUE. This makes the plot much more likely to include all chromosome labels. With small plots, this could
+lead to overlapping labels.}
+
+\item{include.x.axis.line}{DEFAULT: TRUE. IF TRUE, this option adds an x-axis line with ticks between chromosomes.}
 }
 \description{
 This function takes a genome scan object from scan.h2lmm() and plots out allele effect estimates
