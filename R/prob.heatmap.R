@@ -102,7 +102,12 @@ prob.heatmap.from.matrix = function(geno.matrix, marker,
   axis(1, at=0.5, labels=parse(text=paste('"" %<-%', phenotype, '%->% ""')), tick=FALSE, cex.axis=phenotype.lab.cex, line=phenotype.line)
   axis(3, at=c(0, 0.25, 0.5, 0.75, 1), labels=c(s1, s2, s3, s5, s6), cex.axis=phenotype.num.cex, line=phenotype.num.line, padj=phenotype.num.padj)
   if(include.marker){
-    this.title <- ifelse(is.null(p.value), marker, expression(paste(marker, ": ", "-log"[10]*"P", " = ", p.value)))
+    if(is.null(p.value)){
+      this.title <- marker
+    }
+    else{
+      this.title <- bquote(.(paste0(marker, ":")) ~ -log[10]*P ~ .(paste("=", p.value)))
+    }
     title(this.title, line=2.5)
   }
   
