@@ -102,7 +102,7 @@ prob.heatmap.from.matrix = function(geno.matrix, marker,
   axis(1, at=0.5, labels=parse(text=paste('"" %<-%', phenotype, '%->% ""')), tick=FALSE, cex.axis=phenotype.lab.cex, line=phenotype.line)
   axis(3, at=c(0, 0.25, 0.5, 0.75, 1), labels=c(s1, s2, s3, s5, s6), cex.axis=phenotype.num.cex, line=phenotype.num.line, padj=phenotype.num.padj)
   if(include.marker){
-    this.title <- ifelse(is.null(p.value), marker, paste0(marker, ": ", expression("-log"[10]*"P"), " = ", p.value))
+    this.title <- ifelse(is.null(p.value), marker, expression(paste(marker, ": ", "-log"[10]*"P", " = ", p.value)))
     title(this.title, line=2.5)
   }
   
@@ -118,6 +118,7 @@ prob.heatmap.from.matrix = function(geno.matrix, marker,
                                zlim=c(0, 1), ylim=c(0, 1), axes=FALSE, col=rev(cols), main=ramp.label, cex.main=0.77) }
     box()
     axis(4, las=1, cex.axis=prob.axis.cex)
+    axis(3, las=1, tick=FALSE, labels="dinosaurs", at=0)
     par(op)
   }
   else{ par(plt <- oplt) }

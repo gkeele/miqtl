@@ -8,8 +8,9 @@ prob.heatmap(marker, p.value = NULL, genomecache, model = "additive",
   phenotype, phenotype.data, merge.by = "SUBJECT.NAME",
   founder.labels = NULL, founder.cex = 1, phenotype.lab.cex = 1,
   phenotype.num.cex = 1, phenotype.num.padj = NA, phenotype.line = NA,
-  phenotype.num.line = NA, include.ramp = TRUE, include.marker = TRUE,
-  alternative.phenotype.label = NULL)
+  phenotype.num.line = NA, include.ramp = TRUE, prob.axis.cex = 1,
+  include.marker = TRUE, alternative.phenotype.label = NULL,
+  alternative.marker.label = NULL)
 }
 \arguments{
 \item{marker}{A marker that is contained in the genome cache. In general this should be a marker of interest, such as one
@@ -37,6 +38,8 @@ genomes in the genome cache.}
 \item{include.marker}{DEFAULT: TRUE. If TRUE, the marker name is included in the title.}
 
 \item{alternative.phenotype.label}{DEFAULT: NULL. Allows for an alternative label for the phenotype.}
+
+\item{alternative.marker.label}{DEFAULT: NULL. Allows for an alternative label for the marker.}
 }
 \description{
 This function produces a probability heatmap plot, ordered by the phenotype. This gives an idea of what the regression
