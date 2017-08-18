@@ -34,7 +34,7 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
   prob.heatmap.from.matrix(geno.matrix=X, marker=marker, p.value=p.value, model=model, phenotype=phenotype,
                            phenotype.data, merge.by=merge.by, 
                            founder.labels=founder.labels, founder.cex=founder.cex,
-                           phenotype.lab.cex=phenotype.lab.cex, phenotype.num.cex=phenotype.num.cex, phenotype.num.padj=Nphenotype.num.padj,
+                           phenotype.lab.cex=phenotype.lab.cex, phenotype.num.cex=phenotype.num.cex, phenotype.num.padj=phenotype.num.padj,
                            phenotype.line=phenotype.line, phenotype.num.line=phenotype.num.line,
                            include.ramp=include.ramp, include.marker=include.marker,
                            alternative.phenotype.label=alternative.phenotype.label)
