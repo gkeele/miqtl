@@ -294,7 +294,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line)
   
-  label.spots <- min.pos[1] + (max.pos[1] - min.pos[1])/2
+  label.spots <- max.pos[1]/2
   x.tick.spots <- c(0, max.pos[1])
   shift <- max.pos[1]
   if(length(chr.types) > 1){
@@ -305,7 +305,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                 y=c(0, rep(y.max, length(shift:max(this.pos, na.rm=TRUE))), 0), border=NA, col="gray88")
         
       }
-      label.spots <- c(label.spots, min.pos[i] + shift + (max.pos[i] - min.pos[i])/2)
+      label.spots <- c(label.spots, shift + max.pos[i]/2)
       x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
       points(this.pos, outcome[pre.chr==chr.types[i]], type="l", lwd=my.legend.lwd[1], col=main.colors[1])
       shift <- shift + max.pos[i]

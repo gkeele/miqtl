@@ -58,14 +58,12 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
   }
   
   chr <- scan.object$chr
-  
   pos <- ifelse(rep(scale=="Mb", length(scan.object$loci)), scan.object$pos$Mb, scan.object$pos$cM)
 
   ## Grabbing the number of alleles
   if(length(dim(allele.effects)) == 3){ num.founders <- dim(allele.effects)[1] }
   else{ num.founders <- nrow(allele.effects) }
     
-  
   if(!is.null(just.these.chr)){
     keep.chr <- chr %in% just.these.chr
     chr <- chr[keep.chr]
@@ -74,9 +72,25 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
     }
     else{
       allele.effects <- allele.effects[, keep.chr]
-      
     }
     pos <- pos[keep.chr]
+  }
+  
+  ## Removing NAs that start in pos
+  pos.na <- is.na(pos)
+  pos <- pos[!(pos.na)]
+  chr <- chr[!(pos.na)]
+  
+  ## Ordering loci
+  pre.chr <- as.factor(as.numeric(chr))
+  order.i <- order(pre.chr, pos)
+  pre.chr <- pre.chr[order.i]
+  pos <- pos[order.i]
+  if(length(dim(allele.effects)) == 3){
+    allele.effects <- allele.effects[, order.i,]
+  }
+  else{
+    allele.effects <- allele.effects[, order.i]
   }
   
   ## Calculating confidence intervals on the allele effect means
@@ -94,13 +108,6 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
     has.X <- TRUE
     chr[chr=="X"] <- max(as.numeric(unique(chr[chr != "X"]))) + 1
   }
-  
-  pre.chr <- as.factor(as.numeric(chr))
-  order.i <- order(pre.chr, pos)
-  
-  allele.effects <- allele.effects[, order.i]
-  pre.chr <- pre.chr[order.i]
-  pos <- pos[order.i]
   
   min.pos <- tapply(pos, pre.chr, function(x) min(x, na.rm=TRUE))
   max.pos <- tapply(pos, pre.chr, function(x) max(x, na.rm=TRUE))
@@ -161,15 +168,25 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
        xaxt="n", yaxt="n", xlab="", ylab="Additive allele effects", main=this.title,
        frame.plot=FALSE, type="l", cex=0.5, lwd=1.5, col=main.colors[1])
   axis(side=2, at=sort(unique(c(0, y.min, y.min:y.max, y.max))), las=2)
-  label.spots <- min.pos[1] + (max.pos[1] - min.pos[1])/2
+  label.spots <- max.pos[1]/2
   x.tick.spots <- c(0, max.pos[1])
   
   ## Confint for first chr
   if(!is.null(imp.confint.alpha)){
+    first.chr.x <- pos[pre.chr==chr.types[1]]
     for(i in 1:num.founders){
-      polygon(x=c(pos[pre.chr==chr.types[1]], rev(pos[pre.chr==chr.types[1]])),
-              y=c(allele.effect.confint[1, i,  pre.chr==chr.types[1]], rev(allele.effect.confint[2, i, pre.chr==chr.types[1]])),
-              border=NA, col=scales::alpha(main.colors[i], transparency))
+      founder.first.chr.y.max <- allele.effect.confint[2, i,  pre.chr==chr.types[1]]
+      founder.first.chr.y.min <- allele.effect.confint[1, i,  pre.chr==chr.types[1]]
+      if(any(is.na(founder.first.chr.y.max))){
+        polygon.with.nas(x=first.chr.x,
+                         y.ci.max=founder.first.chr.y.max, y.ci.min=founder.first.chr.y.min,
+                         col=scales::alpha(main.colors[i], transparency))
+      }
+      else{
+        polygon(x=c(first.chr.x, rev(first.chr.x)),
+                y=c(founder.first.chr.y.max, rev(founder.first.chr.y.min)),
+                border=NA, col=scales::alpha(main.colors[i], transparency))
+      }
     }
   }
   ## Means for first chr
@@ -188,10 +205,20 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
       
       ## Confint for later chr
       if(!is.null(imp.confint.alpha)){
+        this.chr.x <- pos[pre.chr==chr.types[i]] + shift
         for(j in 1:num.founders){
-          polygon(x=c(pos[pre.chr==chr.types[i]] + shift, rev(pos[pre.chr==chr.types[i]] + shift)),
-                  y=c(allele.effect.confint[1, j,  pre.chr==chr.types[i]], rev(allele.effect.confint[2, j, pre.chr==chr.types[i]])),
-                  border=NA, col=scales::alpha(main.colors[j], transparency))
+          founder.this.chr.y.max <- allele.effect.confint[2, j,  pre.chr==chr.types[i]]
+          founder.this.chr.y.min <- allele.effect.confint[1, j,  pre.chr==chr.types[i]]
+          if(any(is.na(founder.this.chr.y.max))){
+            polygon.with.nas(x=this.chr.x,
+                             y.ci.max=founder.this.chr.y.max, y.ci.min=founder.this.chr.y.min,
+                             col=scales::alpha(main.colors[j], transparency))
+          }
+          else{
+            polygon(x=c(this.chr.x, rev(this.chr.x)),
+                    y=c(founder.this.chr.y.max, rev(founder.this.chr.y.min)),
+                    border=NA, col=scales::alpha(main.colors[j], transparency))
+          }
         }
       }
       ## Means for later chr
@@ -199,7 +226,7 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
         points(x=pos[pre.chr==chr.types[i]] + shift, y=allele.effects[j,  pre.chr==chr.types[i]],
                type="l", lwd=my.lwd[j], col=main.colors[j])
       }
-      label.spots <- c(label.spots, min.pos[i] + shift + (max.pos[i] - min.pos[i])/2)
+      label.spots <- c(label.spots, shift + max.pos[i]/2)
       x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
       shift <- shift + max.pos[i]
     }
@@ -245,3 +272,29 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
            col=main.colors, bty=my.bty, cex=my.legend.cex)
   }
 }
+
+
+polygon.with.nas <- function(x, y.ci.max, y.ci.min, col){
+  enc <- rle(!is.na(y.ci.max))
+  endIdxs <- cumsum(enc$lengths)
+  for(i in 1:length(enc$lengths)){
+    if(enc$values[i]){
+      endIdx <- endIdxs[i]
+      startIdx <- endIdx - enc$lengths[i] + 1
+      
+      subx <- x[startIdx:endIdx]
+      suby.max <- y.ci.max[startIdx:endIdx]
+      suby.min <- y.ci.min[startIdx:endIdx]
+
+      reduced.x <- c(subx, rev(subx))
+      reduced.y <- c(suby.max, rev(suby.min))
+      
+      polygon(x=reduced.x, y=reduced.y, col=col, border=NA)
+    }
+  }
+}
+
+
+
+
+
