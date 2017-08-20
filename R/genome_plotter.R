@@ -192,6 +192,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  use.legend=TRUE, main="",
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.pos="topright",
                                  y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1,
+                                 my.x.axis.cex=0.7,
                                  no.title=FALSE, override.title=NULL, my.title.line=NA, title.cex=1,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                  add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE){
@@ -388,11 +389,11 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     even.axis.label <- axis.label[(1:length(axis.label) %% 2) == 0]
     even.label.spots <- label.spots[(1:length(label.spots) %% 2) == 0]
     
-    axis(side=1, tick=FALSE, line=NA, at=odd.label.spots, labels=odd.axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
-    axis(side=1, tick=FALSE, line=NA, at=even.label.spots, labels=even.axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+    axis(side=1, tick=FALSE, line=NA, at=odd.label.spots, labels=odd.axis.label, cex.axis=my.x.axis.cex, padj=-1.5, xpd=TRUE)
+    axis(side=1, tick=FALSE, line=NA, at=even.label.spots, labels=even.axis.label, cex.axis=my.x.axis.cex, padj=-1.5, xpd=TRUE)
   }
   else{
-    axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+    axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=my.x.axis.cex, padj=-1.5, xpd=TRUE)
   }
   if(use.legend){
     legend(my.legend.pos, legend=names(scan.list), 
