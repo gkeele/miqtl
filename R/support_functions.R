@@ -74,7 +74,7 @@ ci.median <- function(x, conf=0.95){ # from R/asbio
 #' @export
 ci.mean <- function(x, alpha=0.05, na.rm=TRUE){
   n <- sum(!is.na(x))
-  if(n != 0){
+  if(n > 1){ # need more than one observation for confint
     n <- ifelse(n != 0, n, NA)
     sd <- sd(x, na.rm=na.rm)
     se <- sd/sqrt(n)
