@@ -79,7 +79,7 @@ ci.mean <- function(x, alpha=0.05, na.rm=TRUE){
     sd <- sd(x, na.rm=na.rm)
     se <- sd/sqrt(n)
     er <- qt(1-alpha/2, df=n-1, lower.tail=FALSE)*se
-    ci <- c(mean(x)-er, mean(x)+er)
+    ci <- c(mean(x, na.rm=TRUE)-er, mean(x, na.rm=TRUE)+er)
   }
   else{
     ci <- rep(NA, 2)
