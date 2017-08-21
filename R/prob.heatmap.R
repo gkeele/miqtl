@@ -131,7 +131,7 @@ prob.heatmap.from.matrix = function(geno.matrix, marker,
     mtext(text=ramp.label, side=1, line=ramp.label.line, cex=ramp.label.cex)
     par(op)
   }
-  else{ par(plt <- oplt) }
+  #else{ par(plt <- oplt) }
 }
 
 
