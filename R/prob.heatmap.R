@@ -29,7 +29,7 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
                         phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
                         phenotype.line=NA, phenotype.num.line=NA,
                         include.ramp=TRUE, ramp.label.cex=0.7, ramp.label.line=0.5, prob.axis.cex=1,
-                        include.marker=TRUE,
+                        include.marker=TRUE, marker.line=1,
                         alternative.phenotype.label=NULL, alternative.marker.label=NULL){
   h <- DiploprobReader$new(genomecache)
   X <- h$getLocusMatrix(locus=marker, model=model)
@@ -44,12 +44,12 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
                            phenotype.lab.cex=phenotype.lab.cex, phenotype.num.cex=phenotype.num.cex, phenotype.num.padj=phenotype.num.padj,
                            phenotype.line=phenotype.line, phenotype.num.line=phenotype.num.line,
                            include.ramp=include.ramp, ramp.label.cex=ramp.label.cex, ramp.label.line=ramp.label.line, prob.axis.cex=prob.axis.cex,
-                           include.marker=include.marker,
+                           include.marker=include.marker, marker.line=marker.line,
                            alternative.phenotype.label=alternative.phenotype.label)
 }
 
 #' @export
-prob.heatmap.from.matrix = function(geno.matrix, marker,
+prob.heatmap.from.matrix = function(geno.matrix, marker, marker.line=1,
                                     p.value=NULL, model="additive",
                                     phenotype, phenotype.data,
                                     merge.by="SUBJECT.NAME", 
@@ -105,7 +105,7 @@ prob.heatmap.from.matrix = function(geno.matrix, marker,
        labels=rev(founder.labels), cex.axis=founder.cex,
        lty=0, srt=90, las=2) # add txt on the strain 
   phenotype <- ifelse(is.null(alternative.phenotype.label), phenotype, alternative.phenotype.label)
-  axis(1, at=0.5, labels=parse(text=paste('"" %<-%', phenotype, '%->% ""')), tick=FALSE, cex.axis=phenotype.lab.cex, line=phenotype.line)
+  axis(1, at=0.5, labels=parse(text=paste('"-" %<-%', phenotype, '%->% "+"')), tick=FALSE, cex.axis=phenotype.lab.cex, line=phenotype.line)
   axis(3, at=c(0, 0.25, 0.5, 0.75, 1), labels=c(s1, s2, s3, s5, s6), cex.axis=phenotype.num.cex, line=phenotype.num.line, padj=phenotype.num.padj)
   if(include.marker){
     if(is.null(p.value)){
@@ -114,7 +114,7 @@ prob.heatmap.from.matrix = function(geno.matrix, marker,
     else{
       this.title <- bquote(.(paste0(marker, ":")) ~ -log[10]*P ~ .(paste("=", p.value)))
     }
-    title(this.title, line=2.5)
+    title(this.title, line=marker.line)
   }
   
   if(include.ramp){
