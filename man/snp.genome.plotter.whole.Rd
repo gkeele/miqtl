@@ -9,7 +9,7 @@ snp.genome.plotter.whole(snp.scan, just.these.chr = NULL, scale = "Mb",
   hard.thresholds = NULL, thresholds.col = "red",
   thresholds.legend = NULL, thresholds.lty = 2, thresholds.lwd = 1,
   my.legend.cex = 0.6, my.legend.pos = "topright", my.bty = "n",
-  add.chr.to.label = FALSE, axis.cram = TRUE)
+  add.chr.to.label = FALSE, axis.cram = TRUE, include.x.axis.line = TRUE)
 }
 \arguments{
 \item{snp.scan}{An imputed.snp.scan.h2lmm() object.}
@@ -33,6 +33,14 @@ snp.genome.plotter.whole(snp.scan, just.these.chr = NULL, scale = "Mb",
 \item{my.legend.cex}{DEFAULT: 0.6. Specifies the size of the text in the legend.}
 
 \item{my.legend.pos}{DEFAULT: "topright". Specified position of the legend on the plot.}
+
+\item{add.chr.to.label}{DEFAULT: FALSE. If TRUE, adds "Chr" before every chromosome label. If FALSE, "Chr" is added as an axis
+label under the y-axis.}
+
+\item{axis.cram}{DEFAULT: TRUE. This makes the plot much more likely to include all chromosome labels. With small plots, this could
+lead to overlapping labels.}
+
+\item{include.x.axis.line}{DEFAULT: TRUE. IF TRUE, this option adds an x-axis line with ticks between chromosomes.}
 }
 \description{
 This function takes the genome scan output from imputed.snp.scan.h2lmm() and plots the whole genome or single chromosome zoom-ins.

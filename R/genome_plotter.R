@@ -426,6 +426,11 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
 #' @param thresholds.legend DEFAULT: NULL. If non-NULL, string arguments used as labels in thresholds legend. If NULL,
 #' @param my.legend.cex DEFAULT: 0.6. Specifies the size of the text in the legend.
 #' @param my.legend.pos DEFAULT: "topright". Specified position of the legend on the plot.
+#' @param add.chr.to.label DEFAULT: FALSE. If TRUE, adds "Chr" before every chromosome label. If FALSE, "Chr" is added as an axis
+#' label under the y-axis.
+#' @param axis.cram DEFAULT: TRUE. This makes the plot much more likely to include all chromosome labels. With small plots, this could
+#' lead to overlapping labels.
+#' @param include.x.axis.line DEFAULT: TRUE. IF TRUE, this option adds an x-axis line with ticks between chromosomes.
 #' @export
 #' @examples snp.genome.plotter.whole()
 snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
@@ -433,7 +438,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
                                      y.max.manual=NULL, title="", alt.col=NULL,
                                      hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL, thresholds.lty=2, thresholds.lwd=1,
                                      my.legend.cex=0.6, my.legend.pos="topright", my.bty="n",
-                                     add.chr.to.label=FALSE, axis.cram=TRUE){
+                                     add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE){
   
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
   main.object <- snp.scan
@@ -484,13 +489,15 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
 
   x.max <- sum(max.pos)+(length(chr.types)-1)
   plot(1,
-       xlim=c(shift.left, x.max),
+       xlim=c(0, x.max),
        ylim=c(-0.1, y.max),
        xaxt="n", yaxt="n", xlab="", ylab=this.ylab, main=this.title,
        frame.plot=FALSE, type="n")
   axis(side=2, at=0:y.max, las=2)
   
-  label.spots <- min.pos[1] + (max.pos[1] - min.pos[1])/2
+  label.spots <- max.pos[1]/2
+  x.tick.spots <- c(0, max.pos[1])
+  
   shift <- max.pos[1]
   if(length(chr.types) > 1){
     for(i in 2:length(chr.types)){
@@ -499,7 +506,8 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
         polygon(x=c(min(this.pos), min(this.pos):max(this.pos), max(this.pos)), 
                 y=c(0, rep(y.max, length(min(this.pos):max(this.pos))), 0), border=NA, col="gray88")
       }
-      label.spots <- c(label.spots, min.pos[i] + shift + (max.pos[i] - min.pos[i])/2)
+      label.spots <- c(label.spots, shift + max.pos[i]/2)
+      x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
 
       shift <- shift + max.pos[i]
     }
@@ -525,6 +533,12 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
   if(!has.X){
     axis.label <- chr.types
   }
+  
+  if(include.x.axis.line){
+    axis(side=1, tick=TRUE, line=NA, at=x.tick.spots, 
+         labels=NA, xpd=TRUE)
+  }
+  
   if(add.chr.to.label){
     axis.label <- paste("Chr", axis.label)
   }

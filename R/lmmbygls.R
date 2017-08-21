@@ -237,6 +237,22 @@ lmmbygls <- function(formula, data=NULL,
   return(fit)
 }
 
+## Wrapper for lmmbygls when you have replicate and just little K (genome by genome)
+## Wrote this for Yanwei to use with his merge analysis
+#' @export
+lmmbygls.replicates <- function(formula, data, little.K, pheno.id="SUBJECT.NAME", geno.id, ...){
+  use.data <- data[data[,geno.id] %in% colnames(K),]
+  use.K <- K[colnames(K) %in% data[,geno.id], colnames(K) %in% data[,geno.id]]
+  
+  # Making n x n K
+  use.data[,geno.id] <- as.character(use.data[,geno.id])
+  Z <- model.matrix(process.random.formula(geno.id=geno.id), data=use.data)
+  big.K <- Z %*% use.K %*% t(Z)
+  rownames(big.K) <- colnames(big.K) <- as.character(use.data[,pheno.id])
+  lmmbygls.fit <- lmmbygls(formula=formula, data=use.data, K=big.K,
+                           pheno.id=pheno.id, ...)
+  return(lmmbygls.fit)
+}
 
 
 
