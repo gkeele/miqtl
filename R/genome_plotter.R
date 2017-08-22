@@ -435,7 +435,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
 #' @examples snp.genome.plotter.whole()
 snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
                                      scale="Mb",
-                                     y.max.manual=NULL, title="", alt.col=NULL,
+                                     y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1,
+                                     title="", alt.col=NULL,
                                      hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL, thresholds.lty=2, thresholds.lwd=1,
                                      my.legend.cex=0.6, my.legend.pos="topright", my.bty="n",
                                      add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE){
@@ -491,9 +492,10 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
   plot(1,
        xlim=c(0, x.max),
        ylim=c(-0.1, y.max),
-       xaxt="n", yaxt="n", xlab="", ylab=this.ylab, main=this.title,
+       xaxt="n", yaxt="n", xlab="", ylab="", main=this.title,
        frame.plot=FALSE, type="n")
-  axis(side=2, at=0:y.max, las=2)
+  axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
+  mtext(text=this.ylab, side=2, line=my.y.line)
   
   label.spots <- max.pos[1]/2
   x.tick.spots <- c(0, max.pos[1])
@@ -603,11 +605,12 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
 #' @examples snp.genome.plotter.w.r2()
 snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
                                     scale="Mb", zoom.in=FALSE, zoom.in.by=0.1,
-                                    y.max.manual=NULL, title="", alt.col=NULL, this.cex=1,
+                                    y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1,
+                                    title="", alt.col=NULL, this.cex=1,
                                     hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                     my.legend.cex=0.6, my.legend.pos="topleft", thresholds.lty=2, thresholds.lwd=1, my.bty="n", 
                                     r2.bounds=NULL, bounds.col="gray", high.color="red", low.color="blue", add.outline=FALSE,
-                                    include.ramp=TRUE){
+                                    include.ramp=TRUE, ramp.cex=0.7){
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
   main.object <- snp.scan
 
@@ -679,8 +682,10 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
   plot(0, pch='',
        xlim=c(min.pos, max.pos),
        ylim=c(0, y.max+1),
-       yaxt="n", xlab=this.xlab, ylab=this.ylab, main=this.title,
+       yaxt="n", xlab=this.xlab, ylab="", main=this.title,
        frame.plot=FALSE)
+  axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
+  mtext(text=this.ylab, side=2, line=my.y.line)
   if(!is.null(r2.bounds)){
     polygon(c(rep(low.locus.pos, 2), rep(high.locus.pos, 2)), c(0, rep(y.max, 2), 0), col=bounds.col, border=NA)
   }
@@ -706,7 +711,8 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
   }
   
   if(include.ramp){
-    plotrix::color.legend(xl=floor(0.75*max.pos), yb=y.max, xr=max.pos, yt=y.max+0.5, legend=c(0, 0.25, 0.5, 0.75, 1), rect.col=these.colors, align="rb", gradient="x")  
+    plotrix::color.legend(xl=floor(0.75*max.pos), yb=y.max, xr=max.pos, yt=y.max+0.5, cex=ramp.cex,
+                          legend=c(0, 0.5, 1), rect.col=these.colors, align="rb", gradient="x")  
     text(x=(max.pos - floor(0.75*max.pos))/2 + floor(0.75*max.pos),
          y=y.max+0.75,
          labels="r2 with peak SNP")
@@ -780,6 +786,7 @@ single.chr.plotter.w.ci <- function(scan.object, qtl.ci.object,
        ylim=c(0, y.max), 
        xlab=this.xlab, ylab=this.ylab, main=main.title,
        frame.plot=FALSE, type="l", pch=20, cex=0.5, las=1, cex.main=0.8)
+  
   polygon(c(rep(low.locus.pos, 2), rep(high.locus.pos, 2)), c(0, rep(ceiling(max(outcome)), 2), 0), col="gray", border=NA)
   peaks <- qtl.ci.object$peak.loci.pos[[scale]]
   
