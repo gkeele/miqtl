@@ -60,6 +60,19 @@ get.gev.thresholds <- function(threshold.scans, use.lod=FALSE, percentile=0.95){
 }
 
 #' @export
+get.gev.padjust <- function(p.value, threshold.scans, use.lod = FALSE){
+  if(!use.lod){
+    extreme.values <- -log10(threshold.scans$max.statistics$p.value)
+  }
+  else{
+    extreme.values <- threshold.scans$max.statistics$LOD
+  }
+  evd.pars <- as.numeric(evir::gev(extreme.values)$par.est)
+  adj.p <- evir::dgev(x=p.value, xi = evd.pars[1], sigma = evd.pars[2], mu = evd.pars[3])
+  return(adj.p)
+}
+
+#' @export
 ci.median <- function(x, conf=0.95){ # from R/asbio
   n <- nrow(as.matrix(x))
   if(qbinom((1 - conf)/2, n, 0.5) == 0){ stop("CI not calculable") }
