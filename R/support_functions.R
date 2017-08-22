@@ -170,7 +170,7 @@ straineff.mapping.matrix <- function(M=8){
 }
 
 run.imputation <- function(diplotype.probs, impute.map){
-  if(!all(impute.map[1] == impute.map[2])){
+  if(!all(as.character(impute.map[,1]) == as.character(impute.map[,2]))){
     pheno.id <- names(impute.map)[1]
     geno.id <- names(impute.map)[2]
     if(pheno.id == geno.id){ geno.id <- paste0(geno.id, "_2"); names(impute.map)[2] <- geno.id }
