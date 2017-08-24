@@ -40,7 +40,8 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
                                  use.legend=TRUE, main="", my.bty="n", my.lwd=rep(1.25, 8),
                                  set.plot.limit=c(-10, 10), # Null places no limit on y-axis
                                  my.legend.cex=0.6, my.legend.pos="topright", transparency=0.6,
-                                 y.max.manual=NULL, y.min.manual=NULL, no.title=FALSE, override.title=NULL,
+                                 y.max.manual=NULL, y.min.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.9,
+                                 no.title=FALSE, override.title=NULL,
                                  add.chr.to.label=FALSE, alternative.labels=NULL,
                                  axis.cram=TRUE, include.x.axis.line=TRUE)
 {
@@ -167,7 +168,8 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
        ylim=c(y.min, y.max), 
        xaxt="n", yaxt="n", xlab="", ylab="Additive allele effects", main=this.title,
        frame.plot=FALSE, type="l", cex=0.5, lwd=1.5, col=main.colors[1])
-  axis(side=2, at=sort(unique(c(0, y.min, y.min:y.max, y.max))), las=2)
+  axis(side=2, at=sort(unique(c(0, y.min, y.min:y.max, y.max))), las=2, cex.axis=my.y.axis.cex)
+  mtext(text="Additive allele effects", side=2, line=my.y.line, cex=my.y.lab.cex)
   label.spots <- max.pos[1]/2
   x.tick.spots <- c(0, max.pos[1])
   

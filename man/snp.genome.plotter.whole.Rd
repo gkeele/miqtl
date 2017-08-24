@@ -4,9 +4,10 @@
 \alias{snp.genome.plotter.whole}
 \title{Plot whole genome and single chromosome windows of a SNP-based genome scan}
 \usage{
-snp.genome.plotter.whole(snp.scan, just.these.chr = NULL, scale = "Mb",
-  y.max.manual = NULL, my.y.line = 2, my.y.axis.cex = 1, title = "",
-  alt.col = NULL, hard.thresholds = NULL, thresholds.col = "red",
+snp.genome.plotter.whole(snp.scan, just.these.chr = NULL,
+  point.col = "black", scale = "Mb", y.max.manual = NULL, my.y.line = 2,
+  my.y.axis.cex = 1, title = "", override.title = NULL, alt.col = NULL,
+  hard.thresholds = NULL, thresholds.col = "red",
   thresholds.legend = NULL, thresholds.lty = 2, thresholds.lwd = 1,
   my.legend.cex = 0.6, my.legend.pos = "topright", my.bty = "n",
   add.chr.to.label = FALSE, axis.cram = TRUE, include.x.axis.line = TRUE)
