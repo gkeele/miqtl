@@ -433,7 +433,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
 #' @param include.x.axis.line DEFAULT: TRUE. IF TRUE, this option adds an x-axis line with ticks between chromosomes.
 #' @export
 #' @examples snp.genome.plotter.whole()
-snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
+snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="black",
                                      scale="Mb",
                                      y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1,
                                      title="", alt.col=NULL,
@@ -448,7 +448,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL,
   this.ylab <- expression("-log"[10]*"P")
   
   # Allowing for special colors
-  if(is.null(alt.col)){ use.col <- rep("black", length(outcome)) }
+  if(is.null(alt.col)){ use.col <- rep(point.col, length(outcome)) }
   if(!is.null(alt.col)){ use.col <- alt.col }
   chr <- main.object$chr
   has.X <- FALSE
