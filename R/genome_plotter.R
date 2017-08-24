@@ -436,7 +436,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
 snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="black",
                                      scale="Mb",
                                      y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1,
-                                     title="", alt.col=NULL,
+                                     title="", override.title=NULL, alt.col=NULL,
                                      hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL, thresholds.lty=2, thresholds.lwd=1,
                                      my.legend.cex=0.6, my.legend.pos="topright", my.bty="n",
                                      add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE){
@@ -484,9 +484,14 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="b
   }
   
   shift.left <- min(pos[chr==chr.types[1]])
-  this.title <- c(title,
-                  paste0(main.object$formula, " + SNP (", main.object$model.type, ")"),
-                  paste("n =", length(main.object$fit0$y)))
+  if(is.null(override.title)){
+    this.title <- c(title,
+                    paste0(main.object$formula, " + SNP (", main.object$model.type, ")"),
+                    paste("n =", length(main.object$fit0$y)))
+  }
+  else{
+    this.title <- override.title
+  }
 
   x.max <- sum(max.pos)+(length(chr.types)-1)
   plot(1,
