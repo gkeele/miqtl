@@ -74,8 +74,9 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
   K <- data.and.K$K
   
   if(!is.null(just.these.loci)){
-    loci <- loci[loci %in% just.these.loci]
-    loci.chr <- loci.chr[loci %in% just.these.loci]
+    keep <- loci %in% just.these.loci
+    loci <- loci[keep]
+    loci.chr <- loci.chr[keep]
   }
   
   formula.string <- Reduce(paste, deparse(formula))
@@ -187,8 +188,8 @@ make.imputed.design.matrix.list.for.all.loci <- function(loci, loci.chr, n, mode
   for(i in 1:p){
     probs <- h$getLocusMatrix(locus=loci[i], model="full")
     X.list[[i]] <- extract.imputed.design.matrix.from.doqtl.genotype(probs=probs, allele.dir=allele.dir, 
-                                                                       snp=loci[i], snp.chr=loci.chr[i], model=model, 
-                                                                       founders=founders, mapping.matrix=mapping.matrix)
+                                                                     snp=loci[i], snp.chr=loci.chr[i], model=model, 
+                                                                     founders=founders, mapping.matrix=mapping.matrix)
   }
   names(X.list) <- loci
     
