@@ -141,6 +141,7 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
                  model.type=model,
                  X.list=X.list,
                  null.data=null.data)
+  if(length(just.these.loci) == 1){ output$fit1 <- fit1 }
   return(output)
 }
 
