@@ -20,6 +20,8 @@ on median are plotted.}
 
 \item{scale}{DEFAULT: "Mb". Specifies the scale of genomic position to be plotted. Either Mb or cM can be used.}
 
+\item{main.col}{DEFAULT: "black". The color of the main association score to be plotted.}
+
 \item{median.band.col}{DEFAULT: "gray88". The color of the 95\% confident band plotted around the median.}
 
 \item{main}{DEFAULT: "". Adds a title above the model.}
@@ -38,8 +40,6 @@ on median are plotted.}
 
 \item{thresholds.legend}{DEFAULT: NULL. If non-NULL, string arguments used as labels in thresholds legend. If NULL,
 no threshols legend is used.}
-
-\item{main.colors}{DEFAULT: "black". The color of the main association score to be plotted.}
 }
 \description{
 This function takes the genome scan output from scan.h2lmm() and plots the portion that corresponds to a single chromosome.

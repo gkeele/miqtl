@@ -57,7 +57,7 @@ genome.plotter.to.pdf <- function(scan.object, chr=c(1:19, "X"), use.lod=FALSE,
 #' @param chr The chromosome to be plotted.
 #' @param use.lod DEFAULT: FALSE. Plots either the LOD score or the -log10 p-value.
 #' @param scale DEFAULT: "Mb". Specifies the scale of genomic position to be plotted. Either Mb or cM can be used.
-#' @param main.colors DEFAULT: "black". The color of the main association score to be plotted.
+#' @param main.col DEFAULT: "black". The color of the main association score to be plotted.
 #' @param median.band.col DEFAULT: "gray88". The color of the 95\% confident band plotted around the median.
 #' @param main DEFAULT: "". Adds a title above the model.
 #' @param no.title DEFAULT: FALSE. If TRUE, no title is printed.
@@ -400,6 +400,188 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
            lty=rep(1, length(scan.list)), lwd=my.legend.lwd, 
            col=main.colors[1:length(scan.list)], bty="n", cex=my.legend.cex)
   }
+  if(!is.null(hard.thresholds)){
+    for(i in 1:length(hard.thresholds)){
+      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=2)
+    }
+  }
+  if(!is.null(thresholds.legend)){
+    legend("topleft", legend=thresholds.legend, col=thresholds.col, lty=rep(2, length(thresholds.legend)),
+           bty="n", cex=my.legend.cex)
+  }
+}
+
+#' Plot user-specified windows of haplotype-based and snp-based genome scans
+#'
+#' This function takes genome scan association outputs and plots the portion that corresponds to a region of a single chromosome.
+#' When multiple imputations are used, includes the 95\% confidence band on the median.
+#'
+#' @param haplotype.association DEFAULT: NULL. A list of scan.h2lmm() objects (ROP or multiple imputations). If multiple imputations, median and confidence interval 
+#' on median are plotted. If NULL, presumably only SNP scans will be plotted.
+#' @param snp.association DEFAULT: NULL. A list of imputed.snp.scan.h2lmm() objects. If NULL, presumably only haplotype-based scans will be plotted.
+#' @param use.lod DEFAULT: FALSE. Plots either the LOD score or the -log10 p-value.
+#' @param chr The chromosome to be plotted.
+#' @param scale DEFAULT: "Mb". Specifies the scale of genomic position to be plotted. Either Mb or cM can be used.
+#' @param region.min DEFAULT: NULL. The lower bound of the region to be plotted. Should match the scale. If NULL, defaults to the minimum of the specified chromosome.
+#' @param region.max DEFAULT: NULL. The upper bound of the region to be plotted. Should match the scale. If NULL, defaults to the maximum of the specified chromosome.
+#' @param haplotype.col DEFAULT: "black". The color of the haplotype-based association score to be plotted.
+#' @param snp.col DEFAULT: "black". The color of the SNP association score to be plotted.
+#' @param median.band.col DEFAULT: "gray88". The color of the 95\% confident band plotted around the median.
+#' @param main DEFAULT: "". Adds a title above the model.
+#' @param no.title DEFAULT: FALSE. If TRUE, no title is printed.
+#' @param override.title DEFAULT: NULL. If a string is specified, it is included on plot without any of the default automated title.
+#' @param y.max.manual DEFAULT: NULL. Manually adds a max y-value. Allows multiple genome scans to easily be on the same scale.
+#' @param my.legend.cex DEFAULT: 0.6. Specifies the size of the text in the legend.
+#' @param hard.thresholds DEFAULT: NULL. Specify one or more horizontal threshold lines.
+#' @param thresholds.col DEFAULT: "red". Set the colors of the specified thresholds.
+#' @param thresholds.legend DEFAULT: NULL. If non-NULL, string arguments used as labels in thresholds legend. If NULL,
+#' no threshols legend is used.
+#' @export
+#' @examples genome.plotter.region()
+genome.plotter.region <- function(haplotype.association=NULL, snp.association=NULL, use.lod=FALSE,
+                                  chr, scale=c("Mb", "cM"), region.min=NULL, region.max=NULL,
+                                  haplotype.col=c("black", "red"), snp.col=c("black"), median.band.col="gray88",
+                                  main="", no.title=FALSE, override.title=NULL,
+                                  y.max.manual=NULL, my.legend.cex=0.6,
+                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL){
+  scale <- scale[1]
+  MI <- all.CI <- CI <- NULL
+  
+  if(is.null(haplotype.association) & is.null(snp.association)){
+    stop("No associations included in arguments to genome.plotter.region()", call.=FALSE)
+  }
+  if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
+  
+  this.ylab <- ifelse(use.lod, "LOD", expression("-log"[10]*"P"))
+  outcome.type <- ifelse(use.lod, "LOD", "p.value")
+  
+  ## Grabbing index of association and positions to plot
+  if(!is.null(haplotype.association)){
+    check.scan <- haplotype.association[[1]]
+  }
+  else{
+    check.scan <- snp.association[[1]]
+  }
+  keep.chr <- check.scan$chr == chr
+  if(is.null(region.min)){
+    region.min <- min(check.scan$pos[scale], na.rm=TRUE)
+  }
+  if(is.null(region.max)){
+    region.max <- max(check.scan$pos[scale], na.rm=TRUE)
+  }
+  keep.region <- check.scan$pos[scale] >= region.min & check.scan$pos[scale] <= region.max
+  keep <- (keep.chr + keep.region) == 2
+  
+  pos <- check.scan$pos[scale][keep]
+  order.i <- order(pos)
+  pos <- pos[order.i]
+  
+  y.max <- 0
+  if(is.null(y.max.manual)){ y.max <- y.max.manual }
+  else{
+    if(!is.null(haplotype.association)){
+      for(i in 1:length(haplotype.association)){
+        this.outcome <- haplotype.association[[i]][outcome.type][keep]
+        if(!use.lod){ this.outcome <- -log10(this.outcome) }
+        y.max <- max(y.max, max(this.outcome))
+      }
+    }
+    if(!is.null(snp.association)){
+      for(i in 1:length(snp.association)){
+        if(!use.lod){ this.outcome <- -log10(this.outcome) }
+        y.max <- max(y.max, max(this.outcome))
+      }
+    }
+    
+    
+  }
+
+  
+  ## Plotting
+  plot(1, 
+       xlim=c(region.min, region.max), 
+       ylim=c(0, y.max), 
+       xlab=this.xlab, ylab=this.ylab, main=main.title,
+       frame.plot=FALSE, type="l", pch=20, cex=0.5, las=1, cex.main=0.8)
+  
+  if(!is.null(haplotype.association)){
+    for(i in length(haplotype.association)){
+      if(!is.null(haplotype.association[[i]]$MI.LOD)){
+        if(use.lod){
+          all.MI <- haplotype.association[[i]]$MI.LOD
+        }
+        else{
+          all.MI <- -log10(haplotype.association[[i]]$MI.p.value)
+        }
+        # Finding the 95% CI on the median
+        all.CI <- apply(all.MI, 2, function(x) ci.median(x, conf=0.95))
+        CI <- all.CI[,scan.object$chr == chr]
+      }
+      this.outcome <- haplotype.association[[i]][outcome.type][keep][order.i]
+      if(!use.lod){ this.outcome <- -log10(this.outcome) }
+      lines(pos, this.outcome, col=haplotype.col[i])
+    }
+  }
+  if(!is.null(snp.association)){
+    for(i in length(snp.association)){
+      this.outcome <- snp.association[[i]][outcome.type][keep][order.i]
+      if(!use.lod){ this.outcome <- -log10(this.outcome) }
+      points(pos, this.outcome, col=snp.col[i])
+    }
+  }
+  
+  if(use.lod){
+    all.outcome <- scan.object$LOD
+    outcome <- all.outcome[scan.object$chr == chr]
+    plot.this <- "LOD"
+    this.ylab <- "LOD"
+
+  }
+  else{
+    all.outcome <- -log10(scan.object$p.value)
+    outcome <- all.outcome[scan.object$chr == chr]
+    plot.this <- "p.value"
+    this.ylab <- expression("-log"[10]*"P")
+
+  }
+  
+  order.i <- order(pos)
+  
+  outcome <- outcome[order.i]
+  pos <- pos[order.i]
+  
+  min.pos <- min(pos)
+  max.pos <- max(pos)
+  
+  
+  # Finding max y of plot window
+  y.max <- ceiling(max(all.outcome, hard.thresholds, all.CI[2,])) 
+  if(!is.null(y.max.manual)){
+    y.max <- y.max.manual
+  }
+  
+  if(!is.null(scan.object$locus.effect.type)){
+    locus.effect.type <- ifelse(scan.object$locus.effect.type == "fixed", "fixef", "ranef")
+    locus.term <- paste("locus", locus.effect.type, sep=".")
+  }
+  else{
+    locus.term <- "locus"
+  }
+  this.title <- c(main, paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"))
+  if(no.title){ this.title <- NULL }
+  if(!is.null(override.title)){ this.title <- override.title }
+  
+  plot(pos, outcome, 
+       xlim=c(0, max.pos), 
+       ylim=c(0, y.max), 
+       yaxt="n", xlab=paste("Chr", chr, paste0("(", scale, ")")), ylab=this.ylab, main=this.title,
+       frame.plot=FALSE, type="l", lwd=1.5, col=main.col)
+  axis(side=2, at=0:y.max, las=2)
+  if(!is.null(CI)){
+    polygon(x=c(pos, rev(pos)), y=c(CI[1,], rev(CI[2,])), density=NA, col=median.band.col)
+  }
+  points(pos, outcome, type="l", pch=20, cex=0.5, lwd=1.5, col=main.col)
+  
   if(!is.null(hard.thresholds)){
     for(i in 1:length(hard.thresholds)){
       abline(h=hard.thresholds[i], col=thresholds.col[i], lty=2)

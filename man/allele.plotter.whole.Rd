@@ -14,7 +14,7 @@ allele.plotter.whole(scan.object, just.these.chr = NULL, scale = "Mb",
   set.plot.limit = c(-10, 10), my.legend.cex = 0.6,
   my.legend.pos = "topright", transparency = 0.6, y.max.manual = NULL,
   y.min.manual = NULL, my.y.line = 2, my.y.axis.cex = 1,
-  my.y.lab.cex = 0.9, no.title = FALSE, override.title = NULL,
+  my.y.lab.cex = 0.5, no.title = FALSE, override.title = NULL,
   add.chr.to.label = FALSE, alternative.labels = NULL, axis.cram = TRUE,
   include.x.axis.line = TRUE)
 }

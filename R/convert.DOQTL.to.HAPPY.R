@@ -130,11 +130,19 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
   #-----------------------------
   # Rename map data columns
   #-----------------------------
-  colnames(map)[colnames(map) == map.locus_name.colname] <- "marker"
-  colnames(map)[colnames(map) == map.chr.colname] <- "chr"
-  colnames(map)[colnames(map) == map.physical_dist.colname] <- "bp"
-  colnames(map)[colnames(map) == map.genetic_dist.colname] <- "pos"
-  map <- map[,c("marker", "chr", "bp", "pos")]
+  marker <- map[,map.locus_name.colname]
+  chr <- map[,map.chr.colname]
+  bp <- map[,map.physical_dist.colname]
+  pos <- map[,map.genetic_dist.colname]
+  
+  map <- cbind(marker, chr, bp, pos)
+  colnames(map) <- c("marker", "chr", "bp", "pos")
+  
+  # colnames(map)[colnames(map) == map.locus_name.colname] <- "marker"
+  # colnames(map)[colnames(map) == map.chr.colname] <- "chr"
+  # colnames(map)[colnames(map) == map.physical_dist.colname] <- "bp"
+  # colnames(map)[colnames(map) == map.genetic_dist.colname] <- "pos"
+  # map <- map[,c("marker", "chr", "bp", "pos")]
   
   #-----------------------------
   # Combining data of individuals
