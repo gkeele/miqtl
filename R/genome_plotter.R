@@ -440,119 +440,161 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
 #' @examples genome.plotter.region()
 genome.plotter.region <- function(haplotype.association=NULL, snp.association=NULL, use.lod=FALSE,
                                   chr, scale=c("Mb", "cM"), region.min=NULL, region.max=NULL,
-                                  haplotype.col=c("black", "red"), snp.col=c("black"), median.band.col="gray88",
+                                  haplotype.col=c("blue", "red"), haplotype.lwd=3, median.band.col=c("cyan", "pink"),
+                                  snp.col=c("blue", "red"), snp.pch=20, snp.cex=0.9,
                                   main="", no.title=FALSE, override.title=NULL,
                                   y.max.manual=NULL, my.legend.cex=0.6,
                                   hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL){
   scale <- scale[1]
-  MI <- all.CI <- CI <- NULL
-  
+
   if(is.null(haplotype.association) & is.null(snp.association)){
     stop("No associations included in arguments to genome.plotter.region()", call.=FALSE)
   }
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
   
+  # Repeating parameters for multiple scans
+  if(length(snp.pch) == 1 & length(snp.association) > 1){ 
+    snp.pch <- rep(snp.pch, length(snp.association))
+  }
+  if(length(snp.cex) == 1 & length(snp.association) > 1){ 
+    snp.cex <- rep(snp.cex, length(snp.association))
+  }
+  if(length(haplotype.lwd) == 1 & length(haplotype.association) > 1){ 
+    haplotype.lwd <- rep(haplotype.lwd, length(haplotype.association))
+  }
+  
   this.ylab <- ifelse(use.lod, "LOD", expression("-log"[10]*"P"))
   outcome.type <- ifelse(use.lod, "LOD", "p.value")
   
-  ## Grabbing index of association and positions to plot
+  ## Finding plot bounds and processing scans
+  y.max <- x.min <- x.max <- haps.to.plot <- snps.to.plot <- CI <- NULL
   if(!is.null(haplotype.association)){
-    check.scan <- haplotype.association[[1]]
-  }
-  else{
-    check.scan <- snp.association[[1]]
-  }
-  keep.chr <- check.scan$chr == chr
-  if(is.null(region.min)){
-    region.min <- min(check.scan$pos[scale], na.rm=TRUE)
-  }
-  if(is.null(region.max)){
-    region.max <- max(check.scan$pos[scale], na.rm=TRUE)
-  }
-  keep.region <- check.scan$pos[scale] >= region.min & check.scan$pos[scale] <= region.max
-  keep <- (keep.chr + keep.region) == 2
-  
-  pos <- check.scan$pos[scale][keep]
-  order.i <- order(pos)
-  pos <- pos[order.i]
-  
-  y.max <- 0
-  if(is.null(y.max.manual)){ y.max <- y.max.manual }
-  else{
-    if(!is.null(haplotype.association)){
-      for(i in 1:length(haplotype.association)){
-        this.outcome <- haplotype.association[[i]][outcome.type][keep]
-        if(!use.lod){ this.outcome <- -log10(this.outcome) }
-        y.max <- max(y.max, max(this.outcome))
-        
-        # expanding y.max 
-        if(!is.null(haplotype.association[[i]]$MI.LOD)){
-          if(use.lod){
-            all.MI <- haplotype.association[[i]]$MI.LOD
-          }
-          else{
-            all.MI <- -log10(haplotype.association[[i]]$MI.p.value)
-          }
-          # Finding the 95% CI on the median
-          CI <- apply(all.MI[,keep], 2, function(x) ci.median(x, conf=0.95))
-          y.max <- max(y.max, max(CI))
+    haps.to.plot <- list()
+    for(i in 1:length(haplotype.association)){
+      this.scan <- haplotype.association[[i]]
+      this.pos <- this.scan$pos[[scale]]
+      this.outcome <- this.scan[[outcome.type]]
+      if(!use.lod){ this.outcome <- -log10(this.outcome) }
+      
+      ## Getting index to plot
+      keep.chr <- this.scan$chr == chr
+      keep.na <- !is.na(this.pos)
+      keep <- (keep.chr + keep.na) == 2
+      order.i <- order(this.pos[keep])
+      
+      x.min <- min(x.min, 
+                   grab.min.pos.from.scan(scan.object=this.scan, scale=scale, chr=chr))
+      x.min <- max(x.min, 
+                   grab.max.pos.from.scan(scan.object=this.scan, scale=scale, chr=chr))
+      # y.max <- max(y.max,
+      #              grab.max.statistic.from.scan(scan.object=this.scan, outcome=outcome.type, chr=chr))
+      ## Imputations interval
+      if(!is.null(this.scan$MI.LOD)){
+        if(use.lod){
+          all.MI <- this.scan$MI.LOD[,keep][,order.i]
         }
+        else{
+          all.MI <- -log10(this.scan$MI.p.value[,keep][,order.i])
+        }
+        # Finding the 95% CI on the median
+        CI <- apply(all.MI, 2, function(x) ci.median(x, conf=0.95))
+        # y.max <- max(y.max, max(CI, na.rm=TRUE), na.rm=TRUE)
       }
-    }
-    if(!is.null(snp.association)){
-      for(i in 1:length(snp.association)){
-        if(!use.lod){ this.outcome <- -log10(this.outcome) }
-        y.max <- max(y.max, max(this.outcome))
-      }
-    }
-    if(!is.null(hard.thresholds)){
-      y.max <- max(y.max, max(hard.thresholds))
+      haps.to.plot[[i]] <- list(pos=this.pos[keep][order.i], 
+                                outcome=this.outcome[keep][order.i],
+                                CI=CI) 
     }
   }
+  if(!is.null(snp.association)){
+    snps.to.plot <- list()
+    for(i in 1:length(snp.association)){
+      this.scan <- snp.association[[i]]
+      this.pos <- this.scan$pos[[scale]]
+      this.outcome <- this.scan[[outcome.type]]
+      if(!use.lod){ this.outcome <- -log10(this.outcome) }
+      x.min <- min(x.min, 
+                   grab.min.pos.from.scan(scan.object=this.scan, scale=scale, chr=chr))
+      x.max <- max(x.max, 
+                   grab.max.pos.from.scan(scan.object=this.scan, scale=scale, chr=chr))
+      # y.max <- max(y.max,
+      #              grab.max.statistic.from.scan(scan.object=this.scan, outcome=outcome.type, chr=chr))
+      snps.to.plot[[i]] <- list(pos=this.pos[keep][order.i], 
+                                outcome=this.outcome[keep][order.i]) 
+    }
+  }
+  if(!is.null(region.min)){ x.min <- region.min }
+  if(!is.null(region.max)){ x.max <- region.max }
   
-  if(!is.null(haplotype.association[[1]]$locus.effect.type)){
-    locus.effect.type <- ifelse(scan.object$locus.effect.type == "fixed", "fixef", "ranef")
+  ## Setting y limit within region
+  if(!is.null(haplotype.association)){
+    for(i in 1:length(haps.to.plot)){
+      this.scan <- haps.to.plot[[i]]
+      y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= region.min & this.scan$pos <= region.max]))
+      if(!is.null(haps.to.plot[[i]]$CI)){
+        y.max <- max(y.max, max(haps.to.plot[[i]]$CI[,this.scan$pos >= region.min & this.scan$pos <= region.max]))
+      }
+    }
+  }
+  if(!is.null(snp.association)){
+    for(i in 1:length(snps.to.plot)){
+      this.scan <- snps.to.plot[[i]]
+      y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= region.min & this.scan$pos <= region.max]))
+    }
+  }
+  y.max <- max(y.max, max(c(hard.thresholds, 0)))
+  if(!is.null(y.max.manual)){ y.max <- y.max.manual }
+  
+  ## Handling the title
+  if(!is.null(haplotype.association[[1]])){ first.scan <- haplotype.association[[1]] }
+  else{ first.scan <- snp.association[[1]] }
+  if(!is.null(first.scan$locus.effect.type)){
+    locus.effect.type <- ifelse(first.scan$locus.effect.type == "fixed", "fixef", "ranef")
     locus.term <- paste("locus", locus.effect.type, sep=".")
   }
   else{
     locus.term <- "locus"
   }
-  this.title <- c(main, paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"))
+  this.title <- c(main, paste0(first.scan$formula, " + ", locus.term, " (", first.scan$model.type, ")"))
   if(no.title){ this.title <- NULL }
   if(!is.null(override.title)){ this.title <- override.title }
   
+  this.xlab <- paste0("Chr ", chr, " Position (", scale, ")")
+  
   ## Plotting
   plot(1, 
-       xlim=c(region.min, region.max), 
+       xlim=c(x.min, x.max), 
        ylim=c(0, y.max), 
-       xlab=this.xlab, ylab=this.ylab, main=main.title,
+       xlab=this.xlab, ylab=this.ylab, main=this.title,
        frame.plot=FALSE, type="l", pch=20, cex=0.5, las=1, cex.main=0.8)
-  
+  ## Adding associations
   if(!is.null(haplotype.association)){
+    ## Plotting haplotype intervals
     for(i in 1:length(haplotype.association)){
-      if(!is.null(haplotype.association[[i]]$MI.LOD)){
-        if(use.lod){
-          all.MI <- haplotype.association[[i]]$MI.LOD
-        }
-        else{
-          all.MI <- -log10(haplotype.association[[i]]$MI.p.value)
-        }
-        # Finding the 95% CI on the median
-        CI <- apply(all.MI[,keep][order.i], 2, function(x) ci.median(x, conf=0.95))
-        polygon(x=c(pos, rev(pos)), y=c(CI[1,], rev(CI[2,])), density=NA, col=median.band.col[i])
+      this.scan <- haps.to.plot[[i]]
+      this.pos <- this.scan$pos
+      
+      if(!is.null(this.scan$CI)){
+        CI <- this.scan$CI
+        polygon(x=c(this.pos, rev(this.pos)), y=c(CI[1,], rev(CI[2,])), density=NA, col=median.band.col[i])
       }
     }
+    ## Plotting haplotype association lines
     for(i in 1:length(haplotype.association)){
-      this.outcome <- haplotype.association[[i]][outcome.type][keep][order.i]
-      if(!use.lod){ this.outcome <- -log10(this.outcome) }
-      lines(pos, this.outcome, col=haplotype.col[i])
+      this.scan <- haps.to.plot[[i]]
+      this.pos <- this.scan$pos
+      this.outcome <- this.scan$outcome
+      
+      lines(this.pos, this.outcome, col=haplotype.col[i], lwd=haplotype.lwd[i])
     }
   }
   if(!is.null(snp.association)){
-    for(i in length(snp.association)){
-      this.outcome <- snp.association[[i]][outcome.type][keep][order.i]
-      if(!use.lod){ this.outcome <- -log10(this.outcome) }
-      points(pos, this.outcome, col=snp.col[i])
+    for(i in 1:length(snp.association)){
+      this.scan <- snps.to.plot[[i]]
+      this.pos <- this.scan$pos
+      this.outcome <- this.scan$outcome
+      
+      points(this.pos, this.outcome, 
+             col=snp.col[i], pch=snp.pch[i], cex=snp.cex[i])
     }
   }
   
@@ -565,6 +607,29 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
     legend("topleft", legend=thresholds.legend, col=thresholds.col, lty=rep(2, length(thresholds.legend)),
            bty="n", cex=my.legend.cex)
   }
+}
+
+grab.min.pos.from.scan <- function(scan.object, scale="Mb", chr=NULL){
+  pos <- scan.object$pos[[scale]]
+  chr.vec <- scan.object$chr
+  if(!is.null(chr)){ pos <- pos[chr.vec %in% chr]}
+  min.pos <- min(pos, na.rm=TRUE)
+  return(min.pos)
+}
+grab.max.pos.from.scan <- function(scan.object, scale="Mb", chr=NULL){
+  pos <- scan.object$pos[[scale]]
+  chr.vec <- scan.object$chr
+  if(!is.null(chr)){ pos <- pos[chr.vec %in% chr]}
+  max.pos <- max(pos, na.rm=TRUE)
+  return(max.pos)
+}
+grab.max.statistic.from.scan <- function(scan.object, outcome="p.value", chr=NULL){
+  assoc <- scan.object[[outcome]]
+  if(outcome == "p.value"){ assoc <- -log10(assoc)}
+  chr.vec <- scan.object$chr
+  if(!is.null(chr)){ assoc <- assoc[chr.vec %in% chr]}
+  max.assoc <- max(assoc, na.rm=TRUE)
+  return(max.assoc)
 }
 
 #' Plot whole genome and single chromosome windows of a SNP-based genome scan
