@@ -116,8 +116,8 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
   outcome <- outcome[order.i]
   pos <- pos[order.i]
   
-  min.pos <- min(pos)
-  max.pos <- max(pos)
+  min.pos <- min(pos, na.rm=TRUE)
+  max.pos <- max(pos, na.rm=TRUE)
 
   
   # Finding max y of plot window
@@ -484,6 +484,19 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
         this.outcome <- haplotype.association[[i]][outcome.type][keep]
         if(!use.lod){ this.outcome <- -log10(this.outcome) }
         y.max <- max(y.max, max(this.outcome))
+        
+        # expanding y.max 
+        if(!is.null(haplotype.association[[i]]$MI.LOD)){
+          if(use.lod){
+            all.MI <- haplotype.association[[i]]$MI.LOD
+          }
+          else{
+            all.MI <- -log10(haplotype.association[[i]]$MI.p.value)
+          }
+          # Finding the 95% CI on the median
+          CI <- apply(all.MI[,keep], 2, function(x) ci.median(x, conf=0.95))
+          y.max <- max(y.max, max(CI))
+        }
       }
     }
     if(!is.null(snp.association)){
@@ -492,10 +505,21 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
         y.max <- max(y.max, max(this.outcome))
       }
     }
-    
-    
+    if(!is.null(hard.thresholds)){
+      y.max <- max(y.max, max(hard.thresholds))
+    }
   }
-
+  
+  if(!is.null(haplotype.association[[1]]$locus.effect.type)){
+    locus.effect.type <- ifelse(scan.object$locus.effect.type == "fixed", "fixef", "ranef")
+    locus.term <- paste("locus", locus.effect.type, sep=".")
+  }
+  else{
+    locus.term <- "locus"
+  }
+  this.title <- c(main, paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"))
+  if(no.title){ this.title <- NULL }
+  if(!is.null(override.title)){ this.title <- override.title }
   
   ## Plotting
   plot(1, 
@@ -505,7 +529,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
        frame.plot=FALSE, type="l", pch=20, cex=0.5, las=1, cex.main=0.8)
   
   if(!is.null(haplotype.association)){
-    for(i in length(haplotype.association)){
+    for(i in 1:length(haplotype.association)){
       if(!is.null(haplotype.association[[i]]$MI.LOD)){
         if(use.lod){
           all.MI <- haplotype.association[[i]]$MI.LOD
@@ -514,9 +538,11 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
           all.MI <- -log10(haplotype.association[[i]]$MI.p.value)
         }
         # Finding the 95% CI on the median
-        all.CI <- apply(all.MI, 2, function(x) ci.median(x, conf=0.95))
-        CI <- all.CI[,scan.object$chr == chr]
+        CI <- apply(all.MI[,keep][order.i], 2, function(x) ci.median(x, conf=0.95))
+        polygon(x=c(pos, rev(pos)), y=c(CI[1,], rev(CI[2,])), density=NA, col=median.band.col[i])
       }
+    }
+    for(i in 1:length(haplotype.association)){
       this.outcome <- haplotype.association[[i]][outcome.type][keep][order.i]
       if(!use.lod){ this.outcome <- -log10(this.outcome) }
       lines(pos, this.outcome, col=haplotype.col[i])
@@ -529,58 +555,6 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
       points(pos, this.outcome, col=snp.col[i])
     }
   }
-  
-  if(use.lod){
-    all.outcome <- scan.object$LOD
-    outcome <- all.outcome[scan.object$chr == chr]
-    plot.this <- "LOD"
-    this.ylab <- "LOD"
-
-  }
-  else{
-    all.outcome <- -log10(scan.object$p.value)
-    outcome <- all.outcome[scan.object$chr == chr]
-    plot.this <- "p.value"
-    this.ylab <- expression("-log"[10]*"P")
-
-  }
-  
-  order.i <- order(pos)
-  
-  outcome <- outcome[order.i]
-  pos <- pos[order.i]
-  
-  min.pos <- min(pos)
-  max.pos <- max(pos)
-  
-  
-  # Finding max y of plot window
-  y.max <- ceiling(max(all.outcome, hard.thresholds, all.CI[2,])) 
-  if(!is.null(y.max.manual)){
-    y.max <- y.max.manual
-  }
-  
-  if(!is.null(scan.object$locus.effect.type)){
-    locus.effect.type <- ifelse(scan.object$locus.effect.type == "fixed", "fixef", "ranef")
-    locus.term <- paste("locus", locus.effect.type, sep=".")
-  }
-  else{
-    locus.term <- "locus"
-  }
-  this.title <- c(main, paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"))
-  if(no.title){ this.title <- NULL }
-  if(!is.null(override.title)){ this.title <- override.title }
-  
-  plot(pos, outcome, 
-       xlim=c(0, max.pos), 
-       ylim=c(0, y.max), 
-       yaxt="n", xlab=paste("Chr", chr, paste0("(", scale, ")")), ylab=this.ylab, main=this.title,
-       frame.plot=FALSE, type="l", lwd=1.5, col=main.col)
-  axis(side=2, at=0:y.max, las=2)
-  if(!is.null(CI)){
-    polygon(x=c(pos, rev(pos)), y=c(CI[1,], rev(CI[2,])), density=NA, col=median.band.col)
-  }
-  points(pos, outcome, type="l", pch=20, cex=0.5, lwd=1.5, col=main.col)
   
   if(!is.null(hard.thresholds)){
     for(i in 1:length(hard.thresholds)){
