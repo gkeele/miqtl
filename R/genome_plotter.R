@@ -81,35 +81,30 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
   
   if(use.lod){
     all.outcome <- scan.object$LOD
-    outcome <- all.outcome[scan.object$chr == chr]
+    outcome <- all.outcome[scan.object$chr == chr & !is.na(scan.object$pos[[scale]])]
     plot.this <- "LOD"
     this.ylab <- "LOD"
     if(!is.null(scan.object$MI.LOD)){
       all.MI <- scan.object$MI.LOD
       # Finding the 95% CI on the median
       all.CI <- apply(all.MI, 2, function(x) ci.median(x))
-      CI <- all.CI[,scan.object$chr == chr]
+      CI <- all.CI[,scan.object$chr == chr & !is.na(scan.object$pos[[scale]])]
     }
   }
   else{
     all.outcome <- -log10(scan.object$p.value)
-    outcome <- all.outcome[scan.object$chr == chr]
+    outcome <- all.outcome[scan.object$chr == chr & !is.na(scan.object$pos[[scale]])]
     plot.this <- "p.value"
     this.ylab <- expression("-log"[10]*"P")
     if(!is.null(scan.object$MI.LOD)){
       all.MI <- -log10(scan.object$MI.p.value)
       # Finding the 95% CI on the median
       all.CI <- apply(all.MI, 2, function(x) ci.median(x, conf=0.95))
-      CI <- all.CI[,scan.object$chr == chr]
+      CI <- all.CI[,scan.object$chr == chr & !is.na(scan.object$pos[[scale]])]
     }
   }
   
-  if(scale == "Mb"){
-    pos <- scan.object$pos$Mb[scan.object$chr == chr]
-  }
-  else if(scale == "c<"){
-    pos <- scan.object$pos$cM[scan.object$chr == chr]
-  }
+  pos <- scan.object$pos[[scale]][scan.object$chr == chr & !is.na(scan.object$pos[[scale]])]
   
   order.i <- order(pos)
   
@@ -436,6 +431,9 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
 #' @param thresholds.col DEFAULT: "red". Set the colors of the specified thresholds.
 #' @param thresholds.legend DEFAULT: NULL. If non-NULL, string arguments used as labels in thresholds legend. If NULL,
 #' no threshols legend is used.
+#' @param use.legend DEFAULT: TRUE. Include a legend for the different associations. If TRUE, the labels are the names of the non.mi.scan.list object.
+#' @param my.legend.cex DEFAULT: 0.6. Specifies the size of the text in the legend.
+#' @param my.legend.pos DEFAULT: "topright". Specifies where to put the legend, if specified in use.legend.
 #' @export
 #' @examples genome.plotter.region()
 genome.plotter.region <- function(haplotype.association=NULL, snp.association=NULL, use.lod=FALSE,
@@ -443,8 +441,9 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
                                   haplotype.col=c("blue", "red"), haplotype.lwd=3, median.band.col=c("cyan", "pink"),
                                   snp.col=c("black", "gray"), snp.pch=20, snp.cex=0.9,
                                   main="", no.title=FALSE, override.title=NULL,
-                                  y.max.manual=NULL, my.legend.cex=0.6,
-                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL){
+                                  y.max.manual=NULL,
+                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL, 
+                                  use.legend=TRUE, my.legend.cex=0.6, my.legend.pos="topright"){
   scale <- scale[1]
 
   if(is.null(haplotype.association) & is.null(snp.association)){
@@ -486,8 +485,6 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
                    grab.min.pos.from.scan(scan.object=this.scan, scale=scale, chr=chr))
       x.min <- max(x.min, 
                    grab.max.pos.from.scan(scan.object=this.scan, scale=scale, chr=chr))
-      # y.max <- max(y.max,
-      #              grab.max.statistic.from.scan(scan.object=this.scan, outcome=outcome.type, chr=chr))
       ## Imputations interval
       if(!is.null(this.scan$MI.LOD)){
         if(use.lod){
@@ -498,7 +495,6 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
         }
         # Finding the 95% CI on the median
         CI <- apply(all.MI, 2, function(x) ci.median(x, conf=0.95))
-        # y.max <- max(y.max, max(CI, na.rm=TRUE), na.rm=TRUE)
       }
       haps.to.plot[[i]] <- list(pos=this.pos[keep][order.i], 
                                 outcome=this.outcome[keep][order.i],
@@ -516,8 +512,6 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
                    grab.min.pos.from.scan(scan.object=this.scan, scale=scale, chr=chr))
       x.max <- max(x.max, 
                    grab.max.pos.from.scan(scan.object=this.scan, scale=scale, chr=chr))
-      # y.max <- max(y.max,
-      #              grab.max.statistic.from.scan(scan.object=this.scan, outcome=outcome.type, chr=chr))
       snps.to.plot[[i]] <- list(pos=this.pos[keep][order.i], 
                                 outcome=this.outcome[keep][order.i]) 
     }
@@ -596,6 +590,13 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
       points(this.pos, this.outcome, 
              col=snp.col[i], pch=snp.pch[i], cex=snp.cex[i])
     }
+  }
+  
+  if(use.legend){
+    scan.names <- c(names(haplotype.association))
+    legend(my.legend.pos, legend=scan.names, 
+           lty=rep(1, length(scan.names)), lwd=haplotype.lwd, 
+           col=haplotype.col[1:length(scan.names)], bty="n", cex=my.legend.cex)
   }
   
   if(!is.null(hard.thresholds)){
