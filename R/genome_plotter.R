@@ -441,7 +441,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
 genome.plotter.region <- function(haplotype.association=NULL, snp.association=NULL, use.lod=FALSE,
                                   chr, scale=c("Mb", "cM"), region.min=NULL, region.max=NULL,
                                   haplotype.col=c("blue", "red"), haplotype.lwd=3, median.band.col=c("cyan", "pink"),
-                                  snp.col=c("blue", "red"), snp.pch=20, snp.cex=0.9,
+                                  snp.col=c("black", "gray"), snp.pch=20, snp.cex=0.9,
                                   main="", no.title=FALSE, override.title=NULL,
                                   y.max.manual=NULL, my.legend.cex=0.6,
                                   hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL){
