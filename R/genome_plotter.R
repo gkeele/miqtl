@@ -555,11 +555,20 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   this.xlab <- paste0("Chr ", chr, " Position (", scale, ")")
   
   ## Plotting
+  # plot(1, 
+  #      xlim=c(x.min, x.max), 
+  #      ylim=c(0, y.max), 
+  #      xlab=this.xlab, ylab=this.ylab, main=this.title,
+  #      frame.plot=FALSE, type="l", pch=20, cex=0.5, las=1, cex.main=0.8)
   plot(1, 
        xlim=c(x.min, x.max), 
-       ylim=c(0, y.max), 
+       ylim=c(0, y.max), xaxt="n",
        xlab=this.xlab, ylab=this.ylab, main=this.title,
        frame.plot=FALSE, type="l", pch=20, cex=0.5, las=1, cex.main=0.8)
+  
+  x.ticks <- seq(x.min, x.max, length.out=5)
+  x.ticks <- round(x.ticks)
+  axis(side=1, tick=TRUE, line=NA, at=x.ticks, xpd=TRUE)
   ## Adding associations
   if(!is.null(haplotype.association)){
     ## Plotting haplotype intervals
