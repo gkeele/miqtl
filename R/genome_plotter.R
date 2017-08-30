@@ -529,16 +529,16 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   if(!is.null(haplotype.association)){
     for(i in 1:length(haps.to.plot)){
       this.scan <- haps.to.plot[[i]]
-      y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= region.min & this.scan$pos <= region.max]))
+      y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= x.min & this.scan$pos <= x.max]))
       if(!is.null(haps.to.plot[[i]]$CI)){
-        y.max <- max(y.max, max(haps.to.plot[[i]]$CI[,this.scan$pos >= region.min & this.scan$pos <= region.max]))
+        y.max <- max(y.max, max(haps.to.plot[[i]]$CI[,this.scan$pos >= x.min & this.scan$pos <= x.max]))
       }
     }
   }
   if(!is.null(snp.association)){
     for(i in 1:length(snps.to.plot)){
       this.scan <- snps.to.plot[[i]]
-      y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= region.min & this.scan$pos <= region.max]))
+      y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= x.min & this.scan$pos <= x.max]))
     }
   }
   y.max <- max(y.max, max(c(hard.thresholds, 0)))
