@@ -26,7 +26,12 @@ generate.sample.outcomes.matrix <- function(scan.object, model.type=c("null", "a
   method <- method[1]
   
   if(model.type == "null"){ fit <- scan.object$fit0; locus <- NULL }
-  if(model.type == "alt"){ fit <- scan.object$fit1; locus <- scan.object$loci }
+  if(model.type == "alt"){
+    if(is.null(scan.object$fit1)){
+      stop("Scan object does not include the alternative model. Re-run scan.h2lmm with the just.these.loci option specifying the locus.", call.=FALSE)
+    }
+    fit <- scan.object$fit1; locus <- scan.object$loci 
+  }
   fit0.REML <- scan.object$fit0.REML
   if(class(fit) != "lmerMod"){
     na.coefficients <- is.na(fit$coefficients) ## Resolve an issue if one of the coefficients is NA - generally resulting from a variable that does not vary
