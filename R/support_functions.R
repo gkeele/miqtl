@@ -39,7 +39,7 @@ grab.locus.from.scan <- function(scan.object, use.lod=FALSE, chr="all", criterio
     }
     else if(return.value == "position"){
       result <- c(scan.object$pos$cM[keep][which.min(outcome[keep])], scan.object$pos$Mb[keep][which.min(outcome[keep])])
-      names(results) <- c("cM", "Mb")
+      names(result) <- c("cM", "Mb")
     }
   }
   return(result)
