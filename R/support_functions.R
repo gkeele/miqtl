@@ -22,9 +22,11 @@ rint <- function(phenotype, prop=0.5){
 #' @param chr DEFAULT: "all". The portion of the scan that loci are being pulled from.
 #' @param criterion DEFAULT: "min". The criterion by which loci are selected. Currently only "min" is 
 #' available, which selects the locus with the minimum statistical score. 
+#' @param return.value DEFAULT: "marker". If "marker", returns the marker name. If "positions", returns the position in both cM and Mb.
 #' @export
 #' @examples grab.locus.from.scan()
-grab.locus.from.scan <- function(scan.object, use.lod=FALSE, chr="all", criterion="min"){
+grab.locus.from.scan <- function(scan.object, use.lod=FALSE, chr="all", criterion="min", return.value=c("marker", "position")){
+  return.value <- return.value[1]
   if(use.lod){ outcome <- scan.object$LOD }
   else{ outcome <- scan.object$p.value }
   
@@ -32,9 +34,15 @@ grab.locus.from.scan <- function(scan.object, use.lod=FALSE, chr="all", criterio
   else{ keep <- scan.object$chr %in% chr }
   
   if(criterion == "min"){
-    locus <- scan.object$loci[keep][which.min(outcome[keep])]
+    if(return.value == "marker"){
+      result <- scan.object$loci[keep][which.min(outcome[keep])]
+    }
+    else if(return.value == "position"){
+      result <- c(scan.object$pos$cM[keep][which.min(outcome[keep])], scan.object$pos$Mb[keep][which.min(outcome[keep])])
+      names(results) <- c("cM", "Mb")
+    }
   }
-  return(locus)
+  return(result)
 }
 
 #' Returns a significance threshold based on fitting max LODs or max -log10p to a generalized extreme value (GEV) distribution

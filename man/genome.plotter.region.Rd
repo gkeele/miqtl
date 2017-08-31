@@ -6,11 +6,12 @@
 \usage{
 genome.plotter.region(haplotype.association = NULL, snp.association = NULL,
   use.lod = FALSE, chr, scale = c("Mb", "cM"), region.min = NULL,
-  region.max = NULL, haplotype.col = c("black", "red"),
-  snp.col = c("black"), median.band.col = "gray88", main = "",
-  no.title = FALSE, override.title = NULL, y.max.manual = NULL,
-  my.legend.cex = 0.6, hard.thresholds = NULL, thresholds.col = "red",
-  thresholds.legend = NULL)
+  region.max = NULL, haplotype.col = c("blue", "red"), haplotype.lwd = 3,
+  median.band.col = c("cyan", "pink"), snp.col = c("black", "gray"),
+  snp.pch = 20, snp.cex = 0.9, main = "", no.title = FALSE,
+  override.title = NULL, y.max.manual = NULL, hard.thresholds = NULL,
+  thresholds.col = "red", thresholds.legend = NULL, use.legend = TRUE,
+  my.legend.cex = 0.6, my.legend.pos = "topright")
 }
 \arguments{
 \item{haplotype.association}{DEFAULT: NULL. A list of scan.h2lmm() objects (ROP or multiple imputations). If multiple imputations, median and confidence interval 
@@ -30,9 +31,9 @@ on median are plotted. If NULL, presumably only SNP scans will be plotted.}
 
 \item{haplotype.col}{DEFAULT: "black". The color of the haplotype-based association score to be plotted.}
 
-\item{snp.col}{DEFAULT: "black". The color of the SNP association score to be plotted.}
-
 \item{median.band.col}{DEFAULT: "gray88". The color of the 95\% confident band plotted around the median.}
+
+\item{snp.col}{DEFAULT: "black". The color of the SNP association score to be plotted.}
 
 \item{main}{DEFAULT: "". Adds a title above the model.}
 
@@ -42,14 +43,20 @@ on median are plotted. If NULL, presumably only SNP scans will be plotted.}
 
 \item{y.max.manual}{DEFAULT: NULL. Manually adds a max y-value. Allows multiple genome scans to easily be on the same scale.}
 
-\item{my.legend.cex}{DEFAULT: 0.6. Specifies the size of the text in the legend.}
-
 \item{hard.thresholds}{DEFAULT: NULL. Specify one or more horizontal threshold lines.}
 
 \item{thresholds.col}{DEFAULT: "red". Set the colors of the specified thresholds.}
 
 \item{thresholds.legend}{DEFAULT: NULL. If non-NULL, string arguments used as labels in thresholds legend. If NULL,
 no threshols legend is used.}
+
+\item{use.legend}{DEFAULT: TRUE. Include a legend for the different associations. If TRUE, the labels are the names of the non.mi.scan.list object.}
+
+\item{my.legend.cex}{DEFAULT: 0.6. Specifies the size of the text in the legend.}
+
+\item{my.legend.pos}{DEFAULT: "topright". Specifies where to put the legend, if specified in use.legend.}
+
+\item{my.legend.cex}{DEFAULT: 0.6. Specifies the size of the text in the legend.}
 }
 \description{
 This function takes genome scan association outputs and plots the portion that corresponds to a region of a single chromosome.
