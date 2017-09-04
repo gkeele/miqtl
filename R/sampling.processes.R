@@ -334,8 +334,6 @@ run.simple.permutation.threshold.scans <- function(sim.threshold.object,
 
 
 ################# QTL CI methods
-
-
 #' Run single chromosome scans on parametric bootstrap samples from the alternative model of a particular locus
 #'
 #' This function runs single chromosome scans of parametric bootstrap samples from the alternative model of a particular locus. These
