@@ -74,7 +74,7 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
                                scale=c("Mb", "cM"), main.col="black", median.band.col="gray88",
                                main="", no.title=FALSE, override.title=NULL, 
                                my.y.line=2, my.y.axis.cex=1,
-                               y.max.manual=NULL, my.legend.cex=0.6, my.type="l",
+                               y.max.manual=NULL, my.legend.cex=0.6, my.type="l", point.cex=0.5,
                                hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                include.qtl.rug=FALSE, rug.pos=NULL, rug.col="gray50"){
   scale <- scale[1]
@@ -138,7 +138,7 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
        xlim=c(0, max.pos), 
        ylim=c(0, y.max), 
        yaxt="n", xlab=paste("Chr", chr, paste0("(", scale, ")")), ylab="", main=this.title,
-       frame.plot=FALSE, type=my.type, lwd=1.5, col=main.col, pch=20)
+       frame.plot=FALSE, type=my.type, cex=point.cex, lwd=1.5, col=main.col, pch=20)
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line)
   if(!is.null(CI)){
