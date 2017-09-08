@@ -109,7 +109,7 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
   }
   
   pos <- scan.object$pos[[scale]][scan.object$chr == chr & !is.na(scan.object$pos[[scale]])]
-  if(scale="Mb" & !physical.dist.is.Mb){ # If for some reason the recorded Mb are actually bp
+  if(scale == "Mb" & !physical.dist.is.Mb){ # If for some reason the recorded Mb are actually bp
     pos <- pos/1000000
   }
   
