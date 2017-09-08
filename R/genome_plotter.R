@@ -73,10 +73,12 @@ genome.plotter.to.pdf <- function(scan.object, chr=c(1:19, "X"), use.lod=FALSE,
 genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
                                scale=c("Mb", "cM"), main.col="black", median.band.col="gray88",
                                main="", no.title=FALSE, override.title=NULL, 
-                               my.y.line=2, my.y.axis.cex=1,
-                               y.max.manual=NULL, my.legend.cex=0.6, my.type="l", point.cex=0.5,
+                               my.y.line=2, my.y.axis.cex=1, y.max.manual=NULL, 
+                               my.x.line=2, my.x.axis.cex=1,
+                               my.legend.cex=0.6, my.type="l", point.cex=0.5,
                                hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
-                               include.qtl.rug=FALSE, rug.pos=NULL, rug.col="gray50"){
+                               include.qtl.rug=FALSE, rug.pos=NULL, rug.col="gray50",
+                               physical.dist.is.Mb=TRUE){
   scale <- scale[1]
   MI <- all.CI <- CI <- NULL
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
@@ -107,6 +109,9 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
   }
   
   pos <- scan.object$pos[[scale]][scan.object$chr == chr & !is.na(scan.object$pos[[scale]])]
+  if(scale="Mb" & !physical.dist.is.Mb){ # If for some reason the recorded Mb are actually bp
+    pos <- pos/1000000
+  }
   
   order.i <- order(pos)
   
@@ -116,7 +121,6 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
   min.pos <- min(pos, na.rm=TRUE)
   max.pos <- max(pos, na.rm=TRUE)
 
-  
   # Finding max y of plot window
   y.max <- ceiling(max(all.outcome, hard.thresholds, all.CI[2,])) 
   if(!is.null(y.max.manual)){
@@ -137,10 +141,13 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
   plot(pos, outcome, 
        xlim=c(0, max.pos), 
        ylim=c(0, y.max), 
-       yaxt="n", xlab=paste("Chr", chr, paste0("(", scale, ")")), ylab="", main=this.title,
+       xaxt="n", yaxt="n", xlab="", ylab="", main=this.title,
        frame.plot=FALSE, type=my.type, cex=point.cex, lwd=1.5, col=main.col, pch=20)
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line)
+  
+  axis(side=1, cex.axis=my.x.axis.cex)
+  mtext(text=paste("Chr", chr, paste0("(", scale, ")")), side=1, line=my.x.line)
   if(!is.null(CI)){
     polygon(x=c(pos, rev(pos)), y=c(CI[1,], rev(CI[2,])), density=NA, col=median.band.col)
   }
@@ -216,6 +223,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   }
   chr <- main.object$chr
   pos <- ifelse(rep(scale=="Mb", length(outcome)), main.object$pos$Mb, main.object$pos$cM)
+  
   if(!is.null(just.these.chr)){
     keep.chr <- chr %in% just.these.chr
     chr <- chr[keep.chr]
@@ -305,8 +313,10 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     for(i in 2:length(chr.types)){
       this.pos <- pos[pre.chr==chr.types[i]] + shift
       if(i %% 2 == 0){
-        polygon(x=c(shift, shift:max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE)), 
-                y=c(0, rep(y.max, length(shift:max(this.pos, na.rm=TRUE))), 0), border=NA, col="gray88")
+        # polygon(x=c(shift, shift:max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE)), 
+        #         y=c(0, rep(y.max, length(shift:max(this.pos, na.rm=TRUE))), 0), border=NA, col="gray88")
+        polygon(x=c(shift, max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE), shift), 
+                y=c(y.max, y.max, 0, 0), border=NA, col="gray88")
         
       }
       label.spots <- c(label.spots, shift + max.pos[i]/2)
