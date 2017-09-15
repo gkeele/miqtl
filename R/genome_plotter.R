@@ -74,7 +74,9 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
                                scale=c("Mb", "cM"), main.col="black", median.band.col="gray88",
                                main="", no.title=FALSE, override.title=NULL, 
                                my.y.line=2, my.y.axis.cex=1, y.max.manual=NULL, make.y.axis.sparse=FALSE, my.ylab.cex=1,
-                               my.x.line=2, my.x.axis.cex=1, my.x.labels=TRUE, override.xlab=NULL, my.xlab.cex=1,
+                               my.x.line=2, my.x.axis.cex=1, my.xlab.cex=1, x.padj=1,
+                               my.x.labels=TRUE, override.xlab=NULL, 
+                               override.ylab=NULL,
                                my.legend.cex=0.6, my.type="l", point.cex=0.5,
                                hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                include.qtl.rug=FALSE, rug.pos=NULL, rug.col="gray50",
@@ -150,10 +152,11 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
   else{
     axis(side=2, las=2, cex.axis=my.y.axis.cex)
   }
+  this.ylab <- ifelse(is.null(override.ylab), this.ylab, override.ylab)
   mtext(text=this.ylab, side=2, line=my.y.line, cex=my.ylab.cex)
   
   this.xlab <- ifelse(is.null(override.xlab), paste("Chr", chr, paste0("(", scale, ")")), override.xlab)
-  axis(side=1, cex.axis=my.x.axis.cex, labels=my.x.labels)
+  axis(side=1, cex.axis=my.x.axis.cex, labels=my.x.labels, padj=x.padj)
   mtext(text=this.xlab, side=1, line=my.x.line, cex=my.xlab.cex)
   
   if(!is.null(CI)){
@@ -164,8 +167,11 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
   if(include.qtl.rug){
     if(is.null(rug.pos)){ rug.pos <- pos[which.max(outcome)] }
     if(length(rug.col) == 1){ rug.col <- rep(rug.col, length(rug.pos))}
+    # axis(1, at=rug.pos, col.ticks=rug.col, label=FALSE, cex.axis=0.7, lwd.ticks=3, lend="butt")
     for(i in 1:length(rug.pos)){
-      rug(rug.pos[i], col=rug.col[i], ticksize=0.06, lwd=2.5)
+      #rug(rug.pos[i], col=rug.col[i], ticksize=0.06, lwd=2.5, pch=25)
+      #points(x=rug.pos[i], y=0, pch=25, cex=0.5, bg=rug.col[i])
+      axis(1, at=rug.pos[i], col.ticks=rug.col[i], label=FALSE, cex.axis=0.1, lwd.ticks=3, lend="butt", tck=-0.1)
     }
   }
   
