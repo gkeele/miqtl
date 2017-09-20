@@ -74,6 +74,12 @@ scan.h2lmm <- function(genomecache, data,
   num.founders <- length(founders)
   loci <- h$getLoci()
   
+  ## Case where there are replicates and K is not specified, then K is forced to be identity
+  if(pheno.id != geno.id & is.null(K)){
+    K <- diag(unique(data[,geno.id]))
+    rownames(K) <- colnames(K) <- unique(data[,geno.id])
+  }
+  
   cache.subjects <- rownames(h$getLocusMatrix(loci[1], model="additive"))
   data.and.K <- make.processed.data(formula=formula, data=data, 
                                     cache.subjects=cache.subjects, K=K, 
