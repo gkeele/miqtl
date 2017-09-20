@@ -245,7 +245,6 @@ get.f.stat.p.val <- function(qr.alt, qr.null, y){
   return(p.val)
 }
 
-
 #' @export
 get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA", "LRT.random.locus"),
                         round.tol=10){
