@@ -148,11 +148,11 @@ scan.h2lmm <- function(genomecache, data,
   }
   ###### check p-value method
   if(use.lmer & p.value.method == "ANOVA"){
-    cat("ANOVA not currently supported with our implementation of LMER, swithcing to LRT\n")
+    cat("ANOVA not currently supported with our implementation of LMER, switching to LRT\n")
     p.value.method <- "LRT"
   }
   else if(p.value.method == "ANOVA" & (!is.null(K) | !locus.as.fixed)){
-    cat("Standard ANOVA F-test not valid with mixed effect model, swithcing to LRT\n")
+    cat("Standard ANOVA F-test not valid with mixed effect model, switching to LRT\n")
     p.value.method <- "LRT"
   }
   ###### check that both sparse random effect and kinship random effect are not being specified together
@@ -165,7 +165,7 @@ scan.h2lmm <- function(genomecache, data,
   }
   ###### check that use.fix.par=TRUE if locus.as.fixed=FALSE
   if(!use.fix.par & !locus.as.fixed){
-    cat("standard ANOVA F-test not valid with mixed effect model, swithcing to LRT\n")
+    cat("standard ANOVA F-test not valid with mixed effect model, switching to LRT\n")
     use.fix.par <- TRUE
   }
   ###### Switching p-value LRT mode for a random effect
