@@ -76,6 +76,8 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
                                my.y.line=2, my.y.axis.cex=1, y.max.manual=NULL, make.y.axis.sparse=FALSE, my.ylab.cex=1,
                                my.x.line=2, my.x.axis.cex=1, my.xlab.cex=1, x.padj=1,
                                my.x.labels=TRUE, override.xlab=NULL, 
+                               my.title.line=0.5, title.cex=1,
+                               my.lwd=1.5,
                                override.ylab=NULL,
                                my.legend.cex=0.6, my.type="l", point.cex=0.5,
                                hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
@@ -143,8 +145,9 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
   plot(pos, outcome, 
        xlim=c(0, max.pos), 
        ylim=c(0, y.max), 
-       xaxt="n", yaxt="n", xlab="", ylab="", main=this.title,
-       frame.plot=FALSE, type=my.type, cex=point.cex, lwd=1.5, col=main.col, pch=20)
+       xaxt="n", yaxt="n", xlab="", ylab="", main="",
+       frame.plot=FALSE, type=my.type, cex=point.cex, lwd=my.lwd, col=main.col, pch=20)
+  title(main=this.title, line=my.title.line, cex.main=title.cex)
   
   if(!make.y.axis.sparse){
     axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
@@ -167,10 +170,7 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
   if(include.qtl.rug){
     if(is.null(rug.pos)){ rug.pos <- pos[which.max(outcome)] }
     if(length(rug.col) == 1){ rug.col <- rep(rug.col, length(rug.pos))}
-    # axis(1, at=rug.pos, col.ticks=rug.col, label=FALSE, cex.axis=0.7, lwd.ticks=3, lend="butt")
     for(i in 1:length(rug.pos)){
-      #rug(rug.pos[i], col=rug.col[i], ticksize=0.06, lwd=2.5, pch=25)
-      #points(x=rug.pos[i], y=0, pch=25, cex=0.5, bg=rug.col[i])
       axis(1, at=rug.pos[i], col.ticks=rug.col[i], label=FALSE, cex.axis=0.1, lwd.ticks=3, lend="butt", tck=-0.1)
     }
   }
