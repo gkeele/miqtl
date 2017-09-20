@@ -232,6 +232,20 @@ replicates.eigen <- function(Z, K) {
               vectors=qr.Q(qr(Z %*% eigen$vectors))))
 }
 
+get.f.stat.p.val <- function(qr.alt, qr.null, y){
+  rss0 <- sum(qr.resid(qr.null, y)^2)
+  rss1 <- sum(qr.resid(qr.alt, y)^2)
+  df1 <- qr.alt$rank - qr.null$rank
+  df2 <- length(y) - qr.alt$rank
+  
+  mst <- (rss0 - rss1)/df1
+  mse <- rss1/df2
+  f.stat <- mst/mse
+  p.val <- pf(q=f.stat, df1=df1, df2=df2, lower.tail=FALSE)
+  return(p.val)
+}
+
+
 #' @export
 get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA", "LRT.random.locus"),
                         round.tol=10){
@@ -240,8 +254,7 @@ get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA", "LRT.random.locus")
     p.value <- pchisq(q=-2*(fit0$logLik - fit1$logLik), df=fit1$rank-fit0$rank, lower.tail=FALSE)
   }
   if(method == "ANOVA"){
-    class(fit0) <- class(fit1) <- "lm"
-    p.value <- anova(fit0, fit1)$`Pr(>F)`[2]
+    p.value <- get.f.stat.p.val(qr.alt=fit1$qr, qr.null=fit0$qr, y=fit0$y)
   }
   if(method == "LRT.random.locus"){
     chi.sq <- -2*(round(fit0$REML.logLik, round.tol) - round(fit1$REML.logLik, round.tol))
