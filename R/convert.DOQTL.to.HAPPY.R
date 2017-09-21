@@ -306,7 +306,7 @@ convert.additive.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
 #' @export
 convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
                                               map.locus_name.colname="SNP_ID", map.chr.colname="Chr", map.physical_dist.colname="Mb_NCBI38", map.genetic_dist.colname="cM",
-                                              HAPPY.output.path,
+                                              HAPPY.output.path, remove.chr.from.chr=FALSE,
                                               physical_dist.is.Mb=TRUE,
                                               allele.labels=LETTERS[1:8],
                                               chr=c(1:19, "X")){
@@ -327,6 +327,10 @@ convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
   #-------------------------------
   # Marker info
   #-------------------------------
+  if(remove.chr.from.chr){
+    map[,map.chr.colname] <- gsub(x=map[,map.chr.colname], pattern="chr", replacement="", fixed=TRUE)
+  }
+  
   total.map <- map
   
   for(i in 1:length(loci)){
