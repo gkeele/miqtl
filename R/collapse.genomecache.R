@@ -28,6 +28,7 @@ collapse.genomecache <- function(original.cache,
   criterion <- criterion[1]
   model <- model[1]
   
+  browser()
   h <- DiploprobReader$new(original.cache)
   
   # Chromosomes in original cache
@@ -39,6 +40,7 @@ collapse.genomecache <- function(original.cache,
   
   strains <- h$getFounders()
   if(is.null(subjects)){ subjects <- h$getSubjects() }
+  browser()
   
   for(i in 1:length(chr)){
     dir.create(paste0(new.cache, "/additive", "/chr", chr[i], "/data"), recursive=TRUE, showWarnings=FALSE)

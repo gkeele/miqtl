@@ -362,7 +362,7 @@ convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
   for(this.chr in chr){
     ## chr
     map.this.chr <- total.map[as.character(total.map[, map.chr.colname]) == this.chr,]
-    chromosome <- as.character(map.this.chr$Chr)
+    chromosome <- as.character(map.this.chr[, map.chr.colname])
     save(chromosome, file = paste0(HAPPY.output.path, '/additive/chr', this.chr, '/chromosome.RData'))
     save(chromosome, file = paste0(HAPPY.output.path, '/full/chr', this.chr, '/chromosome.RData'))
     save(chromosome, file = paste0(HAPPY.output.path, '/genotype/chr', this.chr, '/chromosome.RData'))
