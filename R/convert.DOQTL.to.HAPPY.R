@@ -5,7 +5,7 @@
 #'
 #' @param DOQTL.recon.output.path The path to the directory containing DO-QTL founder haplotype output files. 
 #' @param map The map file (which contains important information on the loci) loaded into R.
-#' @param physical_dist.is.Mb DEFAULT: TRUE IF true, Mb will be converted to bp within the function.
+#' @param physical_dist.is.Mb DEFAULT: TRUE. IF true, Mb will be converted to bp within the function.
 #' @param map.locus_name.colname DEFAULT: "SNP_ID". The column name in the map data that corresponds to locus/marker names.
 #' @param map.chr.colname DEFAULT: "Chr". The column name in the map data that corresponds to chromosome.
 #' @param map.physical_dist.colname DEFAULT: "Mb_NCBI38". The column name in the map data that corresponds to physical position.
@@ -138,12 +138,6 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
   map <- cbind(marker, chr, bp, pos)
   colnames(map) <- c("marker", "chr", "bp", "pos")
   
-  # colnames(map)[colnames(map) == map.locus_name.colname] <- "marker"
-  # colnames(map)[colnames(map) == map.chr.colname] <- "chr"
-  # colnames(map)[colnames(map) == map.physical_dist.colname] <- "bp"
-  # colnames(map)[colnames(map) == map.genetic_dist.colname] <- "pos"
-  # map <- map[,c("marker", "chr", "bp", "pos")]
-  
   #-----------------------------
   # Combining data of individuals
   #-----------------------------
@@ -250,8 +244,11 @@ convert.additive.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
   #-------------------------------
   total.map <- map
   
+  ## Reducing loci to only those in chr selection
+  loci <- loci[loci %in% map[map[,map.chr.colname] %in% chr, map.locus_name.colname]]
+  
   for(i in 1:length(loci)){
-    chr.locus <- as.character(total.map[total.map$SNP_ID == loci[i], map.chr.colname])
+    chr.locus <- as.character(map[total.map[,map.locus_name.colname] == loci[i], map.chr.colname])
     
     if(convert.to.dosage){ locus.matrix <- DOQTL.array[,,i]*2 }
     else{ locus.matrix <- DOQTL.array[,,i] }
@@ -303,7 +300,30 @@ convert.additive.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
   }
 }
 
+#' Takes founder haplotype reconstructions as a 3D array (with the 36 probability states as one of the dimensions) 
+#' and re-formats into a HAPPY-style genome cache
+#'
+#' This function produces a HAPPY-format genome cache from a founder haplotype reconstruction 3D array.
+#' DO-QTL does not normally output this 3D array, but rather the dosage analogue. However, this function requires
+#' the full probabilities, not the dosages.
+#'
+#' @param DOQTL.array 3D array that contains the founder probabilities. Should be dimension n x 36 x p, where n is the number of individuals
+#' and p is the number of loci. 
+#' @param map The map file (which contains important information on the loci) loaded into R.
+#' @param map.locus_name.colname DEFAULT: "SNP_ID". The column name in the map data that corresponds to locus/marker names.
+#' @param map.chr.colname DEFAULT: "Chr". The column name in the map data that corresponds to chromosome.
+#' @param map.physical_dist.colname DEFAULT: "Mb_NCBI38". The column name in the map data that corresponds to physical position.
+#' @param map.genetic_dist.colname DEFAULT: "cM". The column name in the map data that corresponds to genetic position.
+#' @param HAPPY.output.path The path to a directory that will be created as the HAPPY-format genome cache.
+#' @param remove.chr.from.chr DEFAULT: FALSE. Option to remove "chr" from chromosome information. As in, change "chr1" to "1". The function
+#' expects chromosome information to not include "chr" as a prefix.
+#' @param physical_dist.is.Mb DEFAULT: TRUE. IF true, Mb will be converted to bp within the function.
+#' @param allele.labels DEFAULT: NULL. Allows for specification of founder labels different from what is in the DO-QTL
+#' output. The DEFAULT of NULL leads to using the labels from the DO-QTL output.
+#' @param chr DEFAULT: c(1:19, "X"). Allows for specification of the chromosomes. DEFAULT is all the chromosomes from the mouse.
 #' @export
+#' @import data.table
+#' @examples convert.full.DOQTL.array.to.HAPPY()
 convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
                                               map.locus_name.colname="SNP_ID", map.chr.colname="Chr", map.physical_dist.colname="Mb_NCBI38", map.genetic_dist.colname="cM",
                                               HAPPY.output.path, remove.chr.from.chr=FALSE,

@@ -17,7 +17,7 @@ convert.DOQTL.to.HAPPY(DOQTL.recon.output.path, map,
 
 \item{map}{The map file (which contains important information on the loci) loaded into R.}
 
-\item{physical_dist.is.Mb}{DEFAULT: TRUE IF true, Mb will be converted to bp within the function.}
+\item{physical_dist.is.Mb}{DEFAULT: TRUE. IF true, Mb will be converted to bp within the function.}
 
 \item{map.locus_name.colname}{DEFAULT: "SNP_ID". The column name in the map data that corresponds to locus/marker names.}
 
