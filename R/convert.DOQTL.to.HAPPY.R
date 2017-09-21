@@ -307,7 +307,7 @@ convert.additive.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
 convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
                                               map.locus_name.colname="SNP_ID", map.chr.colname="Chr", map.physical_dist.colname="Mb_NCBI38", map.genetic_dist.colname="cM",
                                               HAPPY.output.path,
-                                              bp.column="Mb_NCBI38", physical_dist.is.Mb=TRUE,
+                                              physical_dist.is.Mb=TRUE,
                                               allele.labels=LETTERS[1:8],
                                               chr=c(1:19, "X")){
   
