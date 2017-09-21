@@ -333,6 +333,9 @@ convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
   
   total.map <- map
   
+  ## Reducing loci to only those in chr selection
+  loci <- loci[loci %in% map[map[,map.chr.colname] %in% chr, map.locus_name.colname]]
+  
   for(i in 1:length(loci)){
     chr.locus <- as.character(map[total.map[,map.locus_name.colname] == loci[i], map.chr.colname])
     
