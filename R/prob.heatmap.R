@@ -36,7 +36,7 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
   subjects <- h$getSubjects()
   rownames(X) <- subjects
   
-  marker <- ifelse(include.marker, marker, NULL)
+  if(!include.marker){ marker <- NULL }
   if(!is.null(alternative.marker.label)){ marker <- alternative.marker.label }
   
   prob.heatmap.from.matrix(geno.matrix=X, marker=marker, p.value=p.value, model=model, phenotype=phenotype,
