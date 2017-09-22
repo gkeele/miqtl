@@ -76,7 +76,7 @@ get.gev.padjust <- function(p.value, threshold.scans, use.lod = FALSE){
     extreme.values <- threshold.scans$max.statistics$LOD
   }
   evd.pars <- as.numeric(evir::gev(extreme.values)$par.est)
-  adj.p <- 1 - evir::pgev(q=-log10(p.value), xi = evd.pars[1], sigma = evd.pars[2], mu = evd.pars[3])
+  adj.p <- 1 - evir::pgev(q=-log10(p.value), xi=evd.pars[1], sigma=evd.pars[2], mu=evd.pars[3])
   return(adj.p)
 }
 
