@@ -5,17 +5,14 @@
 \title{Takes founder haplotype reconstructions as a 3D array (with the 36 probability states as one of the dimensions) 
 and re-formats into a HAPPY-style genome cache}
 \usage{
-convert.full.DOQTL.array.to.HAPPY(DOQTL.array, map,
+convert.full.DOQTL.array.to.HAPPY(full.array, map,
   map.locus_name.colname = "SNP_ID", map.chr.colname = "Chr",
   map.physical_dist.colname = "Mb_NCBI38", map.genetic_dist.colname = "cM",
   HAPPY.output.path, remove.chr.from.chr = FALSE,
   physical_dist.is.Mb = TRUE, allele.labels = LETTERS[1:8], chr = c(1:19,
-  "X"))
+  "X"), diplotype.order = c("DOQTL", "CC"))
 }
 \arguments{
-\item{DOQTL.array}{3D array that contains the founder probabilities. Should be dimension n x 36 x p, where n is the number of individuals
-and p is the number of loci.}
-
 \item{map}{The map file (which contains important information on the loci) loaded into R.}
 
 \item{map.locus_name.colname}{DEFAULT: "SNP_ID". The column name in the map data that corresponds to locus/marker names.}
@@ -37,6 +34,12 @@ expects chromosome information to not include "chr" as a prefix.}
 output. The DEFAULT of NULL leads to using the labels from the DO-QTL output.}
 
 \item{chr}{DEFAULT: c(1:19, "X"). Allows for specification of the chromosomes. DEFAULT is all the chromosomes from the mouse.}
+
+\item{diplotype.order}{DEFAULT: "DOQTL". Specify the order of the diplotypes in the 3D array, so that the rotation to 
+dosages is done correctly.}
+
+\item{DOQTL.array}{3D array that contains the founder probabilities. Should be dimension n x 36 x p, where n is the number of individuals
+and p is the number of loci.}
 }
 \description{
 This function produces a HAPPY-format genome cache from a founder haplotype reconstruction 3D array.

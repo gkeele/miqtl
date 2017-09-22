@@ -325,6 +325,8 @@ convert.additive.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
 #' @param allele.labels DEFAULT: NULL. Allows for specification of founder labels different from what is in the DO-QTL
 #' output. The DEFAULT of NULL leads to using the labels from the DO-QTL output.
 #' @param chr DEFAULT: c(1:19, "X"). Allows for specification of the chromosomes. DEFAULT is all the chromosomes from the mouse.
+#' @param diplotype.order DEFAULT: "DOQTL". Specify the order of the diplotypes in the 3D array, so that the rotation to 
+#' dosages is done correctly.
 #' @export
 #' @import data.table
 #' @examples convert.full.DOQTL.array.to.HAPPY()
