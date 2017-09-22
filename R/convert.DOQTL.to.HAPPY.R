@@ -328,16 +328,18 @@ convert.additive.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
 #' @export
 #' @import data.table
 #' @examples convert.full.DOQTL.array.to.HAPPY()
-convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
+convert.full.DOQTL.array.to.HAPPY <- function(full.array, map,
                                               map.locus_name.colname="SNP_ID", map.chr.colname="Chr", map.physical_dist.colname="Mb_NCBI38", map.genetic_dist.colname="cM",
                                               HAPPY.output.path, remove.chr.from.chr=FALSE,
                                               physical_dist.is.Mb=TRUE,
                                               allele.labels=LETTERS[1:8],
-                                              chr=c(1:19, "X")){
+                                              chr=c(1:19, "X"),
+                                              diplotype.order=c("DOQTL", "CC")){
   
-  samples <- dimnames(DOQTL.array)[[1]]
-  diplotypes <- dimnames(DOQTL.array)[[2]]
-  loci <- dimnames(DOQTL.array)[[3]]
+  samples <- dimnames(full.array)[[1]]
+  diplotypes <- dimnames(full.array)[[2]]
+  loci <- dimnames(full.array)[[3]]
+  diplotype.order <- diplotype.order[1]
   
   full.to.add.matrix <- straineff.mapping.matrix()
   
@@ -363,13 +365,27 @@ convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
   ## Reducing loci to only those in chr selection
   loci <- loci[loci %in% total.map[total.map[,map.chr.colname] %in% chr, map.locus_name.colname]]
   
+  ## Reorder diplotype columns
+  if(diplotype.order == "DOQTL"){
+    full.array <- full.array[,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
+                                17,5,12,18,23,6,13,19,24,28,7,14,
+                                20,25,29,32,8,15,21,26,30,33,35),]
+  }
+  else if(diplotype.order == "CC"){
+    full.array <- full.array[,c(1,2,3,4,5,6,7,8,
+                                9,
+                                10,16,
+                                11,17,22,
+                                12,18,23,27,
+                                13,19,24,28,31,
+                                14,20,25,29,32,34,
+                                15,21,26,30,33,35,36),]
+  }
+  
   for(i in 1:length(loci)){
     chr.locus <- as.character(total.map[total.map[,map.locus_name.colname] == loci[i], map.chr.colname])
     
-    locus.matrix <- DOQTL.array[,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
-                                   17,5,12,18,23,6,13,19,24,28,7,14,
-                                   20,25,29,32,8,15,21,26,30,33,35),
-                                i]
+    locus.matrix <- full.array[,,i]
     
     var_name <- loci[i]
     assign(var_name, locus.matrix)
