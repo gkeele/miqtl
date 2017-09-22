@@ -369,25 +369,25 @@ convert.full.DOQTL.array.to.HAPPY <- function(full.array, map,
   
   ## Reorder diplotype columns
   if(diplotype.order == "DOQTL"){
-    full.array <- full.array[,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
-                                17,5,12,18,23,6,13,19,24,28,7,14,
-                                20,25,29,32,8,15,21,26,30,33,35),]
+    dip.order <- c(1,9,16,22,27,31,34,36,2,3,10,4,11,
+                   17,5,12,18,23,6,13,19,24,28,7,14,
+                   20,25,29,32,8,15,21,26,30,33,35),]
   }
   else if(diplotype.order == "CC"){
-    full.array <- full.array[,c(1,2,3,4,5,6,7,8,
-                                9,
-                                10,16,
-                                11,17,22,
-                                12,18,23,27,
-                                13,19,24,28,31,
-                                14,20,25,29,32,34,
-                                15,21,26,30,33,35,36),]
+    dip.order <- c(1,2,3,4,5,6,7,8,
+                   9,
+                   10,16,
+                   11,17,22,
+                   12,18,23,27,
+                   13,19,24,28,31,
+                   14,20,25,29,32,34,
+                   15,21,26,30,33,35,36),]
   }
   
   for(i in 1:length(loci)){
     chr.locus <- as.character(total.map[total.map[,map.locus_name.colname] == loci[i], map.chr.colname])
     
-    locus.matrix <- full.array[,,i]
+    locus.matrix <- full.array[,dip.order,i]
     
     var_name <- loci[i]
     assign(var_name, locus.matrix)
