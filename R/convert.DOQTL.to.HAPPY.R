@@ -243,12 +243,15 @@ convert.additive.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
   # Marker info
   #-------------------------------
   total.map <- map
-  
+  ## Reducing map to just those also in array
+  total.map <- total.map[total.map[,map.locus_name.colname] %in% loci,]
+  ## Reducing loci to just those also in map
+  loci[loci %in% total.map[,map.locus_name.colname]]
   ## Reducing loci to only those in chr selection
-  loci <- loci[loci %in% map[map[,map.chr.colname] %in% chr, map.locus_name.colname]]
+  loci <- loci[loci %in% total.map[total.map[,map.chr.colname] %in% chr, map.locus_name.colname]]
   
   for(i in 1:length(loci)){
-    chr.locus <- as.character(map[total.map[,map.locus_name.colname] == loci[i], map.chr.colname])
+    chr.locus <- as.character(total.map[total.map[,map.locus_name.colname] == loci[i], map.chr.colname])
     
     if(convert.to.dosage){ locus.matrix <- DOQTL.array[,,i]*2 }
     else{ locus.matrix <- DOQTL.array[,,i] }
@@ -352,12 +355,15 @@ convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
   }
   
   total.map <- map
-  
+  ## Reducing map to just those also in array
+  total.map <- total.map[total.map[,map.locus_name.colname] %in% loci,]
+  ## Reducing loci to just those also in map
+  loci[loci %in% total.map[,map.locus_name.colname]]
   ## Reducing loci to only those in chr selection
-  loci <- loci[loci %in% map[map[,map.chr.colname] %in% chr, map.locus_name.colname]]
+  loci <- loci[loci %in% total.map[total.map[,map.chr.colname] %in% chr, map.locus_name.colname]]
   
   for(i in 1:length(loci)){
-    chr.locus <- as.character(map[total.map[,map.locus_name.colname] == loci[i], map.chr.colname])
+    chr.locus <- as.character(total.map[total.map[,map.locus_name.colname] == loci[i], map.chr.colname])
     
     locus.matrix <- DOQTL.array[,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
                                    17,5,12,18,23,6,13,19,24,28,7,14,
