@@ -308,10 +308,10 @@ convert.additive.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
 #' and re-formats into a HAPPY-style genome cache
 #'
 #' This function produces a HAPPY-format genome cache from a founder haplotype reconstruction 3D array.
-#' DO-QTL does not normally output this 3D array, but rather the dosage analogue. However, this function requires
+#' DO-QTL does not normally output this 3D array, but rather the dosages. However, this function requires
 #' the full probabilities, not the dosages.
 #'
-#' @param DOQTL.array 3D array that contains the founder probabilities. Should be dimension n x 36 x p, where n is the number of individuals
+#' @param full.array 3D array that contains the founder probabilities. Should be dimension n x 36 x p, where n is the number of individuals
 #' and p is the number of loci. 
 #' @param map The map file (which contains important information on the loci) loaded into R.
 #' @param map.locus_name.colname DEFAULT: "SNP_ID". The column name in the map data that corresponds to locus/marker names.
