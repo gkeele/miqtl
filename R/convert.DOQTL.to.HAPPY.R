@@ -260,7 +260,7 @@ convert.additive.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
     assign(var_name, locus.matrix)
     fn <- paste0(HAPPY.output.path, "/additive/chr", chr.locus, "/data/", var_name, ".RData")
     save(list=var_name, file=fn)
-    rm(var_name)
+    rm(list=var_name)
   }
   
   subjects <- samples
@@ -382,7 +382,7 @@ convert.full.DOQTL.array.to.HAPPY <- function(DOQTL.array, map,
     assign(var_name, dosage.matrix)
     add.fn <- paste0(HAPPY.output.path, "/additive/chr", chr.locus, "/data/", var_name, ".RData")
     save(list=var_name, file=add.fn)
-    rm(var_name)
+    rm(list=var_name)
   }
   
   subjects <- samples
