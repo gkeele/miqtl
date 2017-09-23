@@ -105,7 +105,9 @@ prob.heatmap.from.matrix = function(geno.matrix, marker=NULL, marker.line=1,
        labels=rev(founder.labels), cex.axis=founder.cex,
        lty=0, srt=90, las=2) # add txt on the strain 
   phenotype <- ifelse(is.null(alternative.phenotype.label), phenotype, alternative.phenotype.label)
-  axis(1, at=0.5, labels=parse(text=paste('"-" %<-%', phenotype, '%->% "+"')), tick=FALSE, cex.axis=phenotype.lab.cex, line=phenotype.line)
+  axis(1, at=0.5, labels=parse(text=paste('"-" %<-%', gsub(x=phenotype, pattern=" ", replacement="~"), '%->% "+"')), 
+       tick=FALSE, cex.axis=phenotype.lab.cex, line=phenotype.line)
+  
   axis(3, at=c(0, 0.25, 0.5, 0.75, 1), labels=c(s1, s2, s3, s5, s6), cex.axis=phenotype.num.cex, line=phenotype.num.line, padj=phenotype.num.padj)
   if(!is.null(marker)){
     if(is.null(p.value)){
