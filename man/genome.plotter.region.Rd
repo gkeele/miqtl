@@ -5,13 +5,15 @@
 \title{Plot user-specified windows of haplotype-based and snp-based genome scans}
 \usage{
 genome.plotter.region(haplotype.association = NULL, snp.association = NULL,
-  use.lod = FALSE, chr, scale = c("Mb", "cM"), region.min = NULL,
-  region.max = NULL, haplotype.col = c("blue", "red"), haplotype.lwd = 3,
-  median.band.col = c("cyan", "pink"), snp.col = c("black", "gray"),
-  snp.pch = 20, snp.cex = 0.9, main = "", no.title = FALSE,
-  override.title = NULL, y.max.manual = NULL, hard.thresholds = NULL,
-  thresholds.col = "red", thresholds.legend = NULL, use.legend = TRUE,
-  my.legend.cex = 0.6, my.legend.pos = "topright")
+  use.lod = FALSE, chr, region.min = NULL, region.max = NULL,
+  scale = c("Mb", "cM"), haplotype.col = c("blue", "red"),
+  haplotype.lwd = 3, median.band.col = c("cyan", "pink"),
+  snp.col = c("black", "gray"), snp.pch = 20, snp.cex = 0.9, main = "",
+  no.title = FALSE, override.title = NULL, y.max.manual = NULL,
+  my.y.line = 2, my.y.axis.cex = 1, my.y.lab.cex = 0.5,
+  hard.thresholds = NULL, thresholds.col = "red",
+  thresholds.legend = NULL, use.legend = TRUE, my.legend.cex = 0.6,
+  my.legend.pos = "topright", rug.pos = NULL, rug.col = "gray50")
 }
 \arguments{
 \item{haplotype.association}{DEFAULT: NULL. A list of scan.h2lmm() objects (ROP or multiple imputations). If multiple imputations, median and confidence interval 
@@ -23,11 +25,11 @@ on median are plotted. If NULL, presumably only SNP scans will be plotted.}
 
 \item{chr}{The chromosome to be plotted.}
 
-\item{scale}{DEFAULT: "Mb". Specifies the scale of genomic position to be plotted. Either Mb or cM can be used.}
-
 \item{region.min}{DEFAULT: NULL. The lower bound of the region to be plotted. Should match the scale. If NULL, defaults to the minimum of the specified chromosome.}
 
 \item{region.max}{DEFAULT: NULL. The upper bound of the region to be plotted. Should match the scale. If NULL, defaults to the maximum of the specified chromosome.}
+
+\item{scale}{DEFAULT: "Mb". Specifies the scale of genomic position to be plotted. Either Mb or cM can be used.}
 
 \item{haplotype.col}{DEFAULT: "black". The color of the haplotype-based association score to be plotted.}
 

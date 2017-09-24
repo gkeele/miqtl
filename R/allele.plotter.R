@@ -296,7 +296,195 @@ polygon.with.nas <- function(x, y.ci.max, y.ci.min, col){
   }
 }
 
+#' @export
+allele.plotter.region <- function(scan.object,
+                                  scale="Mb", 
+                                  chr, region.min=NULL, region.max=NULL,
+                                  imp.confint.alpha=NULL,
+                                  main.colors=c(rgb(240, 240, 0, maxColorValue=255), # yellow
+                                               rgb(128, 128, 128, maxColorValue=255), # gray
+                                               rgb(240, 128, 128, maxColorValue=255), # pink/salmon
+                                               rgb(16, 16, 240, maxColorValue=255), # dark blue
+                                               rgb(0, 160, 240, maxColorValue=255), # light blue
+                                               rgb(0, 160, 0, maxColorValue=255), # green
+                                               rgb(240, 0, 0, maxColorValue=255), # red
+                                               rgb(144, 0, 224, maxColorValue=255)), # purple,
+                                  use.legend=TRUE, main="", my.bty="n", my.lwd=rep(1.25, 8),
+                                  set.plot.limit=c(-5, 5), # Null places no limit on y-axis
+                                  my.legend.cex=0.7, my.legend.pos="topright", transparency=0.6,
+                                  y.max.manual=NULL, y.min.manual=NULL, 
+                                  my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.5,
+                                  no.title=FALSE, override.title=NULL,
+                                  alternative.labels=NULL,
+                                  rug.pos=NULL, rug.col="gray50")
+{
+  allele.effects <- scan.object$allele.effects
+  
+  ## Check that scan object has allele effect estimate - stop if not
+  if(is.null(allele.effects)){
+    stop("No allele effects in scan object. Re-run scan.h2lmm with return.allele.effects=TRUE", call.=FALSE)
+  }
+  ## Check that confint is specified, imputations were used
+  if(length(dim(allele.effects)) != 3 & !is.null(imp.confint.alpha)){
+    cat("Multiple imputations must have been used to plot effect confidence intervals!\n",
+        "Setting imp.confint.alpha to NULL\n")
+    imp.confint.alpha <- NULL
+  }
+  
+  pos <- ifelse(rep(scale=="Mb", length(scan.object$loci)), scan.object$pos$Mb, scan.object$pos$cM)
+  
+  ## Getting index to plot
+  keep.chr <- scan.object$chr == chr
+  keep.na <- !is.na(pos)
+  keep <- (keep.chr + keep.na) == 2
+  order.i <- order(pos[keep])
+  pos <- pos[keep][order.i]
+  
+  ## Grabbing the number of alleles
+  if(length(dim(allele.effects)) == 3){ 
+    num.founders <- dim(allele.effects)[1]
+    allele.effects <- allele.effects[,keep,][,order.i,]
+  }
+  else{ 
+    num.founders <- nrow(allele.effects) 
+    allele.effects <- allele.effects[,keep][,order.i]
+  }
+  
+  ## Calculating confidence intervals on the allele effect means
+  allele.effect.confint <- NULL
+  if(!is.null(imp.confint.alpha)){
+    allele.effect.confint <- apply(allele.effects, c(1, 2), function(x) ci.mean(x, alpha=imp.confint.alpha))
+  }
+  ## Calculating the allele effect means given that multiple imputations were used
+  if(length(dim(allele.effects)) == 3){
+    allele.effects <- apply(allele.effects, c(1, 2), function(x) mean(x))
+  }
+  
+  min.pos <- min(pos)
+  max.pos <- max(pos)
+  if(!is.null(region.min)){ min.pos <- region.min }
+  if(!is.null(region.max)){ max.pos <- region.max }
+
+  # Finding max and min of y for plot window
+  y.max <- ifelse(max(allele.effects, na.rm=TRUE) > 0, 
+                  ceiling(max(allele.effects, allele.effect.confint, na.rm=TRUE)), 
+                  floor(max(allele.effects, allele.effect.confint, na.rm=TRUE)))
+  y.min <- ifelse(min(allele.effects, na.rm=TRUE) > 0, 
+                  ceiling(min(allele.effects, allele.effect.confint, na.rm=TRUE)), 
+                  floor(min(allele.effects, allele.effect.confint, na.rm=TRUE)))
+  
+  if(!is.null(set.plot.limit)){
+    y.max <- min(y.max, set.plot.limit[2])
+    y.min <- max(y.min, set.plot.limit[1])
+  }
+  
+  if(!is.null(y.max.manual)){
+    y.max <- y.max.manual
+  }
+  if(!is.null(y.min.manual)){
+    y.min <- y.min.manual
+  }
+
+  ### Fixef or ranef
+  locus.effect.type <- ifelse(scan.object$locus.effect.type == "fixed", "fixef", "ranef")
+  locus.term <- paste("locus", locus.effect.type, sep=".")
+  
+  ### Handling the annoying differences between lmer and lm objects
+  if(is.null(scan.object$fit0)){
+    this.title <- c(main, 
+                    paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"),
+                    paste("n =", round(scan.object$n, 2)))
+  }
+  else{
+    if(class(scan.object$fit0) != "lmerMod"){
+      this.title <- c(main, 
+                      paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"),
+                      paste("n =", round(ifelse(is.null(scan.object$fit0$weights), 
+                                                length(scan.object$fit0$y),
+                                                sum(scan.object$fit0$weights)), 2)))
+    }
+    else{
+      this.title <- c(main, 
+                      paste0(scan.object$formula, " + ", locus.term, " (", scan.object$model.type, ")"),
+                      paste("n =", round(sum(scan.object$fit0@resp$weights), 2)))
+    }
+  }
+  if(no.title){ this.title <- NULL }
+  if(!is.null(override.title)){ this.title <- override.title }
+  
+  this.xlab <- paste0("Chr ", chr, " Position (", scale, ")")
+  
+  plot(0, pch="",
+       xlim=c(min.pos, max.pos), 
+       ylim=c(y.min, y.max), 
+       xaxt="n", yaxt="n", xlab=this.xlab, ylab="", main=this.title,
+       frame.plot=FALSE, type="l", cex=0.5, lwd=1.5, col=main.colors[1])
+  axis(side=2, at=sort(unique(c(0, y.min, y.min:y.max, y.max))), las=2, cex.axis=my.y.axis.cex)
+  mtext(text="Additive allele effects", side=2, line=my.y.line, cex=my.y.lab.cex)
+  label.spots <- max.pos[1]/2
+  x.tick.spots <- c(0, max.pos[1])
+  
+  x.ticks <- seq(min.pos, max.pos, length.out=5)
+  x.ticks <- round(x.ticks)
+  axis(side=1, tick=TRUE, line=NA, at=x.ticks, xpd=TRUE)
+  
+  ## Confint
+  if(!is.null(imp.confint.alpha)){
+    for(i in 1:num.founders){
+      founder.y.max <- allele.effect.confint[2, i,]
+      founder.y.min <- allele.effect.confint[1, i,]
+      if(any(is.na(founder.first.y.max))){
+        polygon.with.nas(x=pos,
+                         y.ci.max=founder.y.max, y.ci.min=founder.y.min,
+                         col=scales::alpha(main.colors[i], transparency))
+      }
+      else{
+        polygon(x=c(pos, rev(pos)),
+                y=c(founder.y.max, rev(founder.y.min)),
+                border=NA, col=scales::alpha(main.colors[i], transparency))
+      }
+    }
+  }
+  ## Means
+  for(i in 1:num.founders){
+    points(x=pos, y=allele.effects[i,],
+           type="l", lwd=my.lwd[i], col=main.colors[i])
+  }
+  
+  if(use.legend){
+    if(!is.null(alternative.labels)){ these.labels <- alternative.labels }
+    else{ these.labels <- rownames(allele.effects) }
+    legend(my.legend.pos, legend=these.labels, 
+           fill=main.colors, border="black", 
+           col=main.colors, bty=my.bty, cex=my.legend.cex)
+  }
+  if(!is.null(rug.pos)){
+    if(length(rug.col) == 1){ rug.col <- rep(rug.col, length(rug.pos))}
+    for(i in 1:length(rug.pos)){
+      axis(1, at=rug.pos[i], col.ticks=rug.col[i], label=FALSE, cex.axis=0.1, lwd.ticks=3, lend="butt", tck=-0.1)
+    }
+  }
+}
 
 
+polygon.with.nas <- function(x, y.ci.max, y.ci.min, col){
+  enc <- rle(!is.na(y.ci.max))
+  endIdxs <- cumsum(enc$lengths)
+  for(i in 1:length(enc$lengths)){
+    if(enc$values[i]){
+      endIdx <- endIdxs[i]
+      startIdx <- endIdx - enc$lengths[i] + 1
+      
+      subx <- x[startIdx:endIdx]
+      suby.max <- y.ci.max[startIdx:endIdx]
+      suby.min <- y.ci.min[startIdx:endIdx]
+      
+      reduced.x <- c(subx, rev(subx))
+      reduced.y <- c(suby.max, rev(suby.min))
+      
+      polygon(x=reduced.x, y=reduced.y, col=col, border=NA)
+    }
+  }
+}
 
 

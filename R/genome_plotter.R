@@ -472,13 +472,15 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
 #' @export
 #' @examples genome.plotter.region()
 genome.plotter.region <- function(haplotype.association=NULL, snp.association=NULL, use.lod=FALSE,
-                                  chr, scale=c("Mb", "cM"), region.min=NULL, region.max=NULL,
+                                  chr, region.min=NULL, region.max=NULL, scale=c("Mb", "cM"),
                                   haplotype.col=c("blue", "red"), haplotype.lwd=3, median.band.col=c("cyan", "pink"),
                                   snp.col=c("black", "gray"), snp.pch=20, snp.cex=0.9,
                                   main="", no.title=FALSE, override.title=NULL,
                                   y.max.manual=NULL,
+                                  my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.5,
                                   hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL, 
-                                  use.legend=TRUE, my.legend.cex=0.6, my.legend.pos="topright"){
+                                  use.legend=TRUE, my.legend.cex=0.6, my.legend.pos="topright", 
+                                  rug.pos=NULL, rug.col="gray50"){
   scale <- scale[1]
 
   if(is.null(haplotype.association) & is.null(snp.association)){
@@ -589,21 +591,18 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   
   this.xlab <- paste0("Chr ", chr, " Position (", scale, ")")
   
-  ## Plotting
-  # plot(1, 
-  #      xlim=c(x.min, x.max), 
-  #      ylim=c(0, y.max), 
-  #      xlab=this.xlab, ylab=this.ylab, main=this.title,
-  #      frame.plot=FALSE, type="l", pch=20, cex=0.5, las=1, cex.main=0.8)
-  plot(1, 
+  plot(0, 
        xlim=c(x.min, x.max), 
-       ylim=c(0, y.max), xaxt="n",
-       xlab=this.xlab, ylab=this.ylab, main=this.title,
-       frame.plot=FALSE, type="l", pch=20, cex=0.5, las=1, cex.main=0.8)
+       ylim=c(0, y.max), xaxt="n", yaxt="n",
+       xlab=this.xlab, ylab="", main=this.title,
+       frame.plot=FALSE, type="l", pch="", cex=0.5)
   
   x.ticks <- seq(x.min, x.max, length.out=5)
   x.ticks <- round(x.ticks)
   axis(side=1, tick=TRUE, line=NA, at=x.ticks, xpd=TRUE)
+  axis(side=2, line=my.y.line, las=2, cex.axis=my.y.axis.cex)
+  mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex)
+  
   ## Adding associations
   if(!is.null(haplotype.association)){
     ## Plotting haplotype intervals
@@ -636,8 +635,9 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
     }
   }
   
+  scan.names <- c(names(haplotype.association))
+  use.legend <- ifelse(is.null(scan.names), FALSE, TRUE)
   if(use.legend){
-    scan.names <- c(names(haplotype.association))
     legend(my.legend.pos, legend=scan.names, 
            lty=rep(1, length(scan.names)), lwd=haplotype.lwd, 
            col=haplotype.col[1:length(scan.names)], bty="n", cex=my.legend.cex)
@@ -651,6 +651,12 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   if(!is.null(thresholds.legend)){
     legend("topleft", legend=thresholds.legend, col=thresholds.col, lty=rep(2, length(thresholds.legend)),
            bty="n", cex=my.legend.cex)
+  }
+  if(!is.null(rug.pos)){
+    if(length(rug.col) == 1){ rug.col <- rep(rug.col, length(rug.pos))}
+    for(i in 1:length(rug.pos)){
+      axis(1, at=rug.pos[i], col.ticks=rug.col[i], label=FALSE, cex.axis=0.1, lwd.ticks=3, lend="butt", tck=-0.1)
+    }
   }
 }
 
