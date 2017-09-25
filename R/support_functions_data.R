@@ -33,7 +33,7 @@ make.processed.data <- function(formula, data, cache.subjects, K, pheno.id, geno
 make.simple.augment.K <- function(K, augment.n){
   if(!is.null(K)){
     original.K.names <- colnames(K)
-    K <- as.matrix(Matrx::bdiag(K, diag(augment.n)))
+    K <- as.matrix(Matrix::bdiag(K, diag(augment.n)))
     rownames(K) <- colnames(K) <- c(original.K.names, paste0("augment.obs", 1:augment.n))
   }
   return(K)
