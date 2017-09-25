@@ -314,6 +314,7 @@ allele.plotter.region <- function(scan.object,
                                   my.legend.cex=0.7, my.legend.pos="topright", transparency=0.6,
                                   y.max.manual=NULL, y.min.manual=NULL, 
                                   my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.5,
+                                  my.title.line=0.5, my.title.cex=1,
                                   no.title=FALSE, override.title=NULL,
                                   alternative.labels=NULL,
                                   rug.pos=NULL, rug.col="gray50")
@@ -417,16 +418,17 @@ allele.plotter.region <- function(scan.object,
   plot(0, pch="",
        xlim=c(min.pos, max.pos), 
        ylim=c(y.min, y.max), 
-       xaxt="n", yaxt="n", xlab=this.xlab, ylab="", main=this.title,
-       frame.plot=FALSE, type="l", cex=0.5, lwd=1.5, col=main.colors[1])
-  axis(side=2, at=sort(unique(c(0, y.min, y.min:y.max, y.max))), las=2, cex.axis=my.y.axis.cex)
-  mtext(text="Additive allele effects", side=2, line=my.y.line, cex=my.y.lab.cex)
+       xaxt="n", yaxt="n", xlab=this.xlab, ylab="", main="",
+       frame.plot=FALSE, type="l", cex=0.5, lwd=1.5)
+  title(main=this.title, line=my.title.line, cex.main=my.title.cex)
   label.spots <- max.pos[1]/2
   x.tick.spots <- c(0, max.pos[1])
   
   x.ticks <- seq(min.pos, max.pos, length.out=5)
   x.ticks <- round(x.ticks)
   axis(side=1, tick=TRUE, line=NA, at=x.ticks, xpd=TRUE)
+  axis(side=2, at=sort(unique(c(0, y.min, y.min:y.max, y.max))), las=2, cex.axis=my.y.axis.cex)
+  mtext(text="Additive allele effects", side=2, line=my.y.line, cex=my.y.lab.cex)
   
   ## Confint
   if(!is.null(imp.confint.alpha)){
@@ -456,7 +458,7 @@ allele.plotter.region <- function(scan.object,
     else{ these.labels <- rownames(allele.effects) }
     legend(my.legend.pos, legend=these.labels, 
            fill=main.colors, border="black", 
-           col=main.colors, bty=my.bty, cex=my.legend.cex)
+           col=main.colors, bty=my.bty, bg="white", cex=my.legend.cex)
   }
   if(!is.null(rug.pos)){
     if(length(rug.col) == 1){ rug.col <- rep(rug.col, length(rug.pos))}

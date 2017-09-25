@@ -25,7 +25,7 @@
 #' @examples prob.heatmap()
 prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
                         phenotype, phenotype.data, merge.by="SUBJECT.NAME", 
-                        founder.labels=NULL, founder.cex=1, founder.line=1,
+                        founder.labels=NULL, founder.cex=1, founder.line=1, founder.col=rep("black", 8),
                         phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
                         phenotype.line=NA, phenotype.num.line=NA,
                         include.ramp=TRUE, ramp.label.cex=0.7, ramp.label.line=0.5, prob.axis.cex=1,
@@ -41,7 +41,7 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
   
   prob.heatmap.from.matrix(geno.matrix=X, marker=marker, p.value=p.value, model=model, phenotype=phenotype,
                            phenotype.data, merge.by=merge.by, 
-                           founder.labels=founder.labels, founder.cex=founder.cex, founder.line=founder.line,
+                           founder.labels=founder.labels, founder.cex=founder.cex, founder.line=founder.line, founder.col=founder.col,
                            phenotype.lab.cex=phenotype.lab.cex, phenotype.num.cex=phenotype.num.cex, phenotype.num.padj=phenotype.num.padj,
                            phenotype.line=phenotype.line, phenotype.num.line=phenotype.num.line,
                            include.ramp=include.ramp, ramp.label.cex=ramp.label.cex, ramp.label.line=ramp.label.line, prob.axis.cex=prob.axis.cex,
@@ -54,7 +54,7 @@ prob.heatmap.from.matrix = function(geno.matrix, marker=NULL, marker.line=1,
                                     p.value=NULL, model="additive",
                                     phenotype, phenotype.data,
                                     merge.by="SUBJECT.NAME", 
-                                    founder.labels=NULL, founder.cex=1, founder.line=1,
+                                    founder.labels=NULL, founder.cex=1, founder.line=0.5, founder.col=rep("black", 8),
                                     phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
                                     phenotype.line=NA, phenotype.num.line=NA,
                                     include.ramp=TRUE, ramp.label.cex=0.7, ramp.label.line=0.5, prob.axis.cex=1,
@@ -101,9 +101,14 @@ prob.heatmap.from.matrix = function(geno.matrix, marker=NULL, marker.line=1,
   else{ z.val <- 1 - probs; z.lim <- c(0, 1) }
   image(z=z.val, axes=FALSE, col=cols, zlim=z.lim)
   box()
+  # axis(2, at=seq(0, num.col, 1+1/num.col)/num.col, 
+  #      labels=rev(founder.labels), cex.axis=founder.cex, line=founder.line,
+  #      lty=0, srt=90, las=2, col.axis=founder.col) # add txt on the strain 
   axis(2, at=seq(0, num.col, 1+1/num.col)/num.col, 
-       labels=rev(founder.labels), cex.axis=founder.cex, line=founder.line,
-       lty=0, srt=90, las=2) # add txt on the strain 
+       labels=FALSE,
+       lty=0, srt=90)
+  mtext(text=rev(founder.labels), side=2, at=seq(0, num.col, 1+1/num.col)/num.col, col=founder.col,
+        las=2, line=founder.line, cex=founder.cex)
   phenotype <- ifelse(is.null(alternative.phenotype.label), phenotype, alternative.phenotype.label)
   axis(1, at=0.5, labels=parse(text=paste('"-" %<-%', gsub(x=phenotype, pattern=" ", replacement="~"), '%->% "+"')), 
        tick=FALSE, cex.axis=phenotype.lab.cex, line=phenotype.line)

@@ -7,11 +7,12 @@
 prob.heatmap(marker, p.value = NULL, genomecache, model = "additive",
   phenotype, phenotype.data, merge.by = "SUBJECT.NAME",
   founder.labels = NULL, founder.cex = 1, founder.line = 1,
-  phenotype.lab.cex = 1, phenotype.num.cex = 1, phenotype.num.padj = NA,
-  phenotype.line = NA, phenotype.num.line = NA, include.ramp = TRUE,
-  ramp.label.cex = 0.7, ramp.label.line = 0.5, prob.axis.cex = 1,
-  include.marker = TRUE, marker.line = 1,
-  alternative.phenotype.label = NULL, alternative.marker.label = NULL)
+  founder.col = rep("black", 8), phenotype.lab.cex = 1,
+  phenotype.num.cex = 1, phenotype.num.padj = NA, phenotype.line = NA,
+  phenotype.num.line = NA, include.ramp = TRUE, ramp.label.cex = 0.7,
+  ramp.label.line = 0.5, prob.axis.cex = 1, include.marker = TRUE,
+  marker.line = 1, alternative.phenotype.label = NULL,
+  alternative.marker.label = NULL)
 }
 \arguments{
 \item{marker}{A marker that is contained in the genome cache. In general this should be a marker of interest, such as one

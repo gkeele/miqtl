@@ -330,8 +330,6 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     for(i in 2:length(chr.types)){
       this.pos <- pos[pre.chr==chr.types[i]] + shift
       if(i %% 2 == 0){
-        # polygon(x=c(shift, shift:max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE)), 
-        #         y=c(0, rep(y.max, length(shift:max(this.pos, na.rm=TRUE))), 0), border=NA, col="gray88")
         polygon(x=c(shift, max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE), shift), 
                 y=c(y.max, y.max, 0, 0), border=NA, col="gray88")
         
@@ -478,6 +476,9 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
                                   main="", no.title=FALSE, override.title=NULL,
                                   y.max.manual=NULL,
                                   my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.5,
+                                  my.x.line=2, my.x.axis.cex=1, my.xlab.cex=1, x.padj=-0.3,
+                                  my.x.labels=TRUE, override.xlab=NULL, 
+                                  my.title.line=0.5, my.title.cex=1,
                                   hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL, 
                                   use.legend=TRUE, my.legend.cex=0.6, my.legend.pos="topright", 
                                   rug.pos=NULL, rug.col="gray50"){
@@ -589,18 +590,21 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   if(no.title){ this.title <- NULL }
   if(!is.null(override.title)){ this.title <- override.title }
   
-  this.xlab <- paste0("Chr ", chr, " Position (", scale, ")")
-  
   plot(0, 
        xlim=c(x.min, x.max), 
        ylim=c(0, y.max), xaxt="n", yaxt="n",
-       xlab=this.xlab, ylab="", main=this.title,
+       xlab="", ylab="", main="",
        frame.plot=FALSE, type="l", pch="", cex=0.5)
+  title(main=this.title, line=my.title.line, cex.main=my.title.cex)
   
   x.ticks <- seq(x.min, x.max, length.out=5)
   x.ticks <- round(x.ticks)
-  axis(side=1, tick=TRUE, line=NA, at=x.ticks, xpd=TRUE)
-  axis(side=2, line=my.y.line, las=2, cex.axis=my.y.axis.cex)
+  this.xlab <- ifelse(is.null(override.xlab), paste("Chr", chr, paste0("(", scale, ")")), override.xlab)
+  axis(side=1, tick=TRUE, cex.axis=my.x.axis.cex, labels=my.x.labels, padj=x.padj)
+  mtext(text=this.xlab, side=1, line=my.x.line, cex=my.xlab.cex)
+  #axis(side=1, tick=TRUE, line=NA, at=x.ticks, xpd=TRUE)
+  
+  axis(side=2, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex)
   
   ## Adding associations
@@ -621,7 +625,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
       this.pos <- this.scan$pos
       this.outcome <- this.scan$outcome
       
-      lines(this.pos, this.outcome, col=haplotype.col[i], lwd=haplotype.lwd[i])
+      points(this.pos, this.outcome, col=haplotype.col[i], type="l", lwd=haplotype.lwd[i])
     }
   }
   if(!is.null(snp.association)){
