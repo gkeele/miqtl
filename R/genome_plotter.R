@@ -218,8 +218,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  scale="Mb", main.colors=c("black", "gray48", "blue"),
                                  use.legend=TRUE, main="",
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.pos="topright",
-                                 y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1,
-                                 my.x.axis.cex=0.7,
+                                 y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.5,
+                                 my.x.axis.cex=0.7, my.x.labels=TRUE,
                                  no.title=FALSE, override.title=NULL, my.title.line=NA, title.cex=1,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                  add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE){
@@ -321,7 +321,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
        frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], col=main.colors[1])
   title(main=this.title, line=my.title.line, cex.main=title.cex)
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
-  mtext(text=this.ylab, side=2, line=my.y.line)
+  mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex)
   
   label.spots <- max.pos[1]/2
   x.tick.spots <- c(0, max.pos[1])
@@ -417,10 +417,13 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     even.axis.label <- axis.label[(1:length(axis.label) %% 2) == 0]
     even.label.spots <- label.spots[(1:length(label.spots) %% 2) == 0]
     
+    if(!my.x.labels){ even.axis.label <- FALSE; odd.axis.label <- FALSE }
+    
     axis(side=1, tick=FALSE, line=NA, at=odd.label.spots, labels=odd.axis.label, cex.axis=my.x.axis.cex, padj=-1.5, xpd=TRUE)
     axis(side=1, tick=FALSE, line=NA, at=even.label.spots, labels=even.axis.label, cex.axis=my.x.axis.cex, padj=-1.5, xpd=TRUE)
   }
   else{
+    if(!my.x.labels){ axis.label <- FALSE }
     axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=my.x.axis.cex, padj=-1.5, xpd=TRUE)
   }
   if(use.legend){

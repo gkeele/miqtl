@@ -33,7 +33,7 @@ make.processed.data <- function(formula, data, cache.subjects, K, pheno.id, geno
 make.simple.augment.K <- function(K, augment.n){
   if(!is.null(K)){
     original.K.names <- colnames(K)
-    K <- as.matrix(bdiag(K, diag(augment.n)))
+    K <- as.matrix(Matrx::bdiag(K, diag(augment.n)))
     rownames(K) <- colnames(K) <- c(original.K.names, paste0("augment.obs", 1:augment.n))
   }
   return(K)
@@ -87,7 +87,7 @@ make.augment.weights <- function(data, weights, augment.n, added.data.points){
 make.full.null.augment.K <- function(K, augment.n, original.n){
   if(!is.null(K)){
     original.K.names <- colnames(K)
-    K <- as.matrix(bdiag(K, diag(augment.n)))
+    K <- as.matrix(Matrix::bdiag(K, diag(augment.n)))
     K[-(1:original.n), 1:original.n] <- K[1:original.n, -(1:original.n)] <- 0.5
     K[-(1:original.n), -(1:original.n)][K[-(1:original.n), -(1:original.n)] == 0] <- 0.5
     rownames(K) <- colnames(K) <- c(original.K.names, paste0("augment.obs", 1:augment.n))
