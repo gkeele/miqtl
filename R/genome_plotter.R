@@ -518,10 +518,10 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
       keep.na <- !is.na(this.pos)
       keep <- (keep.chr + keep.na) == 2
       order.i <- order(this.pos[keep])
-      
+      browser()
       x.min <- min(x.min, 
                    grab.min.pos.from.scan(scan.object=this.scan, scale=scale, chr=chr))
-      x.min <- max(x.min, 
+      x.max <- max(x.max, 
                    grab.max.pos.from.scan(scan.object=this.scan, scale=scale, chr=chr))
       ## Imputations interval
       if(!is.null(this.scan$MI.LOD)){
