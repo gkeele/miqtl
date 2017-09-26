@@ -547,6 +547,9 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
       this.scan <- snp.association[[i]]
       this.pos <- this.scan$pos[[scale]]
       this.outcome <- this.scan[[outcome.type]]
+      keep.chr <- this.scan$chr == chr
+      keep.na <- !is.na(this.pos)
+      keep <- (keep.chr + keep.na) == 2
       if(!use.lod){ this.outcome <- -log10(this.outcome) }
       x.min <- min(x.min, 
                    grab.min.pos.from.scan(scan.object=this.scan, scale=scale, chr=chr))
@@ -604,8 +607,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   this.xlab <- ifelse(is.null(override.xlab), paste("Chr", chr, paste0("(", scale, ")")), override.xlab)
   axis(side=1, tick=TRUE, cex.axis=my.x.axis.cex, labels=my.x.labels, padj=x.padj)
   mtext(text=this.xlab, side=1, line=my.x.line, cex=my.xlab.cex)
-  #axis(side=1, tick=TRUE, line=NA, at=x.ticks, xpd=TRUE)
-  
+
   axis(side=2, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex)
   
