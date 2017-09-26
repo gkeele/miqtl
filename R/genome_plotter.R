@@ -572,7 +572,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   if(!is.null(snp.association)){
     for(i in 1:length(snps.to.plot)){
       this.scan <- snps.to.plot[[i]]
-      y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= x.min & this.scan$pos <= x.max]))
+      y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= x.min & this.scan$pos <= x.max]), na.rm=TRUE)
     }
   }
   y.max <- max(y.max, max(c(hard.thresholds, 0)))
