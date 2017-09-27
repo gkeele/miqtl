@@ -483,7 +483,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
                                   my.x.labels=TRUE, override.xlab=NULL, 
                                   my.title.line=0.5, my.title.cex=1,
                                   hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL, 
-                                  use.legend=TRUE, my.legend.cex=0.6, my.legend.pos="topright", 
+                                  use.legend=TRUE, my.legend.cex=0.6, my.legend.pos="topright", my.bty="n",
                                   rug.pos=NULL, rug.col="gray50"){
   scale <- scale[1]
 
@@ -648,7 +648,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   if(use.legend){
     legend(my.legend.pos, legend=scan.names, 
            lty=rep(1, length(scan.names)), lwd=haplotype.lwd, 
-           col=haplotype.col[1:length(scan.names)], bty="n", cex=my.legend.cex)
+           col=haplotype.col[1:length(scan.names)], bty=my.bty, bg="white", cex=my.legend.cex)
   }
   
   if(!is.null(hard.thresholds)){

@@ -15,7 +15,8 @@ genome.plotter.region(haplotype.association = NULL, snp.association = NULL,
   override.xlab = NULL, my.title.line = 0.5, my.title.cex = 1,
   hard.thresholds = NULL, thresholds.col = "red",
   thresholds.legend = NULL, use.legend = TRUE, my.legend.cex = 0.6,
-  my.legend.pos = "topright", rug.pos = NULL, rug.col = "gray50")
+  my.legend.pos = "topright", my.bty = "n", rug.pos = NULL,
+  rug.col = "gray50")
 }
 \arguments{
 \item{haplotype.association}{DEFAULT: NULL. A list of scan.h2lmm() objects (ROP or multiple imputations). If multiple imputations, median and confidence interval 

@@ -8,9 +8,10 @@ genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
   scale = "Mb", main.colors = c("black", "gray48", "blue"),
   use.legend = TRUE, main = "", my.legend.cex = 0.6,
   my.legend.lwd = NULL, my.legend.pos = "topright", y.max.manual = NULL,
-  my.y.line = 2, my.y.axis.cex = 1, my.x.axis.cex = 0.7,
-  no.title = FALSE, override.title = NULL, my.title.line = NA,
-  title.cex = 1, hard.thresholds = NULL, thresholds.col = "red",
+  my.y.line = 2, my.y.axis.cex = 1, my.y.lab.cex = 0.5,
+  my.x.axis.cex = 0.7, my.x.labels = TRUE, no.title = FALSE,
+  override.title = NULL, my.title.line = NA, title.cex = 1,
+  hard.thresholds = NULL, thresholds.col = "red",
   thresholds.legend = NULL, add.chr.to.label = FALSE, axis.cram = TRUE,
   include.x.axis.line = TRUE)
 }
