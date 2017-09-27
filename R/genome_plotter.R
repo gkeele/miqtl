@@ -643,14 +643,6 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
     }
   }
   
-  scan.names <- c(names(haplotype.association))
-  use.legend <- ifelse(is.null(scan.names), FALSE, TRUE)
-  if(use.legend){
-    legend(my.legend.pos, legend=scan.names, 
-           lty=rep(1, length(scan.names)), lwd=haplotype.lwd, 
-           col=haplotype.col[1:length(scan.names)], bty=my.bty, bg="white", cex=my.legend.cex)
-  }
-  
   if(!is.null(hard.thresholds)){
     for(i in 1:length(hard.thresholds)){
       abline(h=hard.thresholds[i], col=thresholds.col[i], lty=2)
@@ -659,6 +651,14 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   if(!is.null(thresholds.legend)){
     legend("topleft", legend=thresholds.legend, col=thresholds.col, lty=rep(2, length(thresholds.legend)),
            bty="n", cex=my.legend.cex)
+  }
+  
+  scan.names <- c(names(haplotype.association))
+  use.legend <- ifelse(is.null(scan.names), FALSE, TRUE)
+  if(use.legend){
+    legend(my.legend.pos, legend=scan.names, 
+           lty=rep(1, length(scan.names)), lwd=haplotype.lwd, 
+           col=haplotype.col[1:length(scan.names)], bty=my.bty, bg="white", cex=my.legend.cex)
   }
   if(!is.null(rug.pos)){
     if(length(rug.col) == 1){ rug.col <- rep(rug.col, length(rug.pos))}

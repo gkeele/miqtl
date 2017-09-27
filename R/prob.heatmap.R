@@ -50,7 +50,7 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
 }
 
 #' @export
-prob.heatmap.from.matrix = function(geno.matrix, marker=NULL, marker.line=1,
+prob.heatmap.from.matrix = function(geno.matrix, marker=NULL, marker.line=2,
                                     p.value=NULL, model="additive",
                                     phenotype, phenotype.data,
                                     merge.by="SUBJECT.NAME", 
