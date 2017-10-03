@@ -1,11 +1,24 @@
+#' Takes qtl2geno founder haplotype reconstruction output files and re-formats into a HAPPY genome cache
+#'
+#' This function produces a HAPPY-format genome cache from qtl2geno founder haplotype reconstruction output files.
+#'
+#' @param qtl2.object The full probabilities output as a list of 3D arrays from qtl2geno.
+#' @param cross.object The cross object that includes map information as well as phenotype and covariate information.
+#' @param HAPPY.output.path The path to a directory that will be created as the HAPPY-format genome cache.
+#' @param allele.labels DEFAULT: NULL. Allows for specification of founder labels different from what is in the DO-QTL
+#' output. The DEFAULT of NULL leads to using the labels from the DO-QTL output.
+#' @param chr DEFAULT: c(1:19, "X"). Specifies the chromosomes to include in the cache.
+#' @param diplotype.order DEFAULT: "qtl2". Specifies the order the diplotype columns are in. The wrong order will result
+#' in incorrect rotation of probabilities into dosages.
 #' @export
+#' @examples convert.qtl2.to.HAPPY()
 convert.qtl2.to.HAPPY <- function(qtl2.object, cross.object,
                                   HAPPY.output.path,
                                   allele.labels=LETTERS[1:8],
                                   chr=c(1:19, "X"),
                                   diplotype.order=c("qtl2", "DOQTL", "CC")){
   
-  full.array.list <- qtl2.object$probs
+  full.array.list <- qtl2.object
   
   map.list <- cross.object$gmap
   pos.list <- cross.object$pmap
@@ -56,17 +69,14 @@ convert.qtl2.to.HAPPY <- function(qtl2.object, cross.object,
   strains <- allele.labels
   for(i in 1:length(chr)){
     loci <- dimnames(full.array.list[[chr[i]]])[[3]]
-    browser()
     chr.map <- map.list[[chr[i]]]
     chr.pos <- pos.list[[chr[i]]]
     
     for(j in 1:length(loci)){
-      chr.locus <- as.character(chr.total.map[chr.total.map[,map.locus_name.colname] == loci[j], map.chr.colname])
-      
       locus.matrix <- full.array.list[[chr[i]]][,dip.order,loci[j]]
       
       ## Handling qtl2's approach to X
-      if(chr.locus == "X"){
+      if(chr[i] == "X"){
         Y.matrix <- full.array.list[[chr[i]]][,-(1:36),loci[j]]
         
         locus.matrix[,"AA"] <- locus.matrix[,"AA"] + Y.matrix[,"AY"]
@@ -83,14 +93,14 @@ convert.qtl2.to.HAPPY <- function(qtl2.object, cross.object,
       
       var_name <- loci[j]
       assign(var_name, locus.matrix)
-      full.fn <- paste0(HAPPY.output.path, "/full/chr", chr.locus, "/data/", var_name, ".RData")
+      full.fn <- paste0(HAPPY.output.path, "/full/chr", chr[i], "/data/", var_name, ".RData")
       save(list=var_name, file=full.fn)
       
       dosage.matrix <- locus.matrix %*% full.to.add.matrix
       colnames(dosage.matrix) <- allele.labels
       rownames(dosage.matrix) <- rownames(locus.matrix)
       assign(var_name, dosage.matrix)
-      add.fn <- paste0(HAPPY.output.path, "/additive/chr", chr.locus, "/data/", var_name, ".RData")
+      add.fn <- paste0(HAPPY.output.path, "/additive/chr", chr[i], "/data/", var_name, ".RData")
       save(list=var_name, file=add.fn)
       rm(list=var_name)
     }
@@ -106,7 +116,6 @@ convert.qtl2.to.HAPPY <- function(qtl2.object, cross.object,
     save(markers, file = paste0(HAPPY.output.path, '/genotype/chr', chr[i], '/markers.RData'))
     ## bp
     bp <- chr.pos[loci]
-    if(physical_dist.is.Mb){ bp <- bp*1000000 }
     save(bp, file = paste0(HAPPY.output.path, '/additive/chr', chr[i], '/bp.RData'))
     save(bp, file = paste0(HAPPY.output.path, '/full/chr', chr[i], '/bp.RData'))
     save(bp, file = paste0(HAPPY.output.path, '/genotype/chr', chr[i], '/bp.RData'))
