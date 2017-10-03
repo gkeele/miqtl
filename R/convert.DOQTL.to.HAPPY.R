@@ -336,7 +336,7 @@ convert.full.DOQTL.array.to.HAPPY <- function(full.array, map,
                                               physical_dist.is.Mb=TRUE,
                                               allele.labels=LETTERS[1:8],
                                               chr=c(1:19, "X"),
-                                              diplotype.order=c("DOQTL", "CC")){
+                                              diplotype.order=c("DOQTL", "CC", "qtl2")){
   
   samples <- dimnames(full.array)[[1]]
   diplotypes <- dimnames(full.array)[[2]]
@@ -383,11 +383,21 @@ convert.full.DOQTL.array.to.HAPPY <- function(full.array, map,
                    14,20,25,29,32,34,
                    15,21,26,30,33,35,36)
   }
+  else if(diplotype.order == "qtl2"){
+    dip.order <- c(1, 3, 6, 10, 15, 21, 28, 36,
+                   2, 
+                   4, 5,
+                   7, 8, 9,
+                   11, 12, 13, 14,
+                   16, 17, 18, 19, 20,
+                   22, 23, 24, 25, 26, 27,
+                   29, 30, 31, 32, 33, 34, 35)
+  }
   
   for(i in 1:length(loci)){
     chr.locus <- as.character(total.map[total.map[,map.locus_name.colname] == loci[i], map.chr.colname])
     
-    locus.matrix <- full.array[,dip.order,i]
+    locus.matrix <- full.array[,dip.order,loci[i]]
     
     var_name <- loci[i]
     assign(var_name, locus.matrix)
