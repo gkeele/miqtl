@@ -10,7 +10,7 @@ convert.full.DOQTL.array.to.HAPPY(full.array, map,
   map.physical_dist.colname = "Mb_NCBI38", map.genetic_dist.colname = "cM",
   HAPPY.output.path, remove.chr.from.chr = FALSE,
   physical_dist.is.Mb = TRUE, allele.labels = LETTERS[1:8], chr = c(1:19,
-  "X"), diplotype.order = c("DOQTL", "CC"))
+  "X"), diplotype.order = c("DOQTL", "CC", "qtl2"))
 }
 \arguments{
 \item{full.array}{3D array that contains the founder probabilities. Should be dimension n x 36 x p, where n is the number of individuals
