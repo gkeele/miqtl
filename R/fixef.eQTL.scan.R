@@ -48,7 +48,8 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
                              Mb=h$getLocusStart(loci, scale="Mb")),
                     model=model,
                     founders=h$getFounders(),
-                    subjects=subjects)
+                    subjects=subjects,
+                    formula=Reduce(paste, deparse(formula)))
 }
 
 get.allele.effects.from.fixef.eQTL <- function(qr.alt, y, founders, intercept.allele, 
@@ -65,7 +66,7 @@ get.allele.effects.from.fixef.eQTL <- function(qr.alt, y, founders, intercept.al
 
 #' @export
 scan.qr <- function(qr.object, 
-                    data, formula,
+                    data, phenotype,
                     return.allele.effects=FALSE,
                     chr="all", id="SUBJECT.NAME",
                     just.these.loci=NULL,
@@ -77,6 +78,7 @@ scan.qr <- function(qr.object,
   num.founders <- length(founders)
   loci <- names(qr.object$qr.list)
   loci.chr <- qr.object$chr
+  rh.formula=qr.object$formula
 
   if(model == "full" & return.allele.effects){
     return.allele.effects <- FALSE
@@ -96,7 +98,9 @@ scan.qr <- function(qr.object,
     loci.chr <- loci.chr[loci %in% just.these.loci]
   }
   
-  formula.string <- Reduce(paste, deparse(formula))
+  formula.string <- paste(phenotype, rh.formula)
+  formula <- formula(formula.string)
+  #formula.string <- Reduce(paste, deparse(formula))
 
   allele.effects <- NULL
   p.vec <- rep(NA, length(loci))
