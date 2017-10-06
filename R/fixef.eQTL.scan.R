@@ -112,7 +112,7 @@ scan.qr <- function(qr.object,
   for(i in 1:length(loci)){
     p.vec[i] <- get.f.stat.p.val(qr.alt=qr.object$qr.list[[i]], 
                                  qr.null=qr.object$qr.0, 
-                                 y=y, n=n)
+                                 y=y)
     if(return.allele.effects){
       allele.effects[,i] <- get.allele.effects.from.fixef.eQTL(qr.alt=qr.object$qr.list[[i]], 
                                                                y=y, 
