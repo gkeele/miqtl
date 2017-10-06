@@ -1,5 +1,52 @@
-
+#' Add the residuals to a data.frame after regressing out a specified QTL effect
+#'
+#' This function sets up conditional scans via regressing out QTL effects. The output is a new data.frame
+#' with a residual outcome to be used as phenotype in subsequent genome scans.
+#'
+#' @param locus The locus for which the QTL effect will be regressed out. The locus must be contained in the
+#' genomecache.
+#' @param new.outcome.name DEFAULT: "new.y". The name of the new residual outcome variable to be included in the output data set.
+#' @param genomecache The path to the genome cache directory. The genome cache is a particularly structured
+#' directory that stores the haplotype probabilities/dosages at each locus. It has an additive model
+#' subdirectory and a full model subdirectory. Each contains subdirectories for each chromosome, which then
+#' store .RData files for the probabilities/dosages of each locus.
+#' @param data A data frame with outcome and potential covariates. Should also have IDs
+#' that link to IDs in the genome cache, often with the individual-level ID named "SUBJECT.NAME", though others
+#' can be specified with pheno.id.
+#' @param formula An lm style formula with functions of outcome and covariates contained in data frame.
+#' @param K DEFAULT: NULL. A positive semi-definite relationship matrix, usually a realized genetic relationship matrix (GRM)
+#' based on SNP genotypes or the founder haplotype probabilities. Colnames and rownames should match
+#' the SUBJECT.NAME column in the data frame. If no K matrix is specified, either lmer is used (if sparse random effects
+#' are included in the formula) or a fixed effect model (equivalent to lm).
+#' @param model DEFAULT: additive. Specifies how to model the founder haplotype probabilities. The additive options specifies
+#' use of haplotype dosages, and is most commonly used. The full option regresses the phenotype on the actual
+#' diplotype probabilities.
+#' @param locus.as.fixed DEFAULT: TRUE. If TRUE, the locus effect is fit as fixed effect. If FALSE, it is
+#' fit as a random effect.
+#' @param use.par DEFAULT: "h2". The parameterization of the likelihood to be used. 
+#' @param use.multi.impute DEFAULT: TRUE. This option specifies whether to use ROP or multiple imputations.
+#' @param num.imp DEFAULT: 11. IF multiple imputations are used, this specifies the number of imputations to perform.
+#' @param brute DEFAULT: TRUE. During the optimization to find maximum likelihood parameters, this specifies checking the
+#' boundary of h2=0. Slightly less efficient, but otherwise the optimization procedure will not directly check
+#' the boundary.
+#' @param use.fix.par DEFAULT: TRUE. This specifies an approximate fitting of mixed effect model (Kang et al. 2009). Much
+#' more efficient, as the optimization of h2 only needs to be performed once for the null model rather than every locus. 
+#' Technically less powerful, though in practice it has proven to be almost equal to the exact procedure.
+#' @param seed DEFAULT: 1. Multiple imputations involve a sampling process of the diplotypes, thus a seed is necessary
+#' to produce the same results over multiple runs and different machines.
+#' @param pheno.id DEFAULT: "SUBJECT.NAME". The is the individual-level ID that is associated with data points in the phenotype
+#' data. Generally this should be unique for each data point.
+#' @param geno.id DEFAULT: "SUBJECT.NAME". The default represents the situation that each genome is unique. Specifying some other
+#' column allows for replicate genomes, such as in the CC or CC-RIX.
+#' @param weights DEFAULT: NULL. If unspecified, individuals are equally weighted. This option allows for a weighted analysis 
+#' when using the mean of multiple individuals with the same genome.
+#' @param do.augment DEFAULT: FALSE. Augments the data with null observations for genotype groups. This is an approximately Bayesian 
+#' approach to applying a prior to the data, and can help control highly influential data points.
+#' @param use.full.null DEFAULT: FALSE. Draws augmented data points from the null model. This allows for the inclusion of null data points
+#' that do not influence the estimation of other model parameters as much.
+#' @param added.data.points DEFAULT: 1. If augment weights are being used, this specifies how many data points should be added in total.
 #' @export
+#' @examples condition.out.locus.for.scan()
 condition.out.locus.for.scan <- function(locus, new.outcome.name="new.y",
                                          genomecache, data, 
                                          formula, K=NULL,
