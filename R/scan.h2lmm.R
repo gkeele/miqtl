@@ -74,7 +74,8 @@ scan.h2lmm <- function(genomecache, data,
   num.founders <- length(founders)
   loci <- h$getLoci()
   
-  ## Case where there are replicates and K is not specified, then K is forced to be identity
+  ## Case where there are replicates and K is not specified, 
+  ## then K is forced to be identity
   if(pheno.id != geno.id & is.null(K)){
     K <- diag(unique(data[,geno.id]))
     rownames(K) <- colnames(K) <- unique(data[,geno.id])
@@ -234,6 +235,7 @@ scan.h2lmm <- function(genomecache, data,
   names(impute.map) <- c(pheno.id, geno.id)
   non.augment.subjects <- as.character(data[,geno.id])[grep(pattern="augment", x=as.character(data[,geno.id]), invert=TRUE)]
 
+  ## More efficient - does not require the formula/data processing steps
   y <- data$y
 
   # Progress bar
@@ -278,7 +280,7 @@ scan.h2lmm <- function(genomecache, data,
         allele.effects[,i,] <- fit1$allele.effects
       }
     }
-    if(!use.multi.impute){
+    else{ ## ROP
       X <- h$getLocusMatrix(loci[i], model=model, subjects=non.augment.subjects)
       keep.col <- 1:ncol(X)
       if(locus.as.fixed){

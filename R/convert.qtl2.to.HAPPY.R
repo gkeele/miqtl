@@ -115,7 +115,7 @@ convert.qtl2.to.HAPPY <- function(qtl2.object, cross.object,
     save(markers, file = paste0(HAPPY.output.path, '/full/chr', chr[i], '/markers.RData'))
     save(markers, file = paste0(HAPPY.output.path, '/genotype/chr', chr[i], '/markers.RData'))
     ## bp
-    bp <- chr.pos[loci]*1000000
+    bp <- chr.pos[loci]*1e6
     save(bp, file = paste0(HAPPY.output.path, '/additive/chr', chr[i], '/bp.RData'))
     save(bp, file = paste0(HAPPY.output.path, '/full/chr', chr[i], '/bp.RData'))
     save(bp, file = paste0(HAPPY.output.path, '/genotype/chr', chr[i], '/bp.RData'))
