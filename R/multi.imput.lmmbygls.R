@@ -1,18 +1,26 @@
 #' @export
-multi.imput.lmmbygls <- function(formula, data, pheno.id="SUBJECT.NAME",
-                                 y=NULL, fit0=NULL,
+multi.imput.lmmbygls <- function(formula, data=NULL, pheno.id="SUBJECT.NAME",
+                                 y=NULL, fit0=NULL, null.formula=NULL,
                                  num.imp, founders=founders, X.probs, 
-                                 K=NULL, return.allele.effects=FALSE,
+                                 K=NULL,
                                  use.par, fix.par=NULL, model=c("additive", "full"), p.value.method=c("LRT", "ANOVA"), locus.as.fixed=TRUE,
                                  use.lmer, impute.map,
                                  brute=TRUE, seed=1, do.augment,
-                                 weights=NULL){
+                                 weights=NULL,
+                                 return.allele.effects=FALSE, return.qtl.predictor=FALSE){
   model <- model[1]
   p.value.method <- p.value.method[1]
-  eigen.K <- logDetV <- M <- allele.effects <- NULL
+  eigen.K <- logDetV <- M <- allele.effects <- qtl.predictor <- NULL
+  ## For allele effect plots
   if(return.allele.effects){ 
     allele.effects <- matrix(NA, nrow=length(founders), ncol=num.imp,
                              dimnames=list(founders, paste0("imp", 1:num.imp)))
+  }
+  ## For conditional scans through residuals
+  if(return.qtl.predictor){
+    if(!is.null(data)){ n <- nrow(data) }
+    else{ n <- length(y) }
+    qtl.predictor <- matrix(NA, nrow=n, ncol=num.imp)
   }
   if(is.null(fit0)){
     null.formula <- make.null.formula(formula=formula, do.augment=do.augment)
@@ -85,6 +93,10 @@ multi.imput.lmmbygls <- function(formula, data, pheno.id="SUBJECT.NAME",
         if(return.allele.effects){
           allele.effects[,i] <- get.allele.effects.from.fixef(fit=fit1, founders=founders, allele.in.intercept=founders[max.column])
         }
+        if(return.qtl.predictor){
+          qtl.predictor[,i] <- regress.out.qtl(fit1=fit1, null.formula=null.formula, alt.formula=locus.formula,
+                                               locus.as.fixed=locus.as.fixed)
+        }
       }
       else{
         null.formula <- make.null.formula(formula=formula, do.augment=do.augment)
@@ -109,5 +121,6 @@ multi.imput.lmmbygls <- function(formula, data, pheno.id="SUBJECT.NAME",
               LOD=imp.LOD,
               p.value=imp.p.value,
               allele.effects=allele.effects,
+              qtl.predictor=qtl.predictor,
               locus.effect.type=fit1$locus.effect.type))
 }

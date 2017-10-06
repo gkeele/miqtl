@@ -155,13 +155,14 @@ condition.out.locus.for.scan <- function(locus, new.outcome.name="new.y",
       stop("Currently cannot take residuals from random effect fitting of QTL", call.=FALSE)
       #fit0.for.mi <- fit0.REML 
     }
-    fit1 <- multi.imput.lmmbygls(formula=formula,
+    fit1 <- multi.imput.lmmbygls(formula=formula, null.formula=null.formula,
                                  y=y, X.probs=diplotype.prob.matrix,
                                  weights=weights, locus.as.fixed=locus.as.fixed,
                                  model=model, founders=founders, pheno.id=pheno.id, num.imp=num.imp,
                                  use.lmer=use.lmer, impute.map=impute.map,
                                  use.par=use.par, fix.par=fix.par, fit0=fit0.for.mi, do.augment=do.augment, 
-                                 brute=brute, seed=seed) 
+                                 brute=brute, seed=seed, return.qtl.predictor=TRUE)
+    qtl.predictor <- rowMeans(fit1$qtl.predictor)
   }
   else{ ## ROP
     X <- h$getLocusMatrix(locus, model=model, subjects=non.augment.subjects)
@@ -206,10 +207,10 @@ condition.out.locus.for.scan <- function(locus, new.outcome.name="new.y",
                                 brute=brute)
       }
     }
-    new.y <- y - qtl.predictor
-    return.data <- null.data
-    return.data[,new.outcome.name] <- new.y
   }
+  new.y <- y - qtl.predictor
+  return.data <- null.data
+  return.data[,new.outcome.name] <- new.y
   return(return.data)
 }
 
