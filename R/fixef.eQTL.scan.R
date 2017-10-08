@@ -159,7 +159,7 @@ generate.qr.permutation.index.matrix <- function(qr.scan.object, num.samples, se
 #' @export
 run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
                                                keep.full.scans=FALSE, scan.index=NULL, id="SUBJECT.NAME",
-                                               formula, data, model=c("additive", "full"),
+                                               data, model=c("additive", "full"),
                                                chr="all", just.these.loci=NULL, use.progress.bar=TRUE,
                                                ...){
   model <- model[1]
@@ -175,6 +175,9 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
     loci <- loci[loci %in% just.these.loci]
     loci.chr <- loci.chr[loci %in% just.these.loci]
   }
+  rh.formula=qr.object$formula
+  formula.string <- paste(phenotype, rh.formula)
+  formula <- formula(formula.string)
   
   full.p <- these.pos <- NULL
   if(keep.full.scans){
@@ -194,7 +197,7 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
     this.data <- merge(x=new.y, y=data, by=id, all.x=TRUE)
 
     this.scan <- scan.qr(qr.object=qr.object, data=this.data, 
-                         formula=perm.formula, model=model,
+                         phenotype=, model=model,
                          id=id, chr=chr, return.allele.effects=FALSE, use.progress.bar=use.progress.bar,
                          ...)
     if(keep.full.scans){
