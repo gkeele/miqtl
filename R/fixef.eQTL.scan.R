@@ -1,6 +1,6 @@
 #' @export
 extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NAME",
-                       data, formula, model=c("additive", "full"),
+                       data, formula, model=c("additive", "full"), condition.loci=NULL,
                        chr="all", just.these.loci=NULL, use.progress.bar=TRUE){
   K <- NULL
   
@@ -23,6 +23,15 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
   }
   subjects <- as.character(data[,geno.id])
   X.0 <- model.matrix(formula, data=data)
+  if(!is.null(condition.loci)){
+    for(i in 1:length(condition.loci)){
+      X.condition <- h$getLocusMatrix(condition.loci[i], model=model, subjects=subjects)
+      keep.col <- 1:ncol(X.condition)
+      max.column <- which.max(colSums(X.condition, na.rm=TRUE))[1]
+      keep.col <- keep.col[keep.col != max.column]
+      X.0 <- cbind(X.0, X.condition[,keep.col])
+    }
+  }
   qr.0 <- qr(X.0)
   
   if(use.progress.bar){ pb <- txtProgressBar(min=0, max=length(loci), style=3) }
@@ -42,6 +51,7 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
   
   qr.object <- list(qr.list=qr.list,
                     intercept.allele=intercept.allele,
+                    condition.loci=condition.loci,
                     qr.0=qr.0,
                     chr=loci.chr,
                     pos=list(cM=h$getLocusStart(loci, scale="cM"),
