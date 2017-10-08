@@ -159,7 +159,7 @@ generate.qr.permutation.index.matrix <- function(qr.scan.object, num.samples, se
 #' @export
 run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
                                                keep.full.scans=FALSE, scan.index=NULL, id="SUBJECT.NAME",
-                                               data, model=c("additive", "full"),
+                                               phenotype, data, model=c("additive", "full"),
                                                chr="all", just.these.loci=NULL, use.progress.bar=TRUE,
                                                ...){
   model <- model[1]
