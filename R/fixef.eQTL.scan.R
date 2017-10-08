@@ -78,7 +78,7 @@ scan.qr <- function(qr.object,
   num.founders <- length(founders)
   loci <- names(qr.object$qr.list)
   loci.chr <- qr.object$chr
-  rh.formula=qr.object$formula
+  rh.formula <- qr.object$formula
 
   if(model == "full" & return.allele.effects){
     return.allele.effects <- FALSE
@@ -175,7 +175,7 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
     loci <- loci[loci %in% just.these.loci]
     loci.chr <- loci.chr[loci %in% just.these.loci]
   }
-  rh.formula=qr.object$formula
+  rh.formula <- qr.object$formula
   formula.string <- paste(phenotype, rh.formula)
   formula <- formula(formula.string)
   
