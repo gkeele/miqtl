@@ -31,6 +31,7 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
       keep.col <- keep.col[keep.col != max.column]
       X.0 <- cbind(X.0, X.condition[,keep.col])
     }
+    formula <- formula(paste(Reduce(paste, deparse(formula)), paste(condition.loci, collapse="+"), sep="+"))
   }
   qr.0 <- qr(X.0)
   
