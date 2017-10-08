@@ -1,5 +1,32 @@
+#' Pre-compute QR decompositions from genome cache for efficient fixed effect model genome scan.
+#'
+#' This function calculates the QR decomposition for the null model, and all alternative models (per locus)
+#' for a genome scan. This is only possible with a model that does not include any random effects.
+#'
+#' @param genomecache The path to the genome cache directory. The genome cache is a particularly structured
+#' directory that stores the haplotype probabilities/dosages at each locus. It has an additive model
+#' subdirectory and a full model subdirectory. Each contains subdirectories for each chromosome, which then
+#' store .RData files for the probabilities/dosages of each locus.
+#' @param id DEFAULT: "SUBJECT.NAME". The is the individual-level ID that is associated with data points 
+#' in the phenotype data. This should be unique for each data point.
+#' @param data A data frame with outcome and potential covariates. Should also have IDs
+#' that link to IDs in the genome cache, often with the individual-level ID named "SUBJECT.NAME", though others
+#' can be specified with pheno.id.
+#' @param formula The right side of an lm-style formula with functions of covariates contained in data frame. First
+#' symbol should be "~". Functions of the outcome will be specified in scan.qr().
+#' @param model DEFAULT: "additive". Specifies how to model the founder haplotype probabilities. The additive options specifies
+#' use of haplotype dosages, and is most commonly used. The full option regresses the phenotype on the actual
+#' diplotype probabilities.
+#' @param condition.loci DEFAULT: NULL. If loci are specified, they will be included in the null and alternative models.
+#' The loci must be present in the genome cache. Alternatively, conditional scans can be accomplished by regressing out 
+#' the loci effects with condition.out.locus.for.scan(), which does not require a new qr.object.
+#' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
+#' @param just.these.loci DEFAULT: NULL. Specifies a reduced set of loci to fit. If loci is just one locus, the alternative model fit
+#' will also be output as fit1.
+#' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar
 #' @export
-extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NAME",
+#' @examples extract.qr()
+extract.qr <- function(genomecache, id="SUBJECT.NAME",
                        data, formula, model=c("additive", "full"), condition.loci=NULL,
                        chr="all", just.these.loci=NULL, use.progress.bar=TRUE){
   K <- NULL
@@ -8,9 +35,6 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
   founders <- h$getFounders()
   num.founders <- length(founders)
   loci <- h$getLoci()
-  
-  cache.subjects <- rownames(h$getLocusMatrix(loci[1], model="additive"))
-  cache.subjects <- unique(as.character(data[,geno.id]))
   
   loci.chr <- h$getChromOfLocus(loci)
   if(chr[1] != "all"){
@@ -21,7 +45,7 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
     loci <- loci[loci %in% just.these.loci]
     loci.chr <- loci.chr[loci %in% just.these.loci]
   }
-  subjects <- as.character(data[,geno.id])
+  subjects <- as.character(data[,id])
   X.0 <- model.matrix(formula, data=data)
   if(!is.null(condition.loci)){
     for(i in 1:length(condition.loci)){
@@ -31,7 +55,6 @@ extract.qr <- function(genomecache, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NA
       keep.col <- keep.col[keep.col != max.column]
       X.0 <- cbind(X.0, X.condition[,keep.col])
     }
-    #formula <- formula(paste(Reduce(paste, deparse(formula)), paste(condition.loci, collapse="+"), sep="+"))
   }
   qr.0 <- qr(X.0)
   
@@ -75,7 +98,27 @@ get.allele.effects.from.fixef.eQTL <- function(qr.alt, y, founders, intercept.al
   return(as.vector(scale(effects, center=center, scale=scale)))
 }
 
+#' Runs genome scan from a QR decomposition object and phenotype data file.
+#'
+#' This function runs the genome scan based on a QR decomposition object and phenotype data file. This functionality only
+#' works for fixed effect models.
+#'
+#' @param qr.object QR decomposition output from extract.qr().
+#' @param data A data frame with outcome and potential covariates. Should also have IDs
+#' that link to IDs in the genome cache, often with the individual-level ID named "SUBJECT.NAME", though others
+#' can be specified with id.
+#' @param phenotype The column name (or function of column name) of a variable in data. This will become the outcome
+#' of the genome scan.
+#' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
+#' @param id DEFAULT: "SUBJECT.NAME". This is the individual-level ID that is associated with data points 
+#' in the phenotype data. This should be unique for each data point.
+#' @param just.these.loci DEFAULT: NULL. Specifies a reduced set of loci to fit. If loci is just one locus, the alternative model fit
+#' will also be output as fit1.
+#' @param debug.single.fit DEFAULT: FALSE. If TRUE, a browser() call is activated after the first locus is fit. This option
+#' allows developers to more easily debug while still using the actual R package.
+#' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar while code runs.
 #' @export
+#' @examples scan.qr()
 scan.qr <- function(qr.object, 
                     data, phenotype,
                     return.allele.effects=FALSE,
@@ -111,7 +154,6 @@ scan.qr <- function(qr.object,
   
   formula.string <- paste(phenotype, rh.formula)
   formula <- formula(formula.string)
-  #formula.string <- Reduce(paste, deparse(formula))
 
   allele.effects <- NULL
   p.vec <- rep(NA, length(loci))
@@ -160,7 +202,20 @@ scan.qr <- function(qr.object,
   return(output)
 }
 
+#' Outputs a matrix of permuted indeces for permutation scans, allowing for the same permutations of individuals
+#' across different outcomes.
+#'
+#' This function produces a matrix with columns that represent the permutations of the row index of the phenotype data.
+#' This allows the same permutations of individuals to be used across different phenotypes. This approach is only statistically
+#' valid when individuals are exchangeable.
+#' 
+#' @param qr.scan.object Output object from scan.qr().
+#' @param num.samples The number of permutations of the index to create - ultimately the number of columns in the
+#' output matrix.
+#' @param seed DEFAULT: 1. Samplings of the index is a random process, thus a seed is necessary
+#' to produce the same results over multiple runs and different machines.
 #' @export
+#' @examples generate.qr.permutation.index.matrix()
 generate.qr.permutation.index.matrix <- function(qr.scan.object, num.samples, seed=1){
   n <- length(qr.scan.object$y)
   
@@ -171,9 +226,33 @@ generate.qr.permutation.index.matrix <- function(qr.scan.object, num.samples, se
   return(perm.ind.matrix)
 }
 
+#' Runs permutation scans for significance thresholds based on an index permutation matrix object, the phenotype data, and
+#' pre-computed QR decompositions for all the models.
+#'
+#' This function runs permutation scans in order to calculate significance thresholds. Its results are most valid when
+#' done in a fixed effect model setting and observations are exchangeable.
+#' 
+#' @param perm.ind.matrix Output object from generate.qr.permutation.index.matrix().
+#' @param qr.object Output object from extract.qr().
+#' @param phenotype The column name (or function of column name) of a variable in data. This will become the outcome
+#' of the genome scan.
+#' @param data A data frame with outcome and potential covariates. Should also have IDs
+#' that link to IDs in the genome cache, often with the individual-level ID named "SUBJECT.NAME", though others
+#' can be specified with id.
+#' @param keep.full.scans DEFAULT: FALSE. If TRUE, all p-values are kept from all loci. If FALSE, only the minimum p-value
+#' is kept from each scan, greatly reducing size of output.
+#' @param scan.index DEFAULT: NULL. If NULL, all permutations are run. Integer vector can be specified to run just a 
+#' subset of the permutations.
+#' @param id DEFAULT: "SUBJECT.NAME". This is the individual-level ID that is associated with data points 
+#' in the phenotype data. This should be unique for each data point.
+#' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
+#' @param just.these.loci DEFAULT: NULL. DEFAULT: NULL. Specifies a reduced set of loci to fit. If loci is just one locus, the alternative model fit
+#' will also be output as fit1.
+#' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar while code runs.
 #' @export
+#' @examples run.qr.permutation.threshold.scans()
 run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
-                                               phenotype, data, model=c("additive", "full"),
+                                               phenotype, data,
                                                keep.full.scans=FALSE, scan.index=NULL, id="SUBJECT.NAME",
                                                chr="all", just.these.loci=NULL, use.progress.bar=TRUE,
                                                ...){
@@ -212,8 +291,8 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
     this.data <- merge(x=new.y, y=data, by=id, all.x=TRUE)
 
     this.scan <- scan.qr(qr.object=qr.object, data=this.data, 
-                         phenotype="new_y", model=model,
-                         id=id, chr=chr, return.allele.effects=FALSE, use.progress.bar=use.progress.bar,
+                         phenotype="new_y", id=id, chr=chr, 
+                         return.allele.effects=FALSE, use.progress.bar=use.progress.bar,
                          ...)
     if(keep.full.scans){
       full.p[i,] <- this.scan$p.value

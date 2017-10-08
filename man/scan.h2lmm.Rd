@@ -30,7 +30,7 @@ based on SNP genotypes or the founder haplotype probabilities. Colnames and rown
 the SUBJECT.NAME column in the data frame. If no K matrix is specified, either lmer is used (if sparse random effects
 are included in the formula) or a fixed effect model (equivalent to lm).}
 
-\item{model}{DEFAULT: additive. Specifies how to model the founder haplotype probabilities. The additive options specifies
+\item{model}{DEFAULT: "additive". Specifies how to model the founder haplotype probabilities. The additive options specifies
 use of haplotype dosages, and is most commonly used. The full option regresses the phenotype on the actual
 diplotype probabilities.}
 
