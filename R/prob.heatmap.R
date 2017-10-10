@@ -26,7 +26,7 @@
 prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
                         phenotype, phenotype.data, merge.by="SUBJECT.NAME", 
                         founder.labels=NULL, founder.cex=1, founder.line=1, founder.col=rep("black", 8),
-                        phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
+                        include.phenotype.axis=TRUE, phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
                         phenotype.line=NA, phenotype.num.line=NA,
                         include.ramp=TRUE, ramp.label.cex=0.7, ramp.label.line=0.5, prob.axis.cex=1,
                         include.marker=TRUE, marker.line=1,
@@ -42,7 +42,7 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
   prob.heatmap.from.matrix(geno.matrix=X, marker=marker, p.value=p.value, model=model, phenotype=phenotype,
                            phenotype.data, merge.by=merge.by, 
                            founder.labels=founder.labels, founder.cex=founder.cex, founder.line=founder.line, founder.col=founder.col,
-                           phenotype.lab.cex=phenotype.lab.cex, phenotype.num.cex=phenotype.num.cex, phenotype.num.padj=phenotype.num.padj,
+                           include.phenotype.axis=include.phenotype.axis, phenotype.lab.cex=phenotype.lab.cex, phenotype.num.cex=phenotype.num.cex, phenotype.num.padj=phenotype.num.padj,
                            phenotype.line=phenotype.line, phenotype.num.line=phenotype.num.line,
                            include.ramp=include.ramp, ramp.label.cex=ramp.label.cex, ramp.label.line=ramp.label.line, prob.axis.cex=prob.axis.cex,
                            marker.line=marker.line,
@@ -55,7 +55,7 @@ prob.heatmap.from.matrix = function(geno.matrix, marker=NULL, marker.line=2,
                                     phenotype, phenotype.data,
                                     merge.by="SUBJECT.NAME", 
                                     founder.labels=NULL, founder.cex=1, founder.line=0.5, founder.col=rep("black", 8),
-                                    phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
+                                    include.phenotype.axis=TRUE, phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
                                     phenotype.line=NA, phenotype.num.line=NA,
                                     include.ramp=TRUE, ramp.label.cex=0.7, ramp.label.line=0.5, prob.axis.cex=1,
                                     alternative.phenotype.label=NULL){
@@ -113,7 +113,9 @@ prob.heatmap.from.matrix = function(geno.matrix, marker=NULL, marker.line=2,
   axis(1, at=0.5, labels=parse(text=paste('"-" %<-%', gsub(x=phenotype, pattern=" ", replacement="~"), '%->% "+"')), 
        tick=FALSE, cex.axis=phenotype.lab.cex, line=phenotype.line)
   
-  axis(3, at=c(0, 0.25, 0.5, 0.75, 1), labels=c(s1, s2, s3, s5, s6), cex.axis=phenotype.num.cex, line=phenotype.num.line, padj=phenotype.num.padj)
+  if(include.phenotype.axis){
+    axis(3, at=c(0, 0.25, 0.5, 0.75, 1), labels=c(s1, s2, s3, s5, s6), cex.axis=phenotype.num.cex, line=phenotype.num.line, padj=phenotype.num.padj)
+  }
   if(!is.null(marker)){
     if(is.null(p.value)){
       this.title <- marker
