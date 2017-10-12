@@ -262,6 +262,7 @@ get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA", "LRT.random.locus")
   return(p.value)
 }
 
+#' @export
 get.allele.effects.from.fixef <- function(fit, founders, allele.in.intercept, 
                                           center=TRUE, scale=FALSE){
   effects <- fit$coefficients[founders]
@@ -272,6 +273,7 @@ get.allele.effects.from.fixef <- function(fit, founders, allele.in.intercept,
   return(as.vector(scale(effects, center=center, scale=scale)))
 }
 
+#' @export
 get.allele.effects.from.ranef <- function(fit, founders, 
                                           center=TRUE, scale=FALSE){
   ## Big time savings potentially
