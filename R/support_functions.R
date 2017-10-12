@@ -274,7 +274,7 @@ get.allele.effects.from.fixef <- function(fit, founders, allele.in.intercept,
 }
 
 #' @export
-get.allele.effects.from.ranef <- function(fit, founders, 
+get.allele.effects.from.ranef <- function(fit, founders=NULL, 
                                           center=TRUE, scale=FALSE){
   ## Big time savings potentially
   if(fit$locus.h2 == 0){
@@ -283,6 +283,7 @@ get.allele.effects.from.ranef <- function(fit, founders,
   else{
     X <- fit$x
     Z <- fit$z
+    if(is.null(founders)){ founders <- colnames(Z) }
     ZZt <- Z %*% t(Z)
     weights <- fit$weights
     if(is.null(weights)){ weights <- rep(1, nrow(Z)) }
