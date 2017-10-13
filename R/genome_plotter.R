@@ -222,6 +222,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  my.x.lab.cex=0.7, my.x.labels=TRUE,
                                  no.title=FALSE, override.title=NULL, my.title.line=NA, title.cex=1,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
+                                 thresholds.legend.pos="topleft",
                                  add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE){
   # If list has no names, use.legend is set to FALSE
   if(is.null(names(scan.list))){ use.legend=FALSE }
@@ -437,7 +438,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     }
   }
   if(!is.null(thresholds.legend)){
-    legend("topleft", legend=thresholds.legend, col=thresholds.col, lty=rep(2, length(thresholds.legend)),
+    legend(thresholds.legend.pos, legend=thresholds.legend, col=thresholds.col, lty=rep(2, length(thresholds.legend)),
            bty="n", cex=my.legend.cex)
   }
 }
