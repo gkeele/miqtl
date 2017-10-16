@@ -649,7 +649,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   
   if(!is.null(hard.thresholds)){
     for(i in 1:length(hard.thresholds)){
-      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=2)
+      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=2, lwd=thresholds.lwd[i])
     }
   }
   if(!is.null(thresholds.legend)){
