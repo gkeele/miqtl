@@ -658,7 +658,8 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   use.legend <- ifelse(is.null(scan.names), FALSE, TRUE)
   if(use.legend){
     legend(my.legend.pos, legend=scan.names, 
-           lty=rep(1, length(scan.names)), lwd=haplotype.lwd, 
+           lty=c(rep(NA, length(haplotype.association)), rep(1, length(snp.association))), 
+           lwd=haplotype.lwd, 
            pch=c(rep(20, length(snp.association)), rep(NA, length(haplotype.association))),
            col=c(snp.col[1:length(haplotype.association)], haplotype.col[1:length(haplotype.association)]), 
            bty=my.bty, bg="white", cex=my.legend.cex)
