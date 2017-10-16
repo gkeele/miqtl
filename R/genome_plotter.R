@@ -483,7 +483,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
                                   my.x.line=2, my.x.axis.cex=1, my.xlab.cex=1, x.padj=-0.3,
                                   my.x.labels=TRUE, override.xlab=NULL, 
                                   my.title.line=0.5, my.title.cex=1,
-                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL, 
+                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL, thresholds.lwd=2,
                                   use.legend=TRUE, my.legend.cex=0.6, my.legend.pos="topright", my.bty="n",
                                   rug.pos=NULL, rug.col="gray50"){
   scale <- scale[1]
@@ -502,6 +502,9 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   }
   if(length(haplotype.lwd) == 1 & length(haplotype.association) > 1){ 
     haplotype.lwd <- rep(haplotype.lwd, length(haplotype.association))
+  }
+  if(length(thresholds.lwd) == 1 & length(hard.thresholds) > 1){
+    thresholds.lwd <- rep(thresholds.lwd, length(hard.thresholds))
   }
   
   this.ylab <- ifelse(use.lod, "LOD", expression("-log"[10]*"P"))
@@ -659,10 +662,11 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   if(use.legend){
     legend(my.legend.pos, legend=scan.names, 
            lty=c(rep(NA, length(snp.association)), rep(1, length(haplotype.association))), 
-           lwd=haplotype.lwd, 
+           lwd=c(rep(NA, length(snp.association)), haplotype.lwd), 
            pch=c(rep(20, length(snp.association)), rep(NA, length(haplotype.association))),
-           col=c(snp.col[1:length(haplotype.association)], haplotype.col[1:length(haplotype.association)]), 
+           col=c(snp.col[1:length(snp.association)], haplotype.col[1:length(haplotype.association)]), 
            bty=my.bty, bg="white", cex=my.legend.cex)
+    browser()
   }
   if(!is.null(rug.pos)){
     if(length(rug.col) == 1){ rug.col <- rep(rug.col, length(rug.pos))}
