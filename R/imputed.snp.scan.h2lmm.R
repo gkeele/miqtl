@@ -84,9 +84,9 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
     X.list <- make.imputed.design.matrix.list.for.all.loci(loci=loci, loci.chr=loci.chr, n=nrow(data), model=model, h=h, 
                                                            allele.dir=allele.dir, mapping.matrix=mapping.matrix,
                                                            founders=founders, exclusion.freq=exclusion.freq)
-    #keep.loci <- loci %in% names(X.list)
-    #loci <- loci[keep.loci]
-    #loci.chr <- loci.chr[keep.loci]
+    keep.loci <- loci %in% names(X.list)
+    loci <- loci[keep.loci]
+    loci.chr <- loci.chr[keep.loci]
   }
   
   if(!is.null(condition.loci)){
