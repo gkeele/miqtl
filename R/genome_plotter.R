@@ -772,8 +772,10 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="b
   
   shift.left <- min(pos[chr==chr.types[1]])
   if(is.null(override.title)){
+    condition.loci <- main.object$condition.loci
     this.title <- c(title,
-                    paste0(main.object$formula, " + SNP (", main.object$model.type, ")"),
+                    paste(main.object$formula, paste(condition.loci, sep=" + "),
+                           paste0("SNP (", main.object$model.type, ")"), sep=" + "),
                     paste("n =", length(main.object$fit0$y)))
   }
   else{
