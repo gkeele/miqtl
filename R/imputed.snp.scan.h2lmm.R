@@ -44,6 +44,7 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
                                    use.par="h2", chr="all", brute=TRUE, use.fix.par=FALSE, 
                                    just.these.loci=NULL,
                                    print.locus.fit=FALSE,
+                                   condition.loci=NULL,
                                    exclusion.freq=.Machine$double.eps,
                                    X.list=NULL, return.X.list=FALSE, # Makes multiple scans more efficient
                                    ...){
@@ -79,9 +80,31 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
     loci.chr <- loci.chr[keep]
   }
   
+  if(!exists("X.list")){
+    X.list <- make.imputed.design.matrix.list.for.all.loci(loci=loci, loci.chr=loci.chr, n=nrow(data), model=model, h=h, 
+                                                           allele.dir=allele.dir, mapping.matrix=mapping.matrix,
+                                                           founders=founders, exclusion.freq=exclusion.freq)
+    #keep.loci <- loci %in% names(X.list)
+    #loci <- loci[keep.loci]
+    #loci.chr <- loci.chr[keep.loci]
+  }
+  
+  if(!is.null(condition.loci)){
+    for(i in 1:length(condition.loci)){
+      condition.X <- X.list[[condition.loci[i]]]
+      if(model == "additive"){
+        colnames(condition.X) <- paste("cond_SNP", i, sep="_")
+      }
+      else if(model == "full"){
+        colnames(condition.X) <-c(paste("cond_SNP", i, "aa", sep="_"), paste("cond_SNP", i, "Aa", sep="_"))
+      }
+      data <- cbind(data, condition.X[as.character(data$SUBJECT.NAME),, drop=FALSE])
+    }
+  }
+  
   formula.string <- Reduce(paste, deparse(formula))
-  null.formula <- make.null.formula(formula=formula, do.augment=FALSE)
-  locus.formula <- make.snp.alt.formula(formula=formula, model=model)
+  null.formula <- make.snp.null.formula(formula=formula, condition.loci=condition.loci, X.list=X.list)
+  locus.formula <- make.snp.alt.formula(formula=null.formula, condition.loci=condition.loci, X.list=X.list, model=model)
   original.n <- nrow(data)
   
   ## Fitting null model
@@ -99,14 +122,6 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
   null.data <- data
   null.K <- K
   
-  if(!exists("X.list")){
-    X.list <- make.imputed.design.matrix.list.for.all.loci(loci=loci, loci.chr=loci.chr, n=nrow(data), model=model, h=h, 
-                                                           allele.dir=allele.dir, mapping.matrix=mapping.matrix,
-                                                           founders=founders, exclusion.freq=exclusion.freq)
-    keep.loci <- loci %in% names(X.list)
-    loci <- loci[keep.loci]
-    loci.chr <- loci.chr[keep.loci]
-  }
   LOD.vec <- p.vec <- h2.record <- rep(0, length(loci))
   
   # Progress bar
@@ -140,6 +155,7 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
                  formula=formula.string,
                  model.type=model,
                  X.list=X.list,
+                 condition.loci=condition.loci,
                  null.data=null.data)
   if(length(just.these.loci) == 1){ output$fit1 <- fit1 }
   return(output)

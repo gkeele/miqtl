@@ -12,6 +12,21 @@ make.alt.formula <- function(formula, X, do.augment){
   this.formula <- as.formula(paste(this.formula.string, paste(gsub(pattern="/", replacement=".", x=colnames(X), fixed=TRUE), collapse=" + "), sep=" + "))
   return(this.formula)
 }
+make.snp.null.formula <- function(formula, condition.loci, X.list, model){
+  this.formula.string <- Reduce(paste, deparse(formula))
+  this.formula.string <- paste0("y ~ ", unlist(strsplit(this.formula.string, split="~"))[-1])
+  if(!is.null(condition.loci)){
+    for(i in 1:length(condition.loci)){
+      if(model == "additive"){
+        this.formula.string <- paste(this.formula.string, paste("cond_SNP", i, sep="_"), sep=" + ")
+      }
+      else if(model == "full"){
+        this.formula.string <- paste(this.formula.string, c(paste("cond_SNP", i, "aa", sep="_"), paste("cond_SNP", i, "Aa", sep="_")), sep=" + ")
+      }
+    }
+  }
+  return(as.formula(this.formula))
+}
 make.snp.alt.formula <- function(formula, model){
   this.formula.string <- Reduce(paste, deparse(formula))
   this.formula.string <- paste0("y ~ ", unlist(strsplit(this.formula.string, split="~"))[-1])
