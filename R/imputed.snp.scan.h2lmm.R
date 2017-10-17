@@ -103,8 +103,8 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
   }
   
   formula.string <- Reduce(paste, deparse(formula))
-  null.formula <- make.snp.null.formula(formula=formula, condition.loci=condition.loci, X.list=X.list)
-  locus.formula <- make.snp.alt.formula(formula=null.formula, condition.loci=condition.loci, X.list=X.list, model=model)
+  null.formula <- make.snp.null.formula(formula=formula, condition.loci=condition.loci, X.list=X.list, model=model)
+  locus.formula <- make.snp.alt.formula(formula=null.formula, model=model)
   original.n <- nrow(data)
   
   ## Fitting null model
