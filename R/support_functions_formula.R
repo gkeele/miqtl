@@ -25,7 +25,7 @@ make.snp.null.formula <- function(formula, condition.loci, X.list, model){
       }
     }
   }
-  return(as.formula(this.formula))
+  return(as.formula(this.formula.string))
 }
 make.snp.alt.formula <- function(formula, model){
   this.formula.string <- Reduce(paste, deparse(formula))
