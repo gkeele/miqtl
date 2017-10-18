@@ -21,7 +21,8 @@
 #' @export
 #' @examples snp.genome.plotter.whole()
 snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="black",
-                                     scale="Mb",
+                                     scale="Mb", 
+                                     distinguish.chr.type=c("color", "box"), distinguish.box.col="gray88", distinguish.snp.col="gray60",
                                      y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1,
                                      title="", override.title=NULL, alt.col=NULL,
                                      hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL, thresholds.lty=2, thresholds.lwd=1,
@@ -29,16 +30,17 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="b
                                      add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE){
   
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
+  distinguish.chr.type <- distinguish.chr.type[1]
   main.object <- snp.scan
   outcome <- -log10(main.object$p.value)
   plot.this <- "p.value"
   this.ylab <- expression("-log"[10]*"P")
   
-  # Allowing for special colors
-  if(is.null(alt.col)){ use.col <- rep(point.col, length(outcome)) }
-  if(!is.null(alt.col)){ use.col <- alt.col }
   chr <- main.object$chr
   pos <- ifelse(rep(scale=="Mb", length(outcome)), main.object$pos$Mb, main.object$pos$cM)
+  
+  # Allowing for special colors
+  if(!is.null(alt.col)){ use.col <- alt.col }
   
   if(!is.null(just.these.chr)){
     keep.chr <- chr %in% just.these.chr
@@ -55,6 +57,16 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="b
   
   pre.chr <- as.factor(as.numeric(chr))
   order.i <- order(pre.chr, pos)
+  
+  # Creating alternating colors for different chromosomes
+  if(is.null(alt.col)){ 
+    if(distinguish.chr.type == "color"){
+      use.col <- ifelse((sapply(1:length(chr), function(x) which(sort(as.numeric(as.character(unique(pre.chr)))) == pre.chr[x])) %% 2) == 1, point.col, distinguish.snp.col)
+    }
+    else{
+      use.col <- rep(point.col, length(outcome)) 
+    }
+  }
   
   outcome <- outcome[order.i]
   pre.chr <- pre.chr[order.i]
@@ -107,8 +119,10 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="b
     for(i in 2:length(chr.types)){
       this.pos <- pos[pre.chr==chr.types[i]] + shift
       if(i %% 2 == 0){
-        polygon(x=c(min(this.pos), min(this.pos):max(this.pos), max(this.pos)), 
-                y=c(0, rep(y.max, length(min(this.pos):max(this.pos))), 0), border=NA, col="gray88")
+        if(distinguish.chr.type == "box"){
+          polygon(x=c(min(this.pos), min(this.pos):max(this.pos), max(this.pos)), 
+                  y=c(0, rep(y.max, length(min(this.pos):max(this.pos))), 0), border=NA, col=distinguish.box.col)
+        }
       }
       label.spots <- c(label.spots, shift + max.pos[i]/2)
       x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
