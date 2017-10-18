@@ -14,9 +14,9 @@ genome.plotter.region(haplotype.association = NULL, snp.association = NULL,
   my.x.axis.cex = 1, my.xlab.cex = 1, x.padj = -0.3, my.x.labels = TRUE,
   override.xlab = NULL, my.title.line = 0.5, my.title.cex = 1,
   hard.thresholds = NULL, thresholds.col = "red",
-  thresholds.legend = NULL, use.legend = TRUE, my.legend.cex = 0.6,
-  my.legend.pos = "topright", my.bty = "n", rug.pos = NULL,
-  rug.col = "gray50")
+  thresholds.legend = NULL, thresholds.lwd = 2, use.legend = TRUE,
+  my.legend.cex = 0.6, my.legend.pos = "topright", my.bty = "n",
+  rug.pos = NULL, rug.col = "gray50")
 }
 \arguments{
 \item{haplotype.association}{DEFAULT: NULL. A list of scan.h2lmm() objects (ROP or multiple imputations). If multiple imputations, median and confidence interval 

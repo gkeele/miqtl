@@ -8,8 +8,9 @@ alleles stored .allele files}
 imputed.snp.scan.h2lmm(data, formula, K, allele.dir, genomecache,
   model = c("additive", "full"), use.par = "h2", chr = "all",
   brute = TRUE, use.fix.par = FALSE, just.these.loci = NULL,
-  print.locus.fit = FALSE, exclusion.freq = .Machine$double.eps,
-  X.list = NULL, return.X.list = FALSE, ...)
+  print.locus.fit = FALSE, condition.loci = NULL,
+  exclusion.freq = .Machine$double.eps, X.list = NULL,
+  return.X.list = FALSE, ...)
 }
 \arguments{
 \item{data}{A data frame with outcome and potential covariates. Should also have individual IDs
