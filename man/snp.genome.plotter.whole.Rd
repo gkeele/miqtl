@@ -8,11 +8,12 @@ snp.genome.plotter.whole(snp.scan, just.these.chr = NULL,
   point.col = "black", scale = "Mb", distinguish.chr.type = c("color",
   "box"), distinguish.box.col = "gray88", distinguish.snp.col = "gray60",
   y.max.manual = NULL, my.y.line = 2, my.y.axis.cex = 1, title = "",
-  override.title = NULL, alt.col = NULL, hard.thresholds = NULL,
-  thresholds.col = "red", thresholds.legend = NULL, thresholds.lty = 2,
-  thresholds.lwd = 1, my.legend.cex = 0.6, my.legend.pos = "topright",
-  my.bty = "n", my.x.labels = TRUE, add.chr.to.label = FALSE,
-  axis.cram = TRUE, include.x.axis.line = TRUE)
+  override.title = NULL, my.title.line = NA, title.cex = 1,
+  alt.col = NULL, hard.thresholds = NULL, thresholds.col = "red",
+  thresholds.legend = NULL, thresholds.lty = 2, thresholds.lwd = 1,
+  my.legend.cex = 0.6, my.legend.pos = "topright", my.bty = "n",
+  my.x.labels = TRUE, add.chr.to.label = FALSE, axis.cram = TRUE,
+  include.x.axis.line = TRUE)
 }
 \arguments{
 \item{snp.scan}{An imputed.snp.scan.h2lmm() object.}
