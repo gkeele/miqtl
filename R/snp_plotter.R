@@ -20,7 +20,7 @@
 #' @param include.x.axis.line DEFAULT: TRUE. IF TRUE, this option adds an x-axis line with ticks between chromosomes.
 #' @export
 #' @examples snp.genome.plotter.whole()
-snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="black",
+snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="black", point.cex=0.5,
                                      scale="Mb", 
                                      distinguish.chr.type=c("color", "box"), distinguish.box.col="gray88", distinguish.snp.col="gray60",
                                      y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1,
@@ -136,11 +136,11 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="b
   shift <- max.pos[1]
   
   if(length(chr.types) >= 1){
-    points(pos[pre.chr==chr.types[1]], outcome[pre.chr==chr.types[1]], pch=20, cex=0.5, col=use.col[pre.chr==chr.types[1]])
+    points(pos[pre.chr==chr.types[1]], outcome[pre.chr==chr.types[1]], pch=20, cex=point.cex, col=use.col[pre.chr==chr.types[1]])
     if(length(chr.types) > 1){
       for(i in 2:length(chr.types)){
         this.pos <- pos[pre.chr==chr.types[i]] + shift
-        points(this.pos, outcome[pre.chr==chr.types[i]], type="p", pch=20, cex=0.5, col=use.col[pre.chr==chr.types[i]])
+        points(this.pos, outcome[pre.chr==chr.types[i]], type="p", pch=20, cex=point.cex, col=use.col[pre.chr==chr.types[i]])
         
         shift <- shift + max.pos[i]
       }
@@ -227,7 +227,8 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="b
 snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
                                     scale="Mb", zoom.in=FALSE, zoom.in.by=0.1,
                                     y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1,
-                                    title="", alt.col=NULL, this.cex=1,
+                                    title="", override.title=NULL, my.title.line=NA, title.cex=1,
+                                    alt.col=NULL, this.cex=1,
                                     hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                     my.legend.cex=0.6, my.legend.pos="topleft", thresholds.lty=2, thresholds.lwd=1, my.bty="n", 
                                     r2.bounds=NULL, bounds.col="gray", high.color="red", low.color="blue", add.outline=FALSE,
@@ -275,6 +276,9 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
     this.title <- c(this.title, 
                     paste("r2 interval level:", r2.bounds))
   }
+  if(!is.null(override.title)){
+    this.title <- override.title
+  }
   this.xlab <- paste0("Chr ", chr, " Position (", scale, ")")
   
   high2low <- colorRampPalette(c(high.color, low.color))
@@ -303,8 +307,9 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
   plot(0, pch='',
        xlim=c(min.pos, max.pos),
        ylim=c(0, y.max+1),
-       yaxt="n", xlab=this.xlab, ylab="", main=this.title,
+       yaxt="n", xlab=this.xlab, ylab="", main=NA,
        frame.plot=FALSE)
+  title(main=this.title, line=my.title.line, cex.main=title.cex)
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line)
   if(!is.null(r2.bounds)){
