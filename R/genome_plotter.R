@@ -660,11 +660,15 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   scan.names <- c(names(snp.association), names(haplotype.association))
   use.legend <- ifelse(is.null(scan.names), FALSE, TRUE)
   if(use.legend){
+    if(is.null(snp.association)){ use.snp.col <- NULL }
+    else{ use.snp.col <- snp.col[1:length(snp.association)] }
+    if(is.null(haplotype.association)){ use.haplotype.col <- NULL }
+    else{ use.haplotype.col <- haplotype.col[1:length(haplotype.association)] }
     legend(my.legend.pos, legend=scan.names, 
            lty=c(rep(NA, length(snp.association)), rep(1, length(haplotype.association))), 
            lwd=c(rep(NA, length(snp.association)), haplotype.lwd), 
            pch=c(rep(20, length(snp.association)), rep(NA, length(haplotype.association))),
-           col=c(snp.col[1:length(snp.association)], haplotype.col[1:length(haplotype.association)]), 
+           col=c(use.snp.col, use.haplotype.col), 
            bty=my.bty, bg="white", cex=my.legend.cex)
   }
   if(!is.null(rug.pos)){
