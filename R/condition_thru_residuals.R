@@ -68,7 +68,6 @@ condition.out.locus.for.scan <- function(locus, new.outcome.name="new.y",
     K <- diag(unique(data[,geno.id]))
     rownames(K) <- colnames(K) <- unique(data[,geno.id])
   }
-  
   cache.subjects <- rownames(h$getLocusMatrix(h$getLoci()[1], model="additive"))
   data.and.K <- make.processed.data(formula=formula, data=data, 
                                     cache.subjects=cache.subjects, K=K, 
@@ -90,7 +89,7 @@ condition.out.locus.for.scan <- function(locus, new.outcome.name="new.y",
   null.formula <- make.null.formula(formula=formula, do.augment=do.augment)
   original.n <- nrow(data)
   old.data <- data
-  
+
   ###### Augmentation
   if(do.augment){
     augment.n <- ifelse(model=="additive", num.founders, num.founders + choose(num.founders, 2))
@@ -262,7 +261,7 @@ condition.out.locus.for.scan <- function(locus, new.outcome.name="new.y",
 }
 
 
-regress.out.qtl <- function(fit1, null.formula, alt.formula, null.data,
+regress.out.qtl <- function(fit1, null.formula, alt.formula,
                             locus.as.fixed){
   qtl.vars <- all.vars(alt.formula)[!(all.vars(alt.formula) %in% all.vars(null.formula))]
   if(locus.as.fixed){
