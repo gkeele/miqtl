@@ -265,6 +265,7 @@ regress.out.qtl <- function(fit1, null.formula, alt.formula,
                             locus.as.fixed){
   qtl.vars <- all.vars(alt.formula)[!(all.vars(alt.formula) %in% all.vars(null.formula))]
   if(locus.as.fixed){
+    qtl.vars <- names(fit1$coefficients[qtl.vars][!is.na(fit1$coefficients[qtl.vars])])
     qtl.predictor <- fit1$x[,qtl.vars] %*% fit1$coefficients[qtl.vars]
   }
   return(qtl.predictor)
