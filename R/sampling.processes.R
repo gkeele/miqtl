@@ -46,6 +46,7 @@ generate.sample.outcomes.matrix <- function(scan.object,
     }
     rownames(sim.y.matrix) <- names(fit$y)
     return.weights <- fit$weights
+    K <- fit$K
   }
   else{
     if(model.type == "null"){ fit <- scan.object$fit0; locus <- NULL }
