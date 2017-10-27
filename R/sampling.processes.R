@@ -39,7 +39,7 @@ generate.sample.outcomes.matrix <- function(scan.object,
     sim.y.matrix <- matrix(NA, nrow=n, ncol=num.samples)
     
     for(i in 1:num.samples){
-      this.subsample <- sort(n=sample.int(length(fit$y), size=n, replace=FALSE))
+      this.subsample <- sample.int(n=length(fit$y), size=n, replace=FALSE)
       
       sim.y.matrix[,i] <- fit$y
       sim.y.matrix[,i][1:length(fit$y) %in% this.subsample] <- NA
