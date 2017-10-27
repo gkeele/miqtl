@@ -8,7 +8,9 @@
 #' from the alternative model.
 #' @param method DEFAULT: "bootstrap". "bootstrap" specifies parametric bootstraps from the given model. "permutation" specifies
 #' parametric permutations that can respect the structure of the data. Permutations are more appropriate if the data have highly
-#' influential data points.
+#' influential data points. "subsample" specifies randomly sampling without replacement some proportion of the data. This is done
+#' by placing NAs in the observations not selected.
+#' @param subsample.prop DEFAULT: 0.63. The proportion of the original data set to sample.
 #' @param use.REML DEFAULT: TRUE. Determines whether the variance components for the parametric sampling are 
 #' based on maximizing the likelihood (ML) or the residual likelihood (REML).
 #' @param use.BLUP DEFAULT: FALSE.This results in the BLUP value of the polgyene effect (assuming a GRM has been given) is used,
@@ -19,96 +21,118 @@
 #' across machines.
 #' @export
 #' @examples generate.sample.outcomes.matrix()
-generate.sample.outcomes.matrix <- function(scan.object, model.type=c("null", "alt"), 
-                                            method=c("bootstrap", "permutation"), use.REML=TRUE,
+generate.sample.outcomes.matrix <- function(scan.object,
+                                            model.type=c("null", "alt"), 
+                                            method=c("bootstrap", "permutation", "subsample"), 
+                                            subsample.prop=0.63, 
+                                            use.REML=TRUE,
                                             use.BLUP=FALSE, num.samples, seed=1){
   model.type <- model.type[1]
   method <- method[1]
   
-  if(model.type == "null"){ fit <- scan.object$fit0; locus <- NULL }
-  if(model.type == "alt"){
-    if(is.null(scan.object$fit1)){
-      stop("Scan object does not include the alternative model. Re-run scan.h2lmm with the just.these.loci option specifying the locus.", call.=FALSE)
-    }
-    fit <- scan.object$fit1; locus <- scan.object$loci 
-  }
-  fit0.REML <- scan.object$fit0.REML
-  if(class(fit) != "lmerMod"){
-    na.coefficients <- is.na(fit$coefficients) ## Resolve an issue if one of the coefficients is NA - generally resulting from a variable that does not vary
-    Xb <- fit$x[,!na.coefficients, drop=FALSE] %*% fit$coefficients[!na.coefficients, drop=FALSE]
-    n <- nrow(fit$x)
-    K <- fit$K
-    weights <- fit$weights
-    return.weights <- weights
-    if(is.null(weights)){ 
-      weights <- rep(1, nrow(K)) 
-    }
-    if(use.REML){
-      if(is.null(K)){
-        tau2 <- 0
-        sigma2 <- fit$sigma2.mle*(n/(n - 1))
-      }
-      else{
-        tau2 <- fit0.REML$tau2.mle
-        sigma2 <- fit0.REML$sigma2.mle
-      }
-    }
-    else{
-      tau2 <- fit$tau2.mle
-      sigma2 <- fit$sigma2.mle  
-    }
+  if(method == "subsample"){
+    model.type <- "alt"
+    
+    fit <- scan.object$fit0
+    n <- floor(subsample.prop*length(fit$y))
+    
     sim.y.matrix <- matrix(NA, nrow=n, ncol=num.samples)
     
-    if(is.null(K)){
-      u <- rep(0, n)
-    }
-    else{
-      original.K <- K
-      impute.map <- scan.object$impute.map
-      K <- reduce.large.K(large.K=K, impute.map=impute.map)
-      if(use.BLUP){
-        X <- fit$x
-        Sigma <- original.K*tau2 + diag(1/weights)*sigma2
-        inv.Sigma <- solve(Sigma)
-        u.BLUP <- (original.K*tau2) %*% inv.Sigma %*% (diag(nrow(original.K)) - X %*% solve(t(X) %*% inv.Sigma %*% X) %*% t(X) %*% inv.Sigma) %*% fit$y  
-      }
-    }
-    
-    set.seed(seed)
     for(i in 1:num.samples){
-      if(tau2 != 0){
-        ## Handling potential replicates
-        if(use.BLUP){
-          u <- u.BLUP
-        }
-        else{
-          u <- c(mnormt::rmnorm(1, mean=rep(0, nrow(K)), varcov=K*tau2))
-        }
-        names(u) <- unique(impute.map[,2])
-        u <- u[impute.map[,2]]
-      }
-      else{
-        u <- rep(0, n)
-      }
-      if(is.null(weights)){
-        e <- rnorm(n=n, mean=0, sd=sqrt(sigma2))
-      }
-      else{
-        e <- c(mnormt::rmnorm(1, mean=rep(0, n), varcov=diag(1/weights)*sigma2))
-      }
-      y.sample <- Xb + u + e
-      if(method == "bootstrap"){
-        sim.y.matrix[,i] <- y.sample
-      }
-      if(method == "permutation"){
-        perm.y.ranks <- order(y.sample)
-        sim.y.matrix[,i] <- fit$y[perm.y.ranks]
-      }
+      this.subsample <- sort(n=sample.int(length(fit$y), size=n, replace=FALSE))
+      
+      sim.y.matrix[,i] <- fit$y
+      sim.y.matrix[,i][1:length(fit$y) %in% this.subsample] <- NA
     }
     rownames(sim.y.matrix) <- names(fit$y)
   }
   else{
-    stop("Need to add lmer-based functionality!!")
+    if(model.type == "null"){ fit <- scan.object$fit0; locus <- NULL }
+    if(model.type == "alt"){
+      if(is.null(scan.object$fit1)){
+        stop("Scan object does not include the alternative model. Re-run scan.h2lmm with the just.these.loci option specifying the locus.", call.=FALSE)
+      }
+      fit <- scan.object$fit1; locus <- scan.object$loci 
+    }
+    subsample.rate <- NULL
+    fit0.REML <- scan.object$fit0.REML
+    if(class(fit) != "lmerMod"){
+      na.coefficients <- is.na(fit$coefficients) ## Resolve an issue if one of the coefficients is NA - generally resulting from a variable that does not vary
+      Xb <- fit$x[,!na.coefficients, drop=FALSE] %*% fit$coefficients[!na.coefficients, drop=FALSE]
+      n <- nrow(fit$x)
+      K <- fit$K
+      weights <- fit$weights
+      return.weights <- weights
+      if(is.null(weights)){ 
+        weights <- rep(1, nrow(K)) 
+      }
+      if(use.REML){
+        if(is.null(K)){
+          tau2 <- 0
+          sigma2 <- fit$sigma2.mle*(n/(n - 1))
+        }
+        else{
+          tau2 <- fit0.REML$tau2.mle
+          sigma2 <- fit0.REML$sigma2.mle
+        }
+      }
+      else{
+        tau2 <- fit$tau2.mle
+        sigma2 <- fit$sigma2.mle  
+      }
+      sim.y.matrix <- matrix(NA, nrow=n, ncol=num.samples)
+      
+      if(is.null(K)){
+        u <- rep(0, n)
+      }
+      else{
+        original.K <- K
+        impute.map <- scan.object$impute.map
+        K <- reduce.large.K(large.K=K, impute.map=impute.map)
+        if(use.BLUP){
+          X <- fit$x
+          Sigma <- original.K*tau2 + diag(1/weights)*sigma2
+          inv.Sigma <- solve(Sigma)
+          u.BLUP <- (original.K*tau2) %*% inv.Sigma %*% (diag(nrow(original.K)) - X %*% solve(t(X) %*% inv.Sigma %*% X) %*% t(X) %*% inv.Sigma) %*% fit$y  
+        }
+      }
+      
+      set.seed(seed)
+      for(i in 1:num.samples){
+        if(tau2 != 0){
+          ## Handling potential replicates
+          if(use.BLUP){
+            u <- u.BLUP
+          }
+          else{
+            u <- c(mnormt::rmnorm(1, mean=rep(0, nrow(K)), varcov=K*tau2))
+          }
+          names(u) <- unique(impute.map[,2])
+          u <- u[impute.map[,2]]
+        }
+        else{
+          u <- rep(0, n)
+        }
+        if(is.null(weights)){
+          e <- rnorm(n=n, mean=0, sd=sqrt(sigma2))
+        }
+        else{
+          e <- c(mnormt::rmnorm(1, mean=rep(0, n), varcov=diag(1/weights)*sigma2))
+        }
+        y.sample <- Xb + u + e
+        if(method == "bootstrap"){
+          sim.y.matrix[,i] <- y.sample
+        }
+        if(method == "permutation"){
+          perm.y.ranks <- order(y.sample)
+          sim.y.matrix[,i] <- fit$y[perm.y.ranks]
+        }
+      }
+      rownames(sim.y.matrix) <- names(fit$y)
+    }
+    else{
+      stop("Need to add lmer-based functionality!!")
+    }
   }
   sim.threshold.object <- list(y.matrix=sim.y.matrix,
                                formula=scan.object$formula,
@@ -117,7 +141,8 @@ generate.sample.outcomes.matrix <- function(scan.object, model.type=c("null", "a
                                K=K,
                                method=method,
                                impute.map=scan.object$impute.map,
-                               locus=locus)
+                               locus=locus,
+                               subsample.rate=subsample.rate)
   return(sim.threshold.object)
 }
 
@@ -791,13 +816,6 @@ nonparametric.bootstrap <- function(formula, data, genomecache, K,
                                     num.bs.samples, num.imp, chr,
                                     model, use.par="h2", use.scan.fix.par=TRUE,
                                     do.augment=FALSE, seed=1, scale="cM"){
-  scan.environment <- environment()
-  for(object in ls(scan.environment)){
-    assign(object, get(object, scan.environment))
-  }
-  source("~/Documents/SolbergHS/GLS/lmmbygls/scripts_to_source.R", local=TRUE)
-  source("~/Documents/SolbergHS/GLS/lmmbygls/support_functions.R", local=TRUE)
-  #source("/nas02/home/g/k/gkeele/SolbergHS/rats989/lmmbygls/GLS_03072016/support_functions.R", local=TRUE)
   
   h <- DiploprobReader$new(genomecache)
   cache.subjects <- h$getSubjects()
@@ -847,14 +865,6 @@ case.bootstrap <- function(formula, data, genomecache, K,
                            num.bs.samples, num.imp, chr,
                            model, use.par="h2", use.scan.fix.par=TRUE,
                            do.augment=FALSE, seed=1, scale="cM"){
-  
-  scan.environment <- environment()
-  for(object in ls(scan.environment)){
-    assign(object, get(object, scan.environment))
-  }
-  source("~/Documents/SolbergHS/GLS/lmmbygls/scripts_to_source.R", local=TRUE)
-  source("~/Documents/SolbergHS/GLS/lmmbygls/support_functions.R", local=TRUE)
-  #source("/nas02/home/g/k/gkeele/SolbergHS/rats989/lmmbygls/GLS_03072016/support_functions.R", local=TRUE)
   
   h <- DiploprobReader$new(genomecache)
   cache.subjects <- h$getSubjects()

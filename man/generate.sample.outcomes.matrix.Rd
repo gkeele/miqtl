@@ -5,8 +5,9 @@
 \title{Returns a matrix of outcome samples, either permutations or from the null model of no locus effect}
 \usage{
 generate.sample.outcomes.matrix(scan.object, model.type = c("null", "alt"),
-  method = c("bootstrap", "permutation"), use.REML = TRUE,
-  use.BLUP = FALSE, num.samples, seed = 1)
+  method = c("bootstrap", "permutation", "subsample"),
+  subsample.prop = 0.63, use.REML = TRUE, use.BLUP = FALSE, num.samples,
+  seed = 1)
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object.}
@@ -16,7 +17,10 @@ from the alternative model.}
 
 \item{method}{DEFAULT: "bootstrap". "bootstrap" specifies parametric bootstraps from the given model. "permutation" specifies
 parametric permutations that can respect the structure of the data. Permutations are more appropriate if the data have highly
-influential data points.}
+influential data points. "subsample" specifies randomly sampling without replacement some proportion of the data. This is done
+by placing NAs in the observations not selected.}
+
+\item{subsample.prop}{DEFAULT: 0.63. The proportion of the original data set to sample.}
 
 \item{use.REML}{DEFAULT: TRUE. Determines whether the variance components for the parametric sampling are 
 based on maximizing the likelihood (ML) or the residual likelihood (REML).}
