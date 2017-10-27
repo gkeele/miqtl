@@ -145,7 +145,7 @@ generate.sample.outcomes.matrix <- function(scan.object,
                                method=method,
                                impute.map=scan.object$impute.map,
                                locus=locus,
-                               subsample.rate=subsample.rate)
+                               subsample.prop=subsample.prop)
   return(sim.threshold.object)
 }
 
