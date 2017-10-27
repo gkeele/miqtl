@@ -36,7 +36,7 @@ generate.sample.outcomes.matrix <- function(scan.object,
     fit <- scan.object$fit0
     n <- floor(subsample.prop*length(fit$y))
     
-    sim.y.matrix <- matrix(NA, nrow=n, ncol=num.samples)
+    sim.y.matrix <- matrix(NA, nrow=length(fit$y), ncol=num.samples)
     
     for(i in 1:num.samples){
       this.subsample <- sample.int(n=length(fit$y), size=n, replace=FALSE)
