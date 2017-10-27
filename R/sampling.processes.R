@@ -45,6 +45,7 @@ generate.sample.outcomes.matrix <- function(scan.object,
       sim.y.matrix[,i][1:length(fit$y) %in% this.subsample] <- NA
     }
     rownames(sim.y.matrix) <- names(fit$y)
+    return.weights <- fit$weights
   }
   else{
     if(model.type == "null"){ fit <- scan.object$fit0; locus <- NULL }
