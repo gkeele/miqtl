@@ -11,6 +11,9 @@
 #' influential data points. "subsample" specifies randomly sampling without replacement some proportion of the data. This is done
 #' by placing NAs in the observations not selected.
 #' @param subsample.prop DEFAULT: 0.63. The proportion of the original data set to sample.
+#' @param subsample.chr DEFAULT: NULL. If method "subsample" is specified, no locus need be specified. If NULL, the default
+#' behavior is to grab the locus (and chromosome) with the peak association. If chromosome is specified, its peak locus will
+#' be grabbed to be passed to the scanning procedure.
 #' @param use.REML DEFAULT: TRUE. Determines whether the variance components for the parametric sampling are 
 #' based on maximizing the likelihood (ML) or the residual likelihood (REML).
 #' @param use.BLUP DEFAULT: FALSE.This results in the BLUP value of the polgyene effect (assuming a GRM has been given) is used,

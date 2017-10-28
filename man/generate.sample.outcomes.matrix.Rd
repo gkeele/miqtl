@@ -6,8 +6,8 @@
 \usage{
 generate.sample.outcomes.matrix(scan.object, model.type = c("null", "alt"),
   method = c("bootstrap", "permutation", "subsample"),
-  subsample.prop = 0.63, use.REML = TRUE, use.BLUP = FALSE, num.samples,
-  seed = 1)
+  subsample.prop = 0.63, subsample.chr = NULL, use.REML = TRUE,
+  use.BLUP = FALSE, num.samples, seed = 1)
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object.}
@@ -21,6 +21,10 @@ influential data points. "subsample" specifies randomly sampling without replace
 by placing NAs in the observations not selected.}
 
 \item{subsample.prop}{DEFAULT: 0.63. The proportion of the original data set to sample.}
+
+\item{subsample.chr}{DEFAULT: NULL. If method "subsample" is specified, no locus need be specified. If NULL, the default
+behavior is to grab the locus (and chromosome) with the peak association. If chromosome is specified, its peak locus will
+be grabbed to be passed to the scanning procedure.}
 
 \item{use.REML}{DEFAULT: TRUE. Determines whether the variance components for the parametric sampling are 
 based on maximizing the likelihood (ML) or the residual likelihood (REML).}
