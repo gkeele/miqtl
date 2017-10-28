@@ -49,7 +49,7 @@ generate.sample.outcomes.matrix <- function(scan.object,
     return.weights <- fit$weights
     K <- fit$K
     if(is.null(subsample.chr)){ locus <- grab.locus.from.scan(scan.object) }
-    else{ locus <- grab.locus.from.scan(scan.object, chr=subsample.chr)}
+    else{ locus <- grab.locus.from.scan(scan.object, chr=subsample.chr) }
   }
   else{
     if(model.type == "null"){ fit <- scan.object$fit0; locus <- NULL }
