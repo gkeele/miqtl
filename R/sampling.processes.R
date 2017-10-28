@@ -25,6 +25,7 @@ generate.sample.outcomes.matrix <- function(scan.object,
                                             model.type=c("null", "alt"), 
                                             method=c("bootstrap", "permutation", "subsample"), 
                                             subsample.prop=0.63, 
+                                            subsample.chr=NULL,
                                             use.REML=TRUE,
                                             use.BLUP=FALSE, num.samples, seed=1){
   model.type <- model.type[1]
@@ -47,7 +48,8 @@ generate.sample.outcomes.matrix <- function(scan.object,
     rownames(sim.y.matrix) <- names(fit$y)
     return.weights <- fit$weights
     K <- fit$K
-    locus <- NULL
+    if(is.null(subsample.chr)){ locus <- grab.locus.from.scan(scan.object) }
+    else{ locus <- grab.locus.from.scan(scan.object, chr=subsample.chr)}
   }
   else{
     if(model.type == "null"){ fit <- scan.object$fit0; locus <- NULL }
