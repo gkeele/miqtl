@@ -241,7 +241,9 @@ scan.h2lmm <- function(genomecache, data,
 
   # Progress bar
   if(!print.locus.fit){
-    pb <- txtProgressBar(min=0, max=length(loci), style=3)
+    if(use.progress.bar){
+      pb <- txtProgressBar(min=0, max=length(loci), style=3)
+    }
   }
   for(i in 1:length(loci)){
     if(use.multi.impute){
