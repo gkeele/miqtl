@@ -29,7 +29,7 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
                         include.phenotype.axis=TRUE, phenotype.lab.cex=1, phenotype.num.cex=1, phenotype.num.padj=NA,
                         phenotype.line=NA, phenotype.num.line=NA,
                         include.ramp=TRUE, ramp.label.cex=0.7, ramp.label.line=0.5, prob.axis.cex=1,
-                        include.marker=TRUE, marker.line=1,
+                        include.marker=TRUE, marker.line=2.5,
                         alternative.phenotype.label=NULL, alternative.marker.label=NULL){
   h <- DiploprobReader$new(genomecache)
   X <- h$getLocusMatrix(locus=marker, model=model)
@@ -50,7 +50,7 @@ prob.heatmap = function(marker, p.value=NULL, genomecache, model="additive",
 }
 
 #' @export
-prob.heatmap.from.matrix = function(geno.matrix, marker=NULL, marker.line=2,
+prob.heatmap.from.matrix = function(geno.matrix, marker=NULL, marker.line=2.5,
                                     p.value=NULL, model="additive",
                                     phenotype, phenotype.data,
                                     merge.by="SUBJECT.NAME", 
@@ -74,14 +74,14 @@ prob.heatmap.from.matrix = function(geno.matrix, marker=NULL, marker.line=2,
   
   # Allow function of phenotype
   phenotype.data <- model.frame(formula(paste(phenotype, "~ 1 +", merge.by)), data=phenotype.data)
-  names(phenotype.data)[1] <- "y"
+  names(phenotype.data)[1] <- "this.y"
   final.data <- merge(x=phenotype.data, y=X.data, by=merge.by, all=FALSE)
   
-  final.data <- final.data[order(final.data$y),] # sort by phenotypic value
+  final.data <- final.data[order(final.data$this.y),] # sort by phenotypic value
   probs <- as.matrix(final.data[,-(1:2)]) # Just keep prob of 8 strains for a certain marker
   probs <- probs[,rev(1:ncol(probs))]
   
-  s <- summary(final.data[,"y"])
+  s <- summary(as.vector(final.data[,"this.y"]))
   s1 <- as.character(round(s[1], 2))
   s2 <- as.character(round(s[2], 2))
   s3 <- as.character(round(s[3], 2))
