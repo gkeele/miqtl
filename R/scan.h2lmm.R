@@ -52,6 +52,7 @@
 #' @param just.these.loci DEFAULT: NULL. Specifies a reduced set of loci to fit. If loci is just one locus, the alternative model fit
 #' will also be output as fit1.
 #' @param print.locus.fit DEFAULT: FALSE. If TRUE, prints out how many loci have been fit currently.
+#' @param use.progress.bar DEFAULT: TRUE. If TRUE, a progress bar is used.
 #' @param debug.single.fit DEFAULT: FALSE. If TRUE, a browser() call is activated after the first locus is fit. This option
 #' allows developers to more easily debug while still using the actual R package.
 #' @export
@@ -64,7 +65,7 @@ scan.h2lmm <- function(genomecache, data,
                        seed=1, pheno.id="SUBJECT.NAME", geno.id="SUBJECT.NAME",
                        weights=NULL, do.augment=FALSE, use.full.null=FALSE, added.data.points=1, 
                        just.these.loci=NULL,
-                       print.locus.fit=FALSE, debug.single.fit=FALSE,
+                       print.locus.fit=FALSE, use.progress.bar=TRUE, debug.single.fit=FALSE,
                        ...){
   model <- model[1]
   p.value.method <- p.value.method[1]

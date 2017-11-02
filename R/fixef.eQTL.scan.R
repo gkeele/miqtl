@@ -162,7 +162,7 @@ scan.qr <- function(qr.object,
     allele.effects <- matrix(NA, nrow=length(founders), ncol=length(loci),
                              dimnames=list(founders, loci))
   }
-  y <- model.frame(formula, data=data)[,1]
+  y <- as.vector(model.frame(formula, data=data)[,1])
   names(y) <- subjects
   # Progress bar
   if(use.progress.bar){ pb <- txtProgressBar(min=0, max=length(loci), style=3) }

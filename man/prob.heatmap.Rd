@@ -11,7 +11,7 @@ prob.heatmap(marker, p.value = NULL, genomecache, model = "additive",
   phenotype.lab.cex = 1, phenotype.num.cex = 1, phenotype.num.padj = NA,
   phenotype.line = NA, phenotype.num.line = NA, include.ramp = TRUE,
   ramp.label.cex = 0.7, ramp.label.line = 0.5, prob.axis.cex = 1,
-  include.marker = TRUE, marker.line = 1,
+  include.marker = TRUE, marker.line = 2.5,
   alternative.phenotype.label = NULL, alternative.marker.label = NULL)
 }
 \arguments{

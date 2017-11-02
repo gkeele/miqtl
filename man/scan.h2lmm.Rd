@@ -11,7 +11,8 @@ scan.h2lmm(genomecache, data, formula, K = NULL, model = c("additive",
   use.fix.par = TRUE, seed = 1, pheno.id = "SUBJECT.NAME",
   geno.id = "SUBJECT.NAME", weights = NULL, do.augment = FALSE,
   use.full.null = FALSE, added.data.points = 1, just.these.loci = NULL,
-  print.locus.fit = FALSE, debug.single.fit = FALSE, ...)
+  print.locus.fit = FALSE, use.progress.bar = TRUE,
+  debug.single.fit = FALSE, ...)
 }
 \arguments{
 \item{genomecache}{The path to the genome cache directory. The genome cache is a particularly structured
@@ -86,6 +87,8 @@ that do not influence the estimation of other model parameters as much.}
 will also be output as fit1.}
 
 \item{print.locus.fit}{DEFAULT: FALSE. If TRUE, prints out how many loci have been fit currently.}
+
+\item{use.progress.bar}{DEFAULT: TRUE. If TRUE, a progress bar is used.}
 
 \item{debug.single.fit}{DEFAULT: FALSE. If TRUE, a browser() call is activated after the first locus is fit. This option
 allows developers to more easily debug while still using the actual R package.}
