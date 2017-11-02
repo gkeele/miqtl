@@ -342,8 +342,10 @@ scan.h2lmm <- function(genomecache, data,
     # Print out locus fit
     if(print.locus.fit){ cat(paste("locus", i, "out of", length(loci)), "\n") }
     else{
-      # Update progress bar
-      setTxtProgressBar(pb, i)
+      if(use.progress.bar){
+        # Update progress bar
+        setTxtProgressBar(pb, i)
+      }
     }
   }
   names(LOD.vec) <- names(p.vec) <- names(df) <- loci
