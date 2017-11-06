@@ -232,6 +232,7 @@ replicates.eigen <- function(Z, K) {
               vectors=qr.Q(qr(Z %*% eigen$vectors))))
 }
 
+#' @export
 get.f.stat.p.val <- function(qr.alt, qr.null, y){
   rss0 <- sum(qr.resid(qr.null, y)^2)
   rss1 <- sum(qr.resid(qr.alt, y)^2)
