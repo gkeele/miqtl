@@ -554,6 +554,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
       keep.chr <- this.scan$chr == chr
       keep.na <- !is.na(this.pos)
       keep <- (keep.chr + keep.na) == 2
+      order.i <- order(this.pos[keep])
       if(!use.lod){ this.outcome <- -log10(this.outcome) }
       x.min <- min(x.min, 
                    grab.min.pos.from.scan(scan.object=this.scan, scale=scale, chr=chr))
@@ -570,19 +571,20 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   if(!is.null(haplotype.association)){
     for(i in 1:length(haps.to.plot)){
       this.scan <- haps.to.plot[[i]]
-      y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= x.min & this.scan$pos <= x.max]))
+      y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= x.min & this.scan$pos <= x.max], na.rm=TRUE), na.rm=TRUE)
       if(!is.null(haps.to.plot[[i]]$CI)){
-        y.max <- max(y.max, max(haps.to.plot[[i]]$CI[,this.scan$pos >= x.min & this.scan$pos <= x.max]))
+        y.max <- max(y.max, max(haps.to.plot[[i]]$CI[,this.scan$pos >= x.min & this.scan$pos <= x.max], na.rm=TRUE), na.rm=TRUE)
       }
     }
   }
   if(!is.null(snp.association)){
     for(i in 1:length(snps.to.plot)){
       this.scan <- snps.to.plot[[i]]
-      y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= x.min & this.scan$pos <= x.max]), na.rm=TRUE)
+      #browser()
+      y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= x.min & this.scan$pos <= x.max], na.rm=TRUE), na.rm=TRUE)
     }
   }
-  y.max <- max(y.max, max(c(hard.thresholds, 0)))
+  y.max <- max(y.max, max(c(hard.thresholds, 0)), na.rm=TRUE)
   if(!is.null(y.max.manual)){ y.max <- y.max.manual }
   
   ## Handling the title

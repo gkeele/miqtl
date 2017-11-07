@@ -23,9 +23,14 @@ rint <- function(phenotype, prop=0.5){
 #' @param criterion DEFAULT: "min". The criterion by which loci are selected. Currently only "min" is 
 #' available, which selects the locus with the minimum statistical score. 
 #' @param return.value DEFAULT: "marker". If "marker", returns the marker name. If "positions", returns the position in both cM and Mb.
+#' If "index", returns the index of the vector.
 #' @export
 #' @examples grab.locus.from.scan()
-grab.locus.from.scan <- function(scan.object, use.lod=FALSE, chr="all", criterion="min", return.value=c("marker", "position")){
+grab.locus.from.scan <- function(scan.object, 
+                                 use.lod=FALSE, 
+                                 chr="all", 
+                                 criterion="min", 
+                                 return.value=c("marker", "position", "index")){
   return.value <- return.value[1]
   if(use.lod){ outcome <- scan.object$LOD }
   else{ outcome <- scan.object$p.value }
@@ -40,6 +45,9 @@ grab.locus.from.scan <- function(scan.object, use.lod=FALSE, chr="all", criterio
     else if(return.value == "position"){
       result <- c(scan.object$pos$cM[keep][which.min(outcome[keep])], scan.object$pos$Mb[keep][which.min(outcome[keep])])
       names(result) <- c("cM", "Mb")
+    }
+    else if(return.value == "index"){
+      result <- which.min(outcome[keep])
     }
   }
   return(result)

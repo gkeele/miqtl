@@ -5,7 +5,7 @@
 \title{Pulls loci from scan objects based on specified criteria}
 \usage{
 grab.locus.from.scan(scan.object, use.lod = FALSE, chr = "all",
-  criterion = "min", return.value = c("marker", "position"))
+  criterion = "min", return.value = c("marker", "position", "index"))
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object (ROP or multiple imputations). If multiple imputations, median and confidence interval 
@@ -18,7 +18,8 @@ on median are plotted.}
 \item{criterion}{DEFAULT: "min". The criterion by which loci are selected. Currently only "min" is 
 available, which selects the locus with the minimum statistical score.}
 
-\item{return.value}{DEFAULT: "marker". If "marker", returns the marker name. If "positions", returns the position in both cM and Mb.}
+\item{return.value}{DEFAULT: "marker". If "marker", returns the marker name. If "positions", returns the position in both cM and Mb.
+If "index", returns the index of the vector.}
 }
 \description{
 This function parses a scan object and returns loci, for instance, the locus with the minimum
