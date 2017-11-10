@@ -195,6 +195,11 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
 #' @param just.these.chr DEFAULT: NULL. Specifies a subset of the chromosomes to be plotted. NULL results in all chromosomes being plotted.
 #' @param scale DEFAULT: "Mb". Specifies the scale of genomic position to be plotted. Either Mb or cM are expected.
 #' @param main.colors DEFAULT: "black". The color of the main association score to be plotted.
+#' @param distinguish.chr.type DEFAULT: "box". The default specifies rectangular block backgrounds to distinguish adjacent chromosomes. The "color" option 
+#' specifies alternating colors.
+#' @param distinguish.box.col DEFAULT: "gray88". If distinguish.chr.type="box" is specified, this argument provides the color of the background rectangle.
+#' @param distinguish.chr.col DEFAULT: "gray60". If distinguish.chr.type="color" is specified, this argument provides the alternating color. Multiple
+#' colors should be specified if multiple scans are included in the plot.
 #' @param use.legend DEFAULT: TRUE. Include a legend for the different associations. If TRUE, the labels are the names of the non.mi.scan.list object.
 #' @param main DEFAULT: NULL. Adds a title above the model.
 #' @param my.legend.cex DEFAULT: 0.6. Specifies the size of the text in the legend.
@@ -215,7 +220,8 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
 #' @export
 #' @examples genome.plotter.whole()
 genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
-                                 scale="Mb", main.colors=c("black", "gray48", "blue"),
+                                 scale="Mb", main.colors=c("black", "darkgreen", "blue"),
+                                 distinguish.chr.type=c("box", "color"), distinguish.box.col="gray88", distinguish.chr.col=c("gray60", "greenyellow", "cyan"),
                                  use.legend=TRUE, main="",
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.pos="topright",
                                  y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.7,
@@ -228,11 +234,11 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   if(is.null(names(scan.list))){ use.legend=FALSE }
   if(is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
+  distinguish.chr.type <- distinguish.chr.type[1]
   main.object <- scan.list[[1]]
   if(use.lod){
     outcome <- main.object$LOD
-    plot.this <- "LOD"
-    this.ylab <- "LOD"
+    plot.this <- this.ylab <- "LOD"
   }
   if(!use.lod){
     outcome <- -log10(main.object$p.value)
@@ -327,17 +333,27 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   label.spots <- max.pos[1]/2
   x.tick.spots <- c(0, max.pos[1])
   shift <- max.pos[1]
+  
+  if(distinguish.chr.type == "box"){ 
+    this.col <- rep(main.colors[1], length(outcome)) 
+  }
+  else if(distinguish.chr.type == "color"){ 
+    #this.col <- ifelse((sapply(1:length(chr), function(x) which(sort(as.numeric(as.character(unique(pre.chr)))) == pre.chr[x])) %% 2) == 1, main.colors[1], distinguish.chr.col[1]) 
+    this.col <- c(main.colors[1], distinguish.chr.col[1])[(as.numeric(as.character(pre.chr)) %% 2 == 0) + 1]
+  }
   if(length(chr.types) > 1){
     for(i in 2:length(chr.types)){
       this.pos <- pos[pre.chr==chr.types[i]] + shift
-      if(i %% 2 == 0){
-        polygon(x=c(shift, max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE), shift), 
-                y=c(y.max, y.max, 0, 0), border=NA, col="gray88")
-        
+      if(distinguish.chr.type == "box"){
+        if(i %% 2 == 0){
+          polygon(x=c(shift, max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE), shift), 
+                  y=c(y.max, y.max, 0, 0), border=NA, col=distinguish.box.col)
+          
+        }
       }
       label.spots <- c(label.spots, shift + max.pos[i]/2)
       x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
-      points(this.pos, outcome[pre.chr==chr.types[i]], type="l", lwd=my.legend.lwd[1], col=main.colors[1])
+      points(this.pos, outcome[pre.chr==chr.types[i]], type="l", lwd=my.legend.lwd[1], col=this.col[pre.chr==chr.types[i]])
       shift <- shift + max.pos[i]
     }
   }
@@ -380,12 +396,23 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       min.pos <- tapply(pos, pre.chr, function(x) min(x, na.rm=TRUE))
       max.pos <- tapply(pos, pre.chr, function(x) max(x, na.rm=TRUE))
       chr.types <- levels(pre.chr)
+      
+      ## Setting up colors for additional scans
+      if(distinguish.chr.type == "box"){ 
+        this.col <- rep(main.colors[i], length(compare.outcome)) 
+      }
+      else if(distinguish.chr.type == "color"){ 
+        #this.col <- ifelse((sapply(1:length(chr), function(x) which(sort(as.numeric(as.character(unique(pre.chr)))) == pre.chr[x])) %% 2) == 1, main.colors[i], distinguish.chr.col[i]) 
+        this.col <- c(main.colors[i], distinguish.chr.col[i])[(as.numeric(as.character(pre.chr)) %% 2 == 0) + 1]
         
+      }
+      
       compare.shift <- max.pos[1]
-      points(pos[pre.chr==chr.types[1]], compare.outcome[pre.chr==chr.types[1]], type="l", col=main.colors[i], lwd=my.legend.lwd[i])
+      points(pos[pre.chr==chr.types[1]], compare.outcome[pre.chr==chr.types[1]], type="l", col=this.col[pre.chr==chr.types[1]], lwd=my.legend.lwd[i])
+      
       if(length(chr.types) > 1){
         for(j in 2:length(chr.types)){
-          points(pos[pre.chr==chr.types[j]] + compare.shift, compare.outcome[pre.chr==chr.types[j]], type="l", col=main.colors[i], lwd=my.legend.lwd[i])
+          points(pos[pre.chr==chr.types[j]] + compare.shift, compare.outcome[pre.chr==chr.types[j]], type="l", col=this.col[pre.chr==chr.types[j]], lwd=my.legend.lwd[i])
           compare.shift <- compare.shift + max.pos[j]
         }
       }

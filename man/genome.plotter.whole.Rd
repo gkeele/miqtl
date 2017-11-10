@@ -5,7 +5,9 @@
 \title{Plot one or more haplotype-based genome scans flexibly (whole genomes or subset of chromosomes)}
 \usage{
 genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
-  scale = "Mb", main.colors = c("black", "gray48", "blue"),
+  scale = "Mb", main.colors = c("black", "darkgreen", "blue"),
+  distinguish.chr.type = c("box", "color"), distinguish.box.col = "gray88",
+  distinguish.chr.col = c("gray60", "greenyellow", "cyan"),
   use.legend = TRUE, main = "", my.legend.cex = 0.6,
   my.legend.lwd = NULL, my.legend.pos = "topright", y.max.manual = NULL,
   my.y.line = 2, my.y.axis.cex = 1, my.y.lab.cex = 0.7,
@@ -25,6 +27,14 @@ genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
 \item{scale}{DEFAULT: "Mb". Specifies the scale of genomic position to be plotted. Either Mb or cM are expected.}
 
 \item{main.colors}{DEFAULT: "black". The color of the main association score to be plotted.}
+
+\item{distinguish.chr.type}{DEFAULT: "box". The default specifies rectangular block backgrounds to distinguish adjacent chromosomes. The "color" option 
+specifies alternating colors.}
+
+\item{distinguish.box.col}{DEFAULT: "gray88". If distinguish.chr.type="box" is specified, this argument provides the color of the background rectangle.}
+
+\item{distinguish.chr.col}{DEFAULT: "gray60". If distinguish.chr.type="color" is specified, this argument provides the alternating color. Multiple
+colors should be specified if multiple scans are included in the plot.}
 
 \item{use.legend}{DEFAULT: TRUE. Include a legend for the different associations. If TRUE, the labels are the names of the non.mi.scan.list object.}
 
