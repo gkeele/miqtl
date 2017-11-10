@@ -1,7 +1,7 @@
 #' @export
-extract.mediation.qr <- function(genomecache, id="SUBJECT.NAME",
+extract.mediation.qr <- function(genomecache, id="SUBJECT.NAME", locus,
                                  data, formula, model=c("additive", "full"), condition.loci=NULL,
-                                 chr="all", locus, use.progress.bar=TRUE){
+                                 chr="all", use.progress.bar=TRUE){
   K <- NULL
   
   ## Extracting chromatin phenotypes
@@ -66,7 +66,7 @@ extract.mediation.qr <- function(genomecache, id="SUBJECT.NAME",
                     pos=list(cM=NA,
                              Mb=pos),
                     model=model,
-                    founders=h$getFounders(),
+                    founders=founders,
                     subjects=subjects,
                     formula=Reduce(paste, deparse(formula)))
 }
