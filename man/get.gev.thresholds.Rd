@@ -4,7 +4,8 @@
 \alias{get.gev.thresholds}
 \title{Returns a significance threshold based on fitting max LODs or max -log10p to a generalized extreme value (GEV) distribution}
 \usage{
-get.gev.thresholds(threshold.scans, use.lod = FALSE, percentile = 0.95)
+get.gev.thresholds(threshold.scans, use.lod = FALSE, percentile = 0.95,
+  type = c("min", "max"))
 }
 \arguments{
 \item{threshold.scans}{Output object from run.threshold.scans().}
@@ -12,6 +13,10 @@ get.gev.thresholds(threshold.scans, use.lod = FALSE, percentile = 0.95)
 \item{use.lod}{DEFAULT: FALSE. "FALSE" specifies LOD scores. "TRUE" specifies p-values.}
 
 \item{percentile}{DEFAULT: 0.95. The desired alpha level (false positive probability) from the GEV distribution.}
+
+\item{type}{DEFAULT: "min". If "min", the minimum statistics are expected, which is usually desired with p-values - though they
+are transformed to maxima using -log10(). If "max", the maximum statistics are expected. This is mainly expected to be used
+with mediation scans for direct mediations (p-value drop).}
 }
 \description{
 This function takes an scan.h2lmm() object, and returns a specified number of outcome samples, either permutations or

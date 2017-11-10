@@ -61,17 +61,26 @@ grab.locus.from.scan <- function(scan.object,
 #' @param threshold.scans Output object from run.threshold.scans().
 #' @param use.lod DEFAULT: FALSE. "FALSE" specifies LOD scores. "TRUE" specifies p-values.
 #' @param percentile DEFAULT: 0.95. The desired alpha level (false positive probability) from the GEV distribution.
+#' @param type DEFAULT: "min". If "min", the minimum statistics are expected, which is usually desired with p-values - though they
+#' are transformed to maxima using -log10(). If "max", the maximum statistics are expected. This is mainly expected to be used
+#' with mediation scans for direct mediations (p-value drop).
 #' @export
 #' @examples get.gev.thresholds()
-get.gev.thresholds <- function(threshold.scans, use.lod=FALSE, percentile=0.95){
+get.gev.thresholds <- function(threshold.scans, use.lod=FALSE, percentile=0.95, type=c("min", "max")){
+  type <- type[1]
   if(!use.lod){
-    extreme.values <- -log10(threshold.scans$max.statistics$p.value)
+    if(is.null(threshold.scans$max.statistics$p.value[[type]])){
+      extreme.values <- -log10(threshold.scans$max.statistics$p.value)
+    }
+    else{
+      extreme.values <- -log10(threshold.scans$max.statistics$p.value[[type]])
+    }
   }
   else{
     extreme.values <- threshold.scans$max.statistics$LOD
   }
   evd.pars <- as.numeric(evir::gev(extreme.values)$par.est)
-  thresh <- evir::qgev(p=percentile, xi=evd.pars[1], sigma=evd.pars[2], mu=evd.pars[3])
+  thresh <- evir::qgev(p=ifelse(type == "min", percentile, 1 - percentile), xi=evd.pars[1], sigma=evd.pars[2], mu=evd.pars[3])
   return(thresh)
 }
 
