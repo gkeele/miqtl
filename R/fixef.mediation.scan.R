@@ -154,7 +154,7 @@ mediation.scan.qr <- function(mediation.qr.object,
 run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix, mediation.qr.object, genomecache,
                                                          phenotype, data,
                                                          keep.full.scans=FALSE, scan.index=NULL, id="SUBJECT.NAME",
-                                                         chr="all", just.these.loci=NULL, use.progress.bar=TRUE,
+                                                         chr="all", use.progress.bar=TRUE,
                                                          ...){
   
   if(is.null(scan.index)){ scan.index <- 1:ncol(perm.ind.matrix) }
@@ -163,15 +163,11 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix, mediat
   condition.loci <- mediation.qr.object$condition.loci
   locus <- mediation.qr.object$locus
   
-  loci <- names(mediation.qr.object$qr.list)
+  chromatin <- names(mediation.qr.object$qr.0.list)
   rh.formula <- mediation.qr.object$formula
-  loci.chr <- mediation.qr.object$chr
+  chromatin.chr <- mediation.qr.object$chr
   if(chr[1] != "all"){
-    loci <- loci[loci.chr %in% chr]
-  }
-  if(!is.null(just.these.loci)){
-    loci <- loci[loci %in% just.these.loci]
-    loci.chr <- loci.chr[loci %in% just.these.loci]
+    chromatin <- chromatin[chromatin.chr %in% chr]
   }
   formula.string <- paste(phenotype, rh.formula, "+", id)
   formula <- formula(formula.string)
@@ -214,9 +210,13 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix, mediat
   }
   return(list(full.results=list(LOD=NULL,
                                 p.value=full.p,
-                                chr=loci.chr, 
+                                chr=chromatin.chr, 
                                 pos=these.pos), 
               max.statistics=list(LOD=NULL,
                                   p.value=list(min=min.p,
                                                max=max.p))))
+}
+
+extract.chr.max.statistics.from.genomewide <- function(full.perm.scans, chr){
+  full.perm.scans$full.results$chr == chr
 }
