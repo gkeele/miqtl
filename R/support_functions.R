@@ -69,11 +69,11 @@ grab.locus.from.scan <- function(scan.object,
 get.gev.thresholds <- function(threshold.scans, use.lod=FALSE, percentile=0.95, type=c("min", "max")){
   type <- type[1]
   if(!use.lod){
-    if(is.null(threshold.scans$max.statistics$p.value[[type]])){
+    if(is.null(threshold.scans$max.statistics$p.value[type])){
       extreme.values <- -log10(threshold.scans$max.statistics$p.value)
     }
     else{
-      extreme.values <- -log10(threshold.scans$max.statistics$p.value[[type]])
+      extreme.values <- -log10(threshold.scans$max.statistics$p.value[type])
     }
   }
   else{
