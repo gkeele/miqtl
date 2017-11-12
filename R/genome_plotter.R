@@ -221,7 +221,7 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
 #' @examples genome.plotter.whole()
 genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  scale="Mb", main.colors=c("black", "cyan", "darkgreen"),
-                                 distinguish.chr.type=c("box", "color"), distinguish.box.col="gray88", distinguish.chr.col=c("gray60", "#008080" "greenyellow"),
+                                 distinguish.chr.type=c("box", "color"), distinguish.box.col="gray88", distinguish.chr.col=c("gray60", "#008080", "greenyellow"),
                                  use.legend=TRUE, main="",
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.pos="topright",
                                  y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.7,
