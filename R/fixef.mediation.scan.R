@@ -180,8 +180,8 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix, mediat
   if(keep.full.scans){
     full.p <- matrix(NA, nrow=length(scan.index), ncol=length(loci))
     colnames(full.p) <- loci
-    these.pos <- list(Mb=qr.object$pos$Mb[loci],
-                      cM=qr.object$pos$cM[loci])
+    these.pos <- list(Mb=mediation.qr.object$pos$Mb[loci],
+                      cM=mediation.qr.object$pos$cM[loci])
   }
   min.p <- max.p <- rep(NA, length(scan.index))
   
