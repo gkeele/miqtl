@@ -73,7 +73,7 @@ get.gev.thresholds <- function(threshold.scans, use.lod=FALSE, percentile=0.95, 
       extreme.values <- -log10(threshold.scans$max.statistics$p.value)
     }
     else{
-      extreme.values <- -log10(threshold.scans$max.statistics$p.value[type])
+      extreme.values <- -log10(threshold.scans$max.statistics$p.value[[type]])
     }
   }
   else{
