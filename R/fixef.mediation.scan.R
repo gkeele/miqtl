@@ -172,12 +172,15 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix, mediat
   formula.string <- paste(phenotype, rh.formula, "+", id)
   formula <- formula(formula.string)
   
+  if(chr == "all"){ chr.levels <- unique(chromatin.chr) }
+  else{ chr.levels <- chr }
+  
   full.p <- these.pos <- NULL
   if(keep.full.scans){
     full.p <- matrix(NA, nrow=length(scan.index), ncol=length(chromatin))
     colnames(full.p) <- chromatin
-    these.pos <- list(Mb=mediation.qr.object$pos$Mb[chromatin.chr %in% chr],
-                      cM=mediation.qr.object$pos$cM[chromatin.chr %in% chr])
+    these.pos <- list(Mb=mediation.qr.object$pos$Mb[chromatin.chr %in% chr.levels],
+                      cM=mediation.qr.object$pos$cM[chromatin.chr %in% chr.levels])
   }
   min.p <- max.p <- rep(NA, length(scan.index))
   
@@ -210,7 +213,7 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix, mediat
   }
   return(list(full.results=list(LOD=NULL,
                                 p.value=full.p,
-                                chr=chromatin.chr[chromatin.chr %in% chr], 
+                                chr=chromatin.chr[chromatin.chr %in% chr.levels], 
                                 pos=these.pos), 
               max.statistics=list(LOD=NULL,
                                   p.value=list(min=min.p,
