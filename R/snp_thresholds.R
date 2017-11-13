@@ -61,7 +61,7 @@ snp.null.par.bs.threshold.scan <- function(scan.object,
                                 chr=these.chr, 
                                 pos=these.pos), 
               max.statistics=list(LOD=NULL,
-                                  p.value=max.results))
+                                  p.value=max.results)))
 }
 
 #' @export
