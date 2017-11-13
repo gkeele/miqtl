@@ -338,7 +338,6 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     this.col <- rep(main.colors[1], length(outcome)) 
   }
   else if(distinguish.chr.type == "color"){ 
-    #this.col <- ifelse((sapply(1:length(chr), function(x) which(sort(as.numeric(as.character(unique(pre.chr)))) == pre.chr[x])) %% 2) == 1, main.colors[1], distinguish.chr.col[1]) 
     this.col <- c(main.colors[1], distinguish.chr.col[1])[(as.numeric(as.character(pre.chr)) %% 2 == 0) + 1]
   }
   if(length(chr.types) > 1){
