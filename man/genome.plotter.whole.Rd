@@ -5,9 +5,9 @@
 \title{Plot one or more haplotype-based genome scans flexibly (whole genomes or subset of chromosomes)}
 \usage{
 genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
-  scale = "Mb", main.colors = c("black", "darkgreen", "blue"),
+  scale = "Mb", main.colors = c("black", "cyan", "darkgreen"),
   distinguish.chr.type = c("box", "color"), distinguish.box.col = "gray88",
-  distinguish.chr.col = c("gray60", "greenyellow", "cyan"),
+  distinguish.chr.col = c("gray60", "#008080", "greenyellow"),
   use.legend = TRUE, main = "", my.legend.cex = 0.6,
   my.legend.lwd = NULL, my.legend.pos = "topright", y.max.manual = NULL,
   my.y.line = 2, my.y.axis.cex = 1, my.y.lab.cex = 0.7,

@@ -220,6 +220,16 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix, mediat
                                                max=max.p))))
 }
 
-extract.chr.max.statistics.from.genomewide <- function(full.perm.scans, chr){
-  full.perm.scans$full.results$chr == chr
+#' @export
+extract.chr.max.statistics.from.genomewide <- function(full.perm.scans, chr, use.lod=FALSE){
+  type <- type[1]
+  statistic.type <- ifelse(use.lod, "LOD", "p.value")
+  full.results <- full.perm.scans$full.results[[statistic.type]][,full.perm.scans$full.results$chr == chr]
+  
+  min.statistics <- apply(full.results, 1, function(x) min(x))
+  max.statistics <- apply(full.results, 1, function(x) max(x))
+  return(list(full.results=NULL,
+              max.statistics=list(LOD=NULL,
+                                  p.value=list(min=min.statistics,
+                                               max=max.statistics))))
 }
