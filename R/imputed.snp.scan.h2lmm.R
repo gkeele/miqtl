@@ -29,6 +29,7 @@
 #' Technically less powerful, though in practice it has proven to be almost equal to the exact procedure.
 #' @param just.these.loci DEFAULT: NULL. Specifies a reduced set of loci to fit.
 #' @param print.locus.fit DEFAULT: FALSE. If TRUE, prints out how many loci have been fit currently.
+#' @param use.progress.bar DEFAULT: TRUE. If TRUE, a progress bar is used.
 #' @param exclusion.freq DEFAULT: .Machine$double.eps. Loci with observed minor allele frequencies beneath
 #' the specified value are removed from the scan.
 #' @param X.list DEFAULT: NULL. This specifies the SNP-based design matrices for all the loci. If a scan
@@ -43,7 +44,7 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
                                    model=c("additive", "full"),
                                    use.par="h2", chr="all", brute=TRUE, use.fix.par=FALSE, 
                                    just.these.loci=NULL,
-                                   print.locus.fit=FALSE,
+                                   print.locus.fit=FALSE, use.progress.bar=TRUE,
                                    condition.loci=NULL,
                                    exclusion.freq=.Machine$double.eps,
                                    X.list=NULL, return.X.list=FALSE, # Makes multiple scans more efficient
@@ -125,7 +126,9 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
   LOD.vec <- p.vec <- h2.record <- rep(0, length(loci))
   
   # Progress bar
-  pb <- txtProgressBar(min=0, max=length(loci), style=3)
+  if(use.progress.bar){
+    pb <- txtProgressBar(min=0, max=length(loci), style=3)
+  }
   for(i in 1:length(loci)){
     X <- X.list[[i]]
     data <- cbind(null.data, X[as.character(null.data$SUBJECT.NAME),, drop=FALSE])
@@ -139,8 +142,10 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
     h2.record[i] <- fit1$h2
     if(print.locus.fit){ cat(paste("locus", i, "out of", length(loci)), "\n") }
     else{
-      # Update progress bar
-      setTxtProgressBar(pb, i)
+      if(use.progress.bar){
+        # Update progress bar
+        setTxtProgressBar(pb, i)
+      }
     }
   }
   if(!return.X.list){ X.list <- NULL }

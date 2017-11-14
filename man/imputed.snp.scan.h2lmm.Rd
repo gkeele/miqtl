@@ -8,7 +8,7 @@ alleles stored .allele files}
 imputed.snp.scan.h2lmm(data, formula, K, allele.dir, genomecache,
   model = c("additive", "full"), use.par = "h2", chr = "all",
   brute = TRUE, use.fix.par = FALSE, just.these.loci = NULL,
-  print.locus.fit = FALSE, condition.loci = NULL,
+  print.locus.fit = FALSE, use.progress.bar = TRUE, condition.loci = NULL,
   exclusion.freq = .Machine$double.eps, X.list = NULL,
   return.X.list = FALSE, ...)
 }
@@ -48,6 +48,8 @@ Technically less powerful, though in practice it has proven to be almost equal t
 \item{just.these.loci}{DEFAULT: NULL. Specifies a reduced set of loci to fit.}
 
 \item{print.locus.fit}{DEFAULT: FALSE. If TRUE, prints out how many loci have been fit currently.}
+
+\item{use.progress.bar}{DEFAULT: TRUE. If TRUE, a progress bar is used.}
 
 \item{exclusion.freq}{DEFAULT: .Machine$double.eps. Loci with observed minor allele frequencies beneath
 the specified value are removed from the scan.}
