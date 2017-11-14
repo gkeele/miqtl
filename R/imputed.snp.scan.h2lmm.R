@@ -76,7 +76,7 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
   K <- data.and.K$K
   
   if(!is.null(just.these.loci)){
-    keep <- loci %in% unique(c(just.these.loci, condition.loci))
+    keep <- loci %in% just.these.loci
     loci <- loci[keep]
     loci.chr <- loci.chr[keep]
   }
@@ -91,8 +91,11 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
   }
   
   if(!is.null(condition.loci)){
+    condition.X.list <- make.imputed.design.matrix.list.for.all.loci(loci=condition.loci, loci.chr=h$getChromOfLocus(condition.loci), n=nrow(data), model=model, h=h, 
+                                                                     allele.dir=allele.dir, mapping.matrix=mapping.matrix,
+                                                                     founders=founders, exclusion.freq=exclusion.freq)
     for(i in 1:length(condition.loci)){
-      condition.X <- X.list[[condition.loci[i]]]
+      condition.X <- condition.X.list[[condition.loci[i]]]
       if(model == "additive"){
         colnames(condition.X) <- paste("cond_SNP", i, sep="_")
       }
