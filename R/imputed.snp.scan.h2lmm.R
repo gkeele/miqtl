@@ -76,7 +76,7 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
   K <- data.and.K$K
   
   if(!is.null(just.these.loci)){
-    keep <- unique(c(loci, condition.loci)) %in% just.these.loci
+    keep <- loci %in% unique(c(just.these.loci, condition.loci))
     loci <- loci[keep]
     loci.chr <- loci.chr[keep]
   }
