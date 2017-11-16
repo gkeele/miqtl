@@ -2,7 +2,7 @@
 snp.null.par.bs.threshold.scan <- function(scan.object, 
                                            data,
                                            allele.dir, genomecache,
-                                           model=c("additive", "full"), chr="all", use.REML=TRUE,
+                                           chr="all", use.REML=TRUE,
                                            use.par="h2", brute=TRUE, use.fix.par=FALSE, seed=1,
                                            use.chol=FALSE,
                                            just.these.loci=NULL,
@@ -16,6 +16,7 @@ snp.null.par.bs.threshold.scan <- function(scan.object,
   loci.chr <- scan.object$chr
   
   condition.loci <- scan.object$condition.loci
+  model <- scan.object$model.type
   
   full.results <- these.chr <- these.pos <- NULL
   if(keep.full.scans){
