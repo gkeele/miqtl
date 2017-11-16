@@ -15,6 +15,8 @@ snp.null.par.bs.threshold.scan <- function(scan.object,
   loci <- scan.object$loci
   loci.chr <- scan.object$chr
   
+  condition.loci <- scan.object$condition.loci
+  
   full.results <- these.chr <- these.pos <- NULL
   if(keep.full.scans){
     full.results <- matrix(NA, nrow=num.bs.scans, ncol=length(loci))
@@ -46,7 +48,7 @@ snp.null.par.bs.threshold.scan <- function(scan.object,
     cat(paste("Conducting null bootstrap scan:", i, "\n"))
     par.bs.scan <- imputed.snp.scan.h2lmm(data=par.bs.data, formula=par.bs.formula, K=null.fit$K,
                                           allele.dir=allele.dir, genomecache=genomecache, 
-                                          model=model,
+                                          model=model, condition.loci=condition.loci,
                                           use.par=use.par, chr=chr, brute=brute, use.fix.par=use.fix.par, seed=seed, 
                                           use.chol=use.chol,
                                           just.these.loci=NULL, print.locus.fit=print.locus.fit,
