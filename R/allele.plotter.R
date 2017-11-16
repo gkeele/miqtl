@@ -435,11 +435,11 @@ allele.plotter.region <- function(scan.object,
     for(i in 1:num.founders){
       founder.y.max <- allele.effect.confint[2, i,]
       founder.y.min <- allele.effect.confint[1, i,]
-      if(any(is.na(founder.first.y.max))){
+      #if(any(is.na(founder.first.y.max))){
         polygon.with.nas(x=pos,
                          y.ci.max=founder.y.max, y.ci.min=founder.y.min,
                          col=scales::alpha(main.colors[i], transparency))
-      }
+      #}
       else{
         polygon(x=c(pos, rev(pos)),
                 y=c(founder.y.max, rev(founder.y.min)),
