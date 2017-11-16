@@ -43,8 +43,10 @@ snp.null.par.bs.threshold.scan <- function(scan.object,
     new.y <- data.frame(new.y=new.y.matrix[,i], SUBJECT.NAME=colnames(null.fit$K))
     par.bs.data <- merge(x=new.y, y=data, by="SUBJECT.NAME", all.x=TRUE)
     
-    original.formula <- paste0(Reduce(paste, deparse(formula(null.fit))))
+    #original.formula <- paste0(Reduce(paste, deparse(formula(null.fit))))
+    original.formula <- scan.object$formula
     par.bs.formula <- formula(paste0("new.y ~ ", unlist(strsplit(original.formula, split="~"))[-1]))
+    brow
     cat(paste("Conducting null bootstrap scan:", i, "\n"))
     par.bs.scan <- imputed.snp.scan.h2lmm(data=par.bs.data, formula=par.bs.formula, K=null.fit$K,
                                           allele.dir=allele.dir, genomecache=genomecache, 
