@@ -62,19 +62,12 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="b
   # Creating alternating colors for different chromosomes
   if(is.null(alt.col)){ 
     if(distinguish.chr.type == "color"){
-      #use.col <- ifelse((sapply(1:length(chr), function(x) which(sort(as.numeric(as.character(unique(pre.chr)))) == pre.chr[x])) %% 2) == 1, point.col, distinguish.snp.col)
-      use.col <- c(point.col[1], distinguish.snp.col[1])[(as.numeric(as.character(pre.chr)) %% 2 == 0) + 1]
+      use.col <- c(point.col[1], distinguish.snp.col[1])[(1:length(as.character(pre.chr)) %% 2 == 0) + 1]
     }
     else{
       use.col <- rep(point.col, length(outcome)) 
     }
   }
-  # if(distinguish.chr.type == "box"){ 
-  #   this.col <- rep(main.colors[1], length(outcome)) 
-  # }
-  # else if(distinguish.chr.type == "color"){ 
-  #   this.col <- c(point.col[1], distinguish.snp.col[1])[(as.numeric(as.character(pre.chr)) %% 2 == 0) + 1]
-  # }
   
   outcome <- outcome[order.i]
   pre.chr <- pre.chr[order.i]
@@ -96,7 +89,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="b
     condition.loci <- main.object$condition.loci
     if(!is.null(condition.loci)){
       this.title <- c(title,
-                      paste(main.object$formula, paste(condition.loci, sep=" + "),
+                      paste(main.object$formula, paste(condition.loci, collapse=" + "),
                             paste0("SNP (", main.object$model.type, ")"), sep=" + "),
                       paste("n =", length(main.object$fit0$y)))
     }
