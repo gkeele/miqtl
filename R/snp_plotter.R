@@ -62,7 +62,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="b
   # Creating alternating colors for different chromosomes
   if(is.null(alt.col)){ 
     if(distinguish.chr.type == "color"){
-      use.col <- c(point.col[1], distinguish.snp.col[1])[(as.numeric(drop.levels(pre.chr)) %% 2 == 0) + 1]
+      use.col <- c(point.col[1], distinguish.snp.col[1])[(as.numeric(droplevels(pre.chr)) %% 2 == 0) + 1]
     }
     else{
       use.col <- rep(point.col, length(outcome)) 
