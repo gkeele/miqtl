@@ -1,3 +1,44 @@
+#' Plot the regression coefficients as allele effects for a single locus as a caterpillar plot from a scan object
+#'
+#' This function takes a scan object from scan.h2lmm() and plots out allele effect estimates
+#' based on regression coefficients for a single locus. If multiple imputation was used, these correspond to 
+#' confidence intervals on the mean effect over imputations.
+#' 
+#' @param scan.object A scan object from scan.h2lmm(). Can work for ROP or multiple imputation.
+#' @param locus The locus for which effect estimates are need. The locus must be included in the scan.
+#' @param main DEFAULT: "". The title to included in the plot.
+#' @param names DEFAULT: c("ACI", "BN", "BUF", "F344", "M520", "MR", "WKY", "WN"). These are the strains used in the HS rats.
+#' @param col DEFAULT: c(rgb(240, 240, 0, maxColorValue=255), rgb(128, 128, 128, maxColorValue=255), rgb(240, 128, 128, maxColorValue=255), 
+#' rgb(16, 16, 240, maxColorValue=255), rgb(0, 160, 240, maxColorValue=255), rgb(0, 160, 0, maxColorValue=255), rgb(240, 0, 0, maxColorValue=255), 
+#' rgb(144, 0, 224, maxColorValue=255)). These are the established Collaborative Cross colors.
+#' @export
+#' @examples plot.locus.effect.from.scan()
+plot.locus.effect.from.scan <- function(scan.object, locus,
+                                        main="",
+                                        names=c("ACI", "BN", "BUF", "F344", "M520", "MR", "WKY", "WN"),
+                                        col=c(rgb(240, 240, 0, maxColorValue=255), 
+                                              rgb(128, 128, 128, maxColorValue=255), 
+                                              rgb(240, 128, 128, maxColorValue=255), 
+                                              rgb(16, 16, 240, maxColorValue=255), 
+                                              rgb(0, 160, 240, maxColorValue =255),
+                                              rgb(0, 160, 0, maxColorValue =255),
+                                              rgb(240, 0, 0, maxColorValue = 255), 
+                                              rgb(144, 0, 224, maxColorValue = 255))){
+  allele.effects <- scan.object$allele.effects
+  effect.matrix <- allele.effects[,locus,]
+  
+  if(length(col) == 1){ col <- rep(col, nrow(effect.matrix)) }
+  
+  effects.95 <- t(apply(effect.matrix, 1, function(x) miqtl::ci.mean(x, alpha=0.05)))
+  effects.75 <- t(apply(effect.matrix, 1, function(x) miqtl::ci.mean(x, alpha=0.25)))
+  mean.effects <- apply(effect.matrix, 1, function(x) mean(x, alpha=0.05, na.rm=TRUE))
+
+  plot.ci(midvals=mean.effects, narrow.intervals=effects.75, wide.intervals=effects.95,
+          names=names, col=col)   
+  abline(v=0, lty=2)
+  title(main)
+}
+
 plot.ci <- function(midvals, narrow.intervals, wide.intervals,
                     names=1:length(midvals),
                     add=FALSE,
@@ -44,46 +85,4 @@ plot.ci <- function(midvals, narrow.intervals, wide.intervals,
     }
   }
   invisible(rev(y.pos))
-}
-
-#' Plot the regression coefficients as allele effects for a single locus as a caterpillar plot from a scan object
-#'
-#' This function takes a scan object from scan.h2lmm() and plots out allele effect estimates
-#' based on regression coefficients for a single locus. If multiple imputation was used, these correspond to 
-#' confidence intervals on the mean effect over imputations.
-#' 
-#' @param scan.object A scan object from scan.h2lmm(). Can work for ROP or multiple imputation.
-#' @param locus The locus for which effect estimates are need. The locus must be included in the scan.
-#' @param main DEFAULT: "". The title to included in the plot.
-#' @param names DEFAULT: c("ACI", "BN", "BUF", "F344", "M520", "MR", "WKY", "WN"). These are the strains used in the HS rats.
-#' @param col DEFAULT: c(rgb(240, 240, 0, maxColorValue=255), rgb(128, 128, 128, maxColorValue=255), rgb(240, 128, 128, maxColorValue=255), 
-#' rgb(16, 16, 240, maxColorValue=255), rgb(0, 160, 240, maxColorValue=255), rgb(0, 160, 0, maxColorValue=255), rgb(240, 0, 0, maxColorValue=255), 
-#' rgb(144, 0, 224, maxColorValue=255)). These are the established Collaborative Cross colors.
-#'
-#' @export
-#' @examples plot.locus.effect.from.scan()
-plot.locus.effect.from.scan <- function(scan.object, locus,
-                                        main="",
-                                        names=c("ACI", "BN", "BUF", "F344", "M520", "MR", "WKY", "WN"),
-                                        col=c(rgb(240, 240, 0, maxColorValue=255), 
-                                              rgb(128, 128, 128, maxColorValue=255), 
-                                              rgb(240, 128, 128, maxColorValue=255), 
-                                              rgb(16, 16, 240, maxColorValue=255), 
-                                              rgb(0, 160, 240, maxColorValue =255),
-                                              rgb(0, 160, 0, maxColorValue =255),
-                                              rgb(240, 0, 0, maxColorValue = 255), 
-                                              rgb(144, 0, 224, maxColorValue = 255))){
-  allele.effects <- scan.object$allele.effects
-  effect.matrix <- allele.effects[,locus,]
-  
-  if(length(col) == 1){ col <- rep(col, nrow(effect.matrix)) }
-  
-  effects.95 <- t(apply(effect.matrix, 1, function(x) miqtl::ci.mean(x, alpha=0.05)))
-  effects.75 <- t(apply(effect.matrix, 1, function(x) miqtl::ci.mean(x, alpha=0.25)))
-  mean.effects <- apply(effect.matrix, 1, function(x) mean(x, alpha=0.05, na.rm=TRUE))
-
-  plot.ci(midvals=mean.effects, narrow.intervals=effects.75, wide.intervals=effects.95,
-          names=names, col=col)   
-  abline(v=0, lty=2)
-  title(main)
 }
