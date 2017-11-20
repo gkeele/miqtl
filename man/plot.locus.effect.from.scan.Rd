@@ -22,8 +22,8 @@
 \item{names}{DEFAULT: c("ACI", "BN", "BUF", "F344", "M520", "MR", "WKY", "WN"). These are the strains used in the HS rats.}
 
 \item{col}{DEFAULT: c(rgb(240, 240, 0, maxColorValue=255), rgb(128, 128, 128, maxColorValue=255), rgb(240, 128, 128, maxColorValue=255), 
-rgb(16, 16, 240, maxColorValue=255), rgb(0, 160, 240, maxColorValue =255),rgb(0, 160, 0, maxColorValue =255),rgb(240, 0, 0, maxColorValue = 255), 
-rgb(144, 0, 224, maxColorValue = 255)). These are the established Collaborative Cross colors.}
+rgb(16, 16, 240, maxColorValue=255), rgb(0, 160, 240, maxColorValue=255), rgb(0, 160, 0, maxColorValue=255), rgb(240, 0, 0, maxColorValue=255), 
+rgb(144, 0, 224, maxColorValue=255)). These are the established Collaborative Cross colors.}
 }
 \description{
 This function takes a scan object from scan.h2lmm() and plots out allele effect estimates
