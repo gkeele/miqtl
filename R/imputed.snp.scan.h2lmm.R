@@ -62,7 +62,10 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
   
   if(!exists("X.list")){
     loci <- h$getLoci(chr=these.chr)
-    loci <- loci[-grep(pattern="^c[X0-9]+\\.loc", x=loci, perl=TRUE)] # Remove pseudomarkers created by qtl2geno
+    remove.pseudo <- grep(pattern="^c[X0-9]+\\.loc", x=loci, perl=TRUE) # Remove pseudomarkers created by qtl2geno
+    if(length(remove.pseudo) > 0){
+      loci <- loci[-remove.pseudo] 
+    }
   }
   else{
     loci <- names(X.list)
