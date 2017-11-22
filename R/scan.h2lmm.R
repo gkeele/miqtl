@@ -199,12 +199,12 @@ scan.h2lmm <- function(genomecache, data,
       ###### Handling constant weights at all loci
       if(!is.null(weights)){
         J <- weights^(1/2) * t(weights^(1/2) * K)
-        eigen.J <- process_eigen_decomposition(eigen.decomp=eigen(J))
+        eigen.J <- process_eigen_decomposition(eigen.decomp=eigen(J, symmetric=TRUE))
         fit0 <- lmmbygls(null.formula, data=data, pheno.id=pheno.id, eigen.K=eigen.J, K=K, use.par=use.par, weights=weights, brute=brute)
         fit0.REML <- lmmbygls(null.formula, data=data, pheno.id=pheno.id, eigen.K=eigen.J, K=K, use.par="h2.REML", weights=weights, brute=brute)
       }
       else{
-        eigen.K <- process_eigen_decomposition(eigen.decomp=eigen(K))
+        eigen.K <- process_eigen_decomposition(eigen.decomp=eigen(K, symmetric=TRUE))
         fit0 <- lmmbygls(null.formula, data=data, pheno.id=pheno.id, eigen.K=eigen.K, K=K, use.par=use.par, weights=weights, brute=brute)
         fit0.REML <- lmmbygls(null.formula, data=data, pheno.id=pheno.id, eigen.K=eigen.K, K=K, use.par="h2.REML", weights=weights, brute=brute)
       }

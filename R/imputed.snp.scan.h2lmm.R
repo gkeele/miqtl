@@ -115,7 +115,7 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
   original.n <- nrow(data)
   
   ## Fitting null model
-  eigen.K <- eigen(K)
+  eigen.K <- eigen(K, symmetric=TRUE)
   fit0 <- lmmbygls(null.formula, data=data, eigen.K=eigen.K, K=K, use.par=use.par, weights=NULL, brute=brute)
   fit0.REML <- lmmbygls(null.formula, data=data, eigen.K=eigen.K, K=K, use.par="h2.REML", weights=NULL, brute=brute)
   

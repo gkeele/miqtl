@@ -41,7 +41,7 @@ lmmbygls.random <- function(formula, data=NULL,
   }
   else{
     if(is.null(eigen.K)){
-      eigen.K <- eigen(K)
+      eigen.K <- eigen(K, symmetric=TRUE)
     }
     Ut <- t(eigen.K$vectors) # a small optimization
     d <- eigen.K$values
