@@ -193,7 +193,7 @@ scan.h2lmm <- function(genomecache, data,
       ###### Handling replicates
       if(pheno.id != geno.id){
         Z <- model.matrix(process.random.formula(geno.id=geno.id), data=data)
-        K <- Z %*% K %*% t(Z)
+        K <- crossprod(t(Z), tcrossprod(K, Z))
         rownames(K) <- colnames(K) <- as.character(data[,pheno.id])
       }
       ###### Handling constant weights at all loci

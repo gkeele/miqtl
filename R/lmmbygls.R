@@ -178,7 +178,7 @@ lmmbygls <- function(formula, data=NULL,
     col.keep <- !is.na(fit$coefficients)
     X <- X[,col.keep]
     
-    logDetXtX <- log(det(t(X) %*% X))
+    logDetXtX <- log(det(crossprod(X)))
     if(is.null(weights)){
       logDetXtVinvX <- log(det(t(X)%*%t(Ut)%*%((1/d)*Ut)%*%X))
       fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*logDetXtX - 0.5*logDetXtVinvX - 0.5*logDetV
@@ -280,7 +280,7 @@ lmmbygls.replicates <- function(formula, data, little.K, pheno.id="SUBJECT.NAME"
   # Making n x n K
   use.data[,geno.id] <- as.character(use.data[,geno.id])
   Z <- model.matrix(process.random.formula(geno.id=geno.id), data=use.data)
-  big.K <- Z %*% use.K %*% t(Z)
+  big.K <- Z %*% tcrossprod(use.K, Z)
   rownames(big.K) <- colnames(big.K) <- as.character(use.data[,pheno.id])
   lmmbygls.fit <- lmmbygls(formula=formula, data=use.data, K=big.K,
                            pheno.id=pheno.id, ...)
