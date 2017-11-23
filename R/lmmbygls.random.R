@@ -52,15 +52,15 @@ lmmbygls.random <- function(formula, data=NULL,
   original.Z <- Z
   ## Rotations
   if(!is.null(weights)){
-    rotate <- t(sqrt(weights) * t(Ut))
+    rotate <- sqrt(weights) * t(Ut)
   }
   else{
-    rotate <- Ut
+    rotate <- t(Ut)
   }
-  y <- rotate %*% y
-  X <- rotate %*% X
-  Z <- rotate %*% Z
-  K <- Z %*% t(Z)
+  y <- crossprod(rotate, y)
+  X <- crossprod(rotate, X)
+  Z <- crossprod(rotate, Z)
+  K <- tcrossprod(Z)
 
   ## Define local objective function/closure for Brent's optimization
   ### Optimize functions
@@ -77,15 +77,14 @@ lmmbygls.random <- function(formula, data=NULL,
     col.keep <- !is.na(fit$coefficients)
     X <- X[,col.keep]
     
-    logDetXtX <- log(det(t(original.X) %*% original.X))
+    logDetXtX <- log(det(crossprod(original.X, original.X)))
     if(is.null(weights)){
       logDetXtVinvX <- log(det(t(X) %*% chol2inv(chol.H) %*% X))
       logDetV <- 2*log(det(chol.H))
       fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*logDetXtX - 0.5*logDetXtVinvX - 0.5*logDetV
     }
     else{
-      un.rotate <- sqrt(weights)*t(Ut)
-      logDetXtVinvX <- log(det(t(original.X) %*% un.rotate %*% chol2inv(chol.H) %*% t(un.rotate) %*% original.X))
+      logDetXtVinvX <- log(det(crossprod(original.X, rotate) %*% chol2inv(chol.H) %*% crossprod(rotate, original.X)))
       logDetV <- 2*log(det(chol.H)) - 2*sum(log(sqrt(weights)))
       fit$REML.logLik <- -(0.5*df)*(log(2*pi) + log(fit$sigma2.reml) + 1) + 0.5*logDetXtX - 0.5*logDetXtVinvX - 0.5*logDetV
     }

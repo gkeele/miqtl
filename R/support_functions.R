@@ -302,44 +302,43 @@ get.allele.effects.from.ranef <- function(fit, founders=NULL,
     X <- fit$x
     Z <- fit$z
     if(is.null(founders)){ founders <- colnames(Z) }
-    ZZt <- Z %*% t(Z)
+    ZZt <- tcrossprod(Z)
     weights <- fit$weights
     if(is.null(weights)){ weights <- rep(1, nrow(Z)) }
     sigma2 <- fit$sigma2.reml
     tau2 <- fit$locus.h2*(sigma2/((1 - fit$locus.h2)*fit$h2 + fit$locus.h2))
     Sigma <- ZZt*tau2 + diag(1/weights)*sigma2
-    inv.Sigma <- solve(Sigma)
-    effects <- as.vector((t(Z)*tau2) %*% inv.Sigma %*% (fit$y - X %*% solve(t(X) %*% inv.Sigma %*% X) %*% t(X) %*% inv.Sigma %*% fit$y))
+    inv.Sigma <- chol2inv(chol(Sigma))
+    effects <- as.vector(crossprod(Z*tau2, inv.Sigma) %*% (fit$y - X %*% chol2inv(chol(crossprod(X, crossprod(inv.Sigma, X)))) %*% crossprod(X, crossprod(inv.Sigma, fit$y))))
   }
   names(effects) <- founders
 
   return(as.vector(scale(effects, center=center, scale=scale)))
 }
 
-#' @export
-get.blup.from.ranef.fit <- function(fit, center=TRUE, scale=FALSE){
-  
-  ## Big time savings potentially
-  if(fit$h2 == 0 | is.null(fit$K)){
-    blups <- rep(0, length(fit$y))
-  }
-  else{
-    X <- fit$x
-    K <- fit$K
-    weights <- fit$weights
-    if(is.null(weights)){ weights <- rep(1, nrow(K)) }
-    sigma2 <- fit$sigma2.reml
-    kinship.h2 <- (1 - fit$locus.h2)*fit$h2
-    total.variance <- sigma2/(1 - fit$locus.h2 - kinship.h2)
-    tau2 <- kinship.h2 * total.variance
-    Sigma <- K*tau2 + diag(1/weights)*sigma2
-    inv.Sigma <- solve(Sigma)
-    blups <- as.vector((K*tau2) %*% inv.Sigma %*% (fit$y - X %*% solve(t(X) %*% inv.Sigma %*% X) %*% t(X) %*% inv.Sigma %*% fit$y))
-  }
-  names(blups) <- names(y)
-  
-  return(as.vector(scale(blups, center=center, scale=scale)))
-}
+# get.blup.from.ranef.fit <- function(fit, center=TRUE, scale=FALSE){
+#   
+#   ## Big time savings potentially
+#   if(fit$h2 == 0 | is.null(fit$K)){
+#     blups <- rep(0, length(fit$y))
+#   }
+#   else{
+#     X <- fit$x
+#     K <- fit$K
+#     weights <- fit$weights
+#     if(is.null(weights)){ weights <- rep(1, nrow(K)) }
+#     sigma2 <- fit$sigma2.reml
+#     kinship.h2 <- (1 - fit$locus.h2)*fit$h2
+#     total.variance <- sigma2/(1 - fit$locus.h2 - kinship.h2)
+#     tau2 <- kinship.h2 * total.variance
+#     Sigma <- K*tau2 + diag(1/weights)*sigma2
+#     inv.Sigma <- chol2inv(chol(Sigma))
+#     blups <- as.vector(crossprod(K*tau2, inv.Sigma) %*% (fit$y - X %*% chol2inv(chol(crossprod(X, cross.prod(inv.Sigma, X)))) %*% crossprod(X, crossprod(inv.Sigma, fit$y))))
+#   }
+#   names(blups) <- names(y)
+#   
+#   return(as.vector(scale(blups, center=center, scale=scale)))
+# }
 
 
 
