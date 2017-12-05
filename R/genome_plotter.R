@@ -464,7 +464,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE)
   }
   if(!is.null(mark.locus)){
-    abline(v=updated.pos[which(names(outcome) == mark.locus)], lty=2, lwd=2, col=scales::alpha(mark.locus.col, 0.5))
+    #abline(v=updated.pos[which(names(outcome) == mark.locus)], lty=2, lwd=2, col=scales::alpha(mark.locus.col, 0.5))
+    rug(x=updated.pos[which(names(outcome) == mark.locus)], lwd=4, col=mark.locus.col)
   }
   if(use.legend){
     legend(my.legend.pos, legend=names(scan.list), 
