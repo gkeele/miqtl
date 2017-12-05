@@ -269,7 +269,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   outcome <- outcome[order.i]
   pre.chr <- pre.chr[order.i]
   pos <- pos[order.i]
-  
+
   min.pos <- tapply(pos, pre.chr, function(x) min(x, na.rm=TRUE))
   max.pos <- tapply(pos, pre.chr, function(x) max(x, na.rm=TRUE))
   chr.types <- levels(pre.chr)
@@ -322,6 +322,11 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   if(no.title){ this.title <- NULL }
   if(!is.null(override.title)){ this.title <- override.title }
   
+  ## For later plotting, like mark.locus
+  updated.pos <- rep(NA, length(outcome))
+  names(updated.pos) <- names(outcome)
+  updated.pos[pre.chr==chr.types[1]] <- pos[pre.chr==chr.types[1]]
+  
   x.max <- sum(max.pos)+(length(chr.types)-1)
   plot(pos[pre.chr==chr.types[1]], outcome[pre.chr==chr.types[1]], 
        xlim=c(0, x.max), 
@@ -345,6 +350,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   if(length(chr.types) > 1){
     for(i in 2:length(chr.types)){
       this.pos <- pos[pre.chr==chr.types[i]] + shift
+      updated.pos[pre.chr==chr.types[i]] <- pos[pre.chr==chr.types[i]] + shift
       if(distinguish.chr.type == "box"){
         if(i %% 2 == 0){
           polygon(x=c(shift, max(this.pos, na.rm=TRUE), max(this.pos, na.rm=TRUE), shift), 
@@ -456,7 +462,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE)
   }
   if(!is.null(mark.locus)){
-    abline(v=pos[which(loci == mark.locus)], lty=2, col=mark.locus.col)
+    abline(v=updated.pos[which(names(outcome) == mark.locus)], lty=2, lwd=2, col=mark.locus.col)
   }
   if(use.legend){
     legend(my.legend.pos, legend=names(scan.list), 
