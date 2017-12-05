@@ -256,7 +256,6 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
                                                keep.full.scans=FALSE, scan.index=NULL, id="SUBJECT.NAME",
                                                chr="all", just.these.loci=NULL, use.progress.bar=TRUE,
                                                ...){
-  
   if(is.null(scan.index)){ scan.index <- 1:ncol(perm.ind.matrix) }
   
   loci <- names(qr.object$qr.list)

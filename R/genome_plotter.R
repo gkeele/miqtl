@@ -230,7 +230,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  no.title=FALSE, override.title=NULL, my.title.line=NA, title.cex=1,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                  thresholds.legend.pos="topleft",
-                                 add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE){
+                                 add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE,
+                                 mark.locus=NULL, mark.locus.col="red"){
   # If list has no names, use.legend is set to FALSE
   if(is.null(names(scan.list))){ use.legend=FALSE }
   if(is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
@@ -453,6 +454,9 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   else{
     if(!my.x.labels){ axis.label <- FALSE }
     axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE)
+  }
+  if(!is.null(mark.locus)){
+    abline(v=pos[which(loci == mark.locus)], lty=2, col=mark.locus.col)
   }
   if(use.legend){
     legend(my.legend.pos, legend=names(scan.list), 
