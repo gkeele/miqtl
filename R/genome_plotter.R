@@ -299,28 +299,30 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     locus.term <- "locus"
   }
 
-  ### Handling the annoying differences between lmer and lm objects
-  if(is.null(scan.list[[1]]$fit0)){
-    this.title <- c(main, 
-                    paste0(scan.list[[1]]$formula, " + ", locus.term, " (", scan.list[[1]]$model.type, ")"),
-                    paste("n =", round(scan.list[[1]]$n, 2)))
-  }
+  if(no.title){ this.title <- NULL }
+  else if(!is.null(override.title)){ this.title <- override.title }
   else{
-    if(class(scan.list[[1]]$fit0) != "lmerMod"){
+    ### Handling the annoying differences between lmer and lm objects
+    if(is.null(scan.list[[1]]$fit0)){
       this.title <- c(main, 
                       paste0(scan.list[[1]]$formula, " + ", locus.term, " (", scan.list[[1]]$model.type, ")"),
-                      paste("n =", round(ifelse(is.null(scan.list[[1]]$fit0$weights), 
-                                                length(scan.list[[1]]$fit0$y),
-                                                sum(scan.list[[1]]$fit0$weights)), 2)))
+                      paste("n =", round(scan.list[[1]]$n, 2)))
     }
     else{
-      this.title <- c(main, 
-                      paste0(scan.list[[1]]$formula, " + ", locus.term, " (", scan.list[[1]]$model.type, ")"),
-                      paste("n =", round(sum(scan.list[[1]]$fit0@resp$weights), 2)))
+      if(class(scan.list[[1]]$fit0) != "lmerMod"){
+        this.title <- c(main, 
+                        paste0(scan.list[[1]]$formula, " + ", locus.term, " (", scan.list[[1]]$model.type, ")"),
+                        paste("n =", round(ifelse(is.null(scan.list[[1]]$fit0$weights), 
+                                                  length(scan.list[[1]]$fit0$y),
+                                                  sum(scan.list[[1]]$fit0$weights)), 2)))
+      }
+      else{
+        this.title <- c(main, 
+                        paste0(scan.list[[1]]$formula, " + ", locus.term, " (", scan.list[[1]]$model.type, ")"),
+                        paste("n =", round(sum(scan.list[[1]]$fit0@resp$weights), 2)))
+      }
     }
   }
-  if(no.title){ this.title <- NULL }
-  if(!is.null(override.title)){ this.title <- override.title }
   
   ## For later plotting, like mark.locus
   updated.pos <- rep(NA, length(outcome))
