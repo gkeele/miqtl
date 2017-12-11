@@ -418,7 +418,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       }
       
       compare.shift <- max.pos[1]
-      points(pos[pre.chr==chr.types[1]], compare.outcome[pre.chr==chr.types[1]], type="l", col=this.col[pre.chr==chr.types[1]], lwd=my.legend.lwd[i])
+      points(pos[pre.chr==chr.types[1]], compare.outcome[pre.chr==chr.types[1]], type="l", 
+             col=this.col[pre.chr==chr.types[1]], lwd=my.legend.lwd[i], lty=my.legend.lty[i])
       
       if(length(chr.types) > 1){
         for(j in 2:length(chr.types)){
@@ -472,7 +473,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   }
   if(use.legend){
     legend(my.legend.pos, legend=names(scan.list), 
-           lty=rep(1, length(scan.list)), lwd=my.legend.lwd, 
+           lty=my.legend.lty, lwd=my.legend.lwd, 
            col=main.colors[1:length(scan.list)], bty="n", cex=my.legend.cex)
   }
   if(!is.null(hard.thresholds)){
