@@ -37,10 +37,10 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
                                                rgb(0, 160, 0, maxColorValue=255), # green
                                                rgb(240, 0, 0, maxColorValue=255), # red
                                                rgb(144, 0, 224, maxColorValue=255)), # purple,
-                                 use.legend=TRUE, main="", my.bty="n", my.lwd=rep(1.25, 8),
+                                 use.legend=TRUE, main="", my.bty="n", my.lwd=1.25,
                                  set.plot.limit=c(-10, 10), # Null places no limit on y-axis
                                  my.legend.cex=0.6, my.legend.pos="topright", transparency=0.6,
-                                 y.max.manual=NULL, y.min.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.5,
+                                 y.max.manual=NULL, y.min.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=1,
                                  no.title=FALSE, override.title=NULL,
                                  add.chr.to.label=FALSE, alternative.labels=NULL,
                                  axis.cram=TRUE, include.x.axis.line=TRUE)
@@ -320,6 +320,9 @@ allele.plotter.region <- function(scan.object,
                                   rug.pos=NULL, rug.col="gray50")
 {
   allele.effects <- scan.object$allele.effects
+  if(length(my.lwd) == 1){
+    my.lwd <- rep(my.lwd, 8)
+  }
   
   ## Check that scan object has allele effect estimate - stop if not
   if(is.null(allele.effects)){
