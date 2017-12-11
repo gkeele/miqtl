@@ -224,7 +224,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  distinguish.chr.type=c("box", "color"), distinguish.box.col="gray88", 
                                  distinguish.chr.col=c("gray60", "#008080", "greenyellow"),
                                  use.legend=TRUE, main="",
-                                 my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.pos="topright",
+                                 my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.lty=1, my.legend.pos="topright",
                                  y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.7,
                                  my.x.lab.cex=0.7, my.x.labels=TRUE,
                                  no.title=FALSE, override.title=NULL, my.title.line=NA, title.cex=1,
@@ -235,7 +235,10 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   # If list has no names, use.legend is set to FALSE
   if(is.null(names(scan.list))){ use.legend=FALSE }
   if(is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
+  if(length(my.legend.lty) == 1){ my.legend.lty <- rep(my.legend.lty, length(scan.list)) }
+  
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
+  
   distinguish.chr.type <- distinguish.chr.type[1]
   main.object <- scan.list[[1]]
   if(use.lod){
@@ -334,7 +337,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
        xlim=c(0, x.max), 
        ylim=c(-0.1, y.max), 
        xaxt="n", yaxt="n", ylab="", xlab="", main=NA,
-       frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], col=main.colors[1])
+       frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], lty=my.legend.lty[1], col=main.colors[1])
   title(main=this.title, line=my.title.line, cex.main=title.cex)
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex)
@@ -362,7 +365,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       }
       label.spots <- c(label.spots, shift + max.pos[i]/2)
       x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
-      points(this.pos, outcome[pre.chr==chr.types[i]], type="l", lwd=my.legend.lwd[1], col=this.col[pre.chr==chr.types[i]])
+      points(this.pos, outcome[pre.chr==chr.types[i]], type="l", lty=my.legend.lty[1], lwd=my.legend.lwd[1], col=this.col[pre.chr==chr.types[i]])
       shift <- shift + max.pos[i]
     }
   }
@@ -411,9 +414,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
         this.col <- rep(main.colors[i], length(compare.outcome)) 
       }
       else if(distinguish.chr.type == "color"){ 
-        #this.col <- ifelse((sapply(1:length(chr), function(x) which(sort(as.numeric(as.character(unique(pre.chr)))) == pre.chr[x])) %% 2) == 1, main.colors[i], distinguish.chr.col[i]) 
         this.col <- c(main.colors[i], distinguish.chr.col[i])[(as.numeric(as.character(pre.chr)) %% 2 == 0) + 1]
-        
       }
       
       compare.shift <- max.pos[1]
@@ -421,7 +422,10 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       
       if(length(chr.types) > 1){
         for(j in 2:length(chr.types)){
-          points(pos[pre.chr==chr.types[j]] + compare.shift, compare.outcome[pre.chr==chr.types[j]], type="l", col=this.col[pre.chr==chr.types[j]], lwd=my.legend.lwd[i])
+          points(pos[pre.chr==chr.types[j]] + compare.shift, compare.outcome[pre.chr==chr.types[j]], type="l", 
+                 col=this.col[pre.chr==chr.types[j]], 
+                 lwd=my.legend.lwd[i],
+                 lty=my.legend.lty[i])
           compare.shift <- compare.shift + max.pos[j]
         }
       }
@@ -464,7 +468,6 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE)
   }
   if(!is.null(mark.locus)){
-    #abline(v=updated.pos[which(names(outcome) == mark.locus)], lty=2, lwd=2, col=scales::alpha(mark.locus.col, 0.5))
     rug(x=updated.pos[which(names(outcome) == mark.locus)], lwd=4, col=mark.locus.col)
   }
   if(use.legend){
