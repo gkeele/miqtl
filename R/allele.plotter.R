@@ -320,6 +320,7 @@ allele.plotter.region <- function(scan.object,
                                   rug.pos=NULL, rug.col="gray50")
 {
   allele.effects <- scan.object$allele.effects
+  
   if(length(my.lwd) == 1){
     my.lwd <- rep(my.lwd, 8)
   }
