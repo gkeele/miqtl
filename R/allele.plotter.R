@@ -40,7 +40,8 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
                                  use.legend=TRUE, main="", my.bty="n", my.lwd=1.25,
                                  set.plot.limit=c(-10, 10), # Null places no limit on y-axis
                                  my.legend.cex=0.6, my.legend.pos="topright", transparency=0.6,
-                                 y.max.manual=NULL, y.min.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=1,
+                                 y.max.manual=NULL, y.min.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.7,
+                                 my.x.lab.cex=0.7,
                                  no.title=FALSE, override.title=NULL,
                                  add.chr.to.label=FALSE, alternative.labels=NULL,
                                  axis.cram=TRUE, include.x.axis.line=TRUE)
@@ -246,7 +247,7 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
   
   if(include.x.axis.line){
     axis(side=1, tick=TRUE, line=NA, at=x.tick.spots, 
-         labels=NA, xpd=TRUE)
+         labels=NA, xpd=TRUE, )
   }
   
   if(add.chr.to.label){
@@ -264,11 +265,11 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
     even.axis.label <- axis.label[(1:length(axis.label) %% 2) == 0]
     even.label.spots <- label.spots[(1:length(label.spots) %% 2) == 0]
     
-    axis(side=1, tick=FALSE, line=NA, at=odd.label.spots, labels=odd.axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
-    axis(side=1, tick=FALSE, line=NA, at=even.label.spots, labels=even.axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+    axis(side=1, tick=FALSE, line=NA, at=odd.label.spots, labels=odd.axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE)
+    axis(side=1, tick=FALSE, line=NA, at=even.label.spots, labels=even.axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE)
   }
   else{
-    axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=0.7, padj=-1.5, xpd=TRUE)
+    axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE)
   }
   if(use.legend){
     if(!is.null(alternative.labels)){ these.labels <- alternative.labels }
