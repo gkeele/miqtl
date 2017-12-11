@@ -47,6 +47,10 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
 {
   allele.effects <- scan.object$allele.effects
   
+  if(length(my.lwd) == 1){
+    my.lwd <- rep(my.lwd, 8)
+  }
+  
   ## Check that scan object has allele effect estimate - stop if not
   if(is.null(allele.effects)){
     stop("No allele effects in scan object. Re-run scan.h2lmm with return.allele.effects=TRUE", call.=FALSE)
