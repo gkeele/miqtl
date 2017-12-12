@@ -140,8 +140,8 @@ scan.qr <- function(qr.object,
         "Setting return.allele.effects to FALSE\n")
   }
   
-  rownames(data) <- as.character(data[,id])
-  data <- data[subjects,]
+  reorder <- match(subjects, data[,id])
+  data <- data[reorder,]
   n <- nrow(data)
 
   if(chr[1] != "all"){
