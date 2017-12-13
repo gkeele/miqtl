@@ -519,7 +519,9 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
 #' @examples genome.plotter.region()
 genome.plotter.region <- function(haplotype.association=NULL, snp.association=NULL, use.lod=FALSE,
                                   chr, region.min=NULL, region.max=NULL, scale=c("Mb", "cM"),
-                                  haplotype.col=c("blue", "red"), haplotype.lwd=3, median.band.col=c("cyan", "pink"),
+                                  haplotype.col=c("blue", "red"), 
+                                  haplotype.lwd=3, haplotype.lty=1,
+                                  median.band.col=c("cyan", "pink"),
                                   snp.col=c("black", "gray"), snp.pch=20, snp.cex=0.9,
                                   main="", no.title=FALSE, override.title=NULL,
                                   y.max.manual=NULL,
@@ -546,6 +548,9 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   }
   if(length(haplotype.lwd) == 1 & length(haplotype.association) > 1){ 
     haplotype.lwd <- rep(haplotype.lwd, length(haplotype.association))
+  }
+  if(length(haplotype.lty) == 1 & length(haplotype.association) > 1){
+    haplotype.lty <- rep(haplotype.lty, length(haplotype.association))
   }
   if(length(thresholds.lwd) == 1 & length(hard.thresholds) > 1){
     thresholds.lwd <- rep(thresholds.lwd, length(hard.thresholds))
@@ -670,6 +675,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
       
       if(!is.null(this.scan$CI)){
         CI <- this.scan$CI
+        #browser()
         polygon(x=c(this.pos, rev(this.pos)), y=c(CI[1,], rev(CI[2,])), density=NA, col=median.band.col[i])
       }
     }
@@ -679,7 +685,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
       this.pos <- this.scan$pos
       this.outcome <- this.scan$outcome
       
-      points(this.pos, this.outcome, col=haplotype.col[i], type="l", lwd=haplotype.lwd[i])
+      points(this.pos, this.outcome, col=haplotype.col[i], type="l", lty=haplotype.lty[i], lwd=haplotype.lwd[i])
     }
   }
   if(!is.null(snp.association)){
@@ -711,7 +717,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
     if(is.null(haplotype.association)){ use.haplotype.col <- NULL }
     else{ use.haplotype.col <- haplotype.col[1:length(haplotype.association)] }
     legend(my.legend.pos, legend=scan.names, 
-           lty=c(rep(NA, length(snp.association)), rep(1, length(haplotype.association))), 
+           lty=c(rep(NA, length(snp.association)), rep(haplotype.lty, length(haplotype.association))), 
            lwd=c(rep(NA, length(snp.association)), haplotype.lwd), 
            pch=c(rep(20, length(snp.association)), rep(NA, length(haplotype.association))),
            col=c(use.snp.col, use.haplotype.col), 
