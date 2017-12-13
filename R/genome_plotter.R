@@ -629,7 +629,6 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   if(!is.null(snp.association)){
     for(i in 1:length(snps.to.plot)){
       this.scan <- snps.to.plot[[i]]
-      #browser()
       y.max <- max(y.max, max(this.scan$outcome[this.scan$pos >= x.min & this.scan$pos <= x.max], na.rm=TRUE), na.rm=TRUE)
     }
   }
@@ -673,10 +672,13 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
       this.scan <- haps.to.plot[[i]]
       this.pos <- this.scan$pos
       
+      this.col <- 1
       if(!is.null(this.scan$CI)){
         CI <- this.scan$CI
-        #browser()
-        polygon(x=c(this.pos, rev(this.pos)), y=c(CI[1,], rev(CI[2,])), density=NA, col=median.band.col[i])
+        polygon(x=c(this.pos, rev(this.pos)), y=c(CI[1,], rev(CI[2,])), density=NA, col=median.band.col[this.col])
+      }
+      else{
+        this.col <- this.col + 1
       }
     }
     ## Plotting haplotype association lines
@@ -698,7 +700,6 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
              col=snp.col[i], pch=snp.pch[i], cex=snp.cex[i])
     }
   }
-  
   if(!is.null(hard.thresholds)){
     for(i in 1:length(hard.thresholds)){
       abline(h=hard.thresholds[i], col=thresholds.col[i], lty=2, lwd=thresholds.lwd[i])
