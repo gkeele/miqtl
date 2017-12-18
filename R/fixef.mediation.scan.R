@@ -1,8 +1,15 @@
 #' @export
-extract.mediation.qr <- function(genomecache, id="SUBJECT.NAME", locus,
-                                 data, formula, model=c("additive", "full"), condition.loci=NULL,
-                                 chr="all", use.progress.bar=TRUE){
+extract.mediation.qr <- function(genomecache, 
+                                 id="SUBJECT.NAME", 
+                                 locus,
+                                 data, 
+                                 formula, 
+                                 model=c("additive", "full"), 
+                                 condition.loci=NULL,
+                                 chr="all", 
+                                 use.progress.bar=TRUE){
   K <- NULL
+  model <- model[1]
   
   ## Extracting chromatin phenotypes
   chromatin <- grep(names(data), pattern="^chr", perl=TRUE, value=TRUE)
@@ -73,10 +80,13 @@ extract.mediation.qr <- function(genomecache, id="SUBJECT.NAME", locus,
 
 #' @export
 mediation.scan.qr <- function(mediation.qr.object, 
-                              data, phenotype,
+                              data, 
+                              phenotype,
                               return.allele.effects=FALSE,
-                              chr="all", id="SUBJECT.NAME",
-                              debug.single.fit=FALSE, use.progress.bar=TRUE,
+                              chr="all", 
+                              id="SUBJECT.NAME",
+                              debug.single.fit=FALSE, 
+                              use.progress.bar=TRUE,
                               ...){
   model <- mediation.qr.object$model
   subjects <- mediation.qr.object$subjects
@@ -151,10 +161,16 @@ mediation.scan.qr <- function(mediation.qr.object,
 }
 
 #' @export
-run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix, mediation.qr.object, genomecache,
-                                                         phenotype, data,
-                                                         keep.full.scans=FALSE, scan.index=NULL, id="SUBJECT.NAME",
-                                                         chr="all", use.progress.bar=TRUE,
+run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix, 
+                                                         mediation.qr.object, 
+                                                         genomecache,
+                                                         phenotype, 
+                                                         data,
+                                                         keep.full.scans=FALSE, 
+                                                         scan.index=NULL, 
+                                                         id="SUBJECT.NAME",
+                                                         chr="all", 
+                                                         use.progress.bar=TRUE,
                                                          ...){
   
   if(is.null(scan.index)){ scan.index <- 1:ncol(perm.ind.matrix) }
@@ -221,7 +237,10 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix, mediat
 }
 
 #' @export
-extract.chr.max.statistics.from.genomewide <- function(full.perm.scans, chr, use.lod=FALSE, type=c("min", "max")){
+extract.chr.max.statistics.from.genomewide <- function(full.perm.scans, 
+                                                       chr, 
+                                                       use.lod=FALSE, 
+                                                       type=c("min", "max")){
   type <- type[1]
   statistic.type <- ifelse(use.lod, "LOD", "p.value")
   full.results <- full.perm.scans$full.results[[statistic.type]][,full.perm.scans$full.results$chr == chr]

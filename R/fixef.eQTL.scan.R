@@ -26,10 +26,17 @@
 #' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar
 #' @export
 #' @examples extract.qr()
-extract.qr <- function(genomecache, id="SUBJECT.NAME",
-                       data, formula, model=c("additive", "full"), condition.loci=NULL,
-                       chr="all", just.these.loci=NULL, use.progress.bar=TRUE){
+extract.qr <- function(genomecache, 
+                       id="SUBJECT.NAME",
+                       data, 
+                       formula, 
+                       model=c("additive", "full"), 
+                       condition.loci=NULL,
+                       chr="all", 
+                       just.these.loci=NULL, 
+                       use.progress.bar=TRUE){
   K <- NULL
+  model <- model[1]
   
   h <- DiploprobReader$new(genomecache)
   founders <- h$getFounders()
@@ -120,11 +127,14 @@ get.allele.effects.from.fixef.eQTL <- function(qr.alt, y, founders, intercept.al
 #' @export
 #' @examples scan.qr()
 scan.qr <- function(qr.object, 
-                    data, phenotype,
+                    data, 
+                    phenotype,
                     return.allele.effects=FALSE,
-                    chr="all", id="SUBJECT.NAME",
+                    chr="all", 
+                    id="SUBJECT.NAME",
                     just.these.loci=NULL,
-                    debug.single.fit=FALSE, use.progress.bar=TRUE,
+                    debug.single.fit=FALSE, 
+                    use.progress.bar=TRUE,
                     ...){
   model <- qr.object$model
   subjects <- qr.object$subjects
@@ -209,20 +219,26 @@ scan.qr <- function(qr.object,
 #' This allows the same permutations of individuals to be used across different phenotypes. This approach is only statistically
 #' valid when individuals are exchangeable.
 #' 
-#' @param qr.scan.object Output object from scan.qr().
+#' @param qr.scan.object DEFAULT: NULL. Output object from scan.qr(). If NULL, function expects the number of individuals being
+#' permutated.
+#' @param n DEFAULT: NULL. Alternative to qr.scan.object. If NULL, function expects a qr.scan object.
 #' @param num.samples The number of permutations of the index to create - ultimately the number of columns in the
 #' output matrix.
 #' @param seed DEFAULT: 1. Samplings of the index is a random process, thus a seed is necessary
 #' to produce the same results over multiple runs and different machines.
 #' @export
 #' @examples generate.qr.permutation.index.matrix()
-generate.qr.permutation.index.matrix <- function(qr.scan.object, num.samples, seed=1){
-  n <- length(qr.scan.object$y)
+generate.qr.permutation.index.matrix <- function(qr.scan.object=NULL, 
+                                                 n=NULL, 
+                                                 num.samples, 
+                                                 seed=1){
+  if(!is.null(qr.scan.object)){
+    n <- length(qr.scan.object$y)
+  }
   
   set.seed(seed)
   perm.ind.matrix <- replicate(n=num.samples, sample(1:n, replace=FALSE))
   colnames(perm.ind.matrix) <- paste0("perm.", 1:num.samples)
-  rownames(perm.ind.matrix) <- names(qr.scan.object$y)
   return(perm.ind.matrix)
 }
 
@@ -251,10 +267,16 @@ generate.qr.permutation.index.matrix <- function(qr.scan.object, num.samples, se
 #' @param use.progress.bar DEFAULT: FALSE. Results in a progress bar while code runs.
 #' @export
 #' @examples run.qr.permutation.threshold.scans()
-run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
-                                               phenotype, data,
-                                               keep.full.scans=FALSE, scan.index=NULL, id="SUBJECT.NAME",
-                                               chr="all", just.these.loci=NULL, use.progress.bar=FALSE,
+run.qr.permutation.threshold.scans <- function(perm.ind.matrix, 
+                                               qr.object,
+                                               phenotype, 
+                                               data,
+                                               keep.full.scans=FALSE, 
+                                               scan.index=NULL, 
+                                               id="SUBJECT.NAME",
+                                               chr="all", 
+                                               just.these.loci=NULL, 
+                                               use.progress.bar=FALSE,
                                                ...){
   if(is.null(scan.index)){ scan.index <- 1:ncol(perm.ind.matrix) }
   
@@ -280,13 +302,16 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
   }
   min.p <- rep(NA, length(scan.index))
   
-  y <- model.frame(formula, data=data)[,1]
-  formula.string <- Reduce(paste, deparse(formula))
-  perm.formula <- formula(paste0("new_y ~ ", unlist(strsplit(formula.string, split="~"))[-1]))
+  #y <- model.frame(formula, data=data)[,1]
+  this.data <- data
+  #formula.string <- Reduce(paste, deparse(formula))
+  #perm.formula <- formula(paste0("new_y ~ ", unlist(strsplit(formula.string, split="~"))[-1]))
+  
   for(i in 1:length(scan.index)){
-    new.y <- data.frame(y[perm.ind.matrix[,scan.index[i]]], rownames(perm.ind.matrix))
-    names(new.y) <- c("new_y", id)
-    this.data <- merge(x=new.y, y=data, by=id, all.x=TRUE)
+    #new.y <- data.frame(y[perm.ind.matrix[,scan.index[i]]], data[,id])
+    #names(new.y) <- c("new_y", id)
+    #this.data <- merge(x=new.y, y=data, by=id, all.x=TRUE)
+    this.data$new_y <- model.frame(formula, data=data)[perm.ind.matrix[,scan.index[i]], 1]
 
     this.scan <- scan.qr(qr.object=qr.object, data=this.data, 
                          phenotype="new_y", id=id, chr=chr, 
