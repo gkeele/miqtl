@@ -23,7 +23,7 @@
 #' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
 #' @param just.these.loci DEFAULT: NULL. Specifies a reduced set of loci to fit. If loci is just one locus, the alternative model fit
 #' will also be output as fit1.
-#' @param use.progress.bar DEFAULT: FALSE. Results in a progress bar
+#' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar
 #' @export
 #' @examples extract.qr()
 extract.qr <- function(genomecache, id="SUBJECT.NAME",
