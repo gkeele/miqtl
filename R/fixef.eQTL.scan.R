@@ -70,7 +70,7 @@ extract.qr <- function(genomecache, id="SUBJECT.NAME",
     X <- cbind(X.0, X[,keep.col])
     qr.list[[i]] <- qr(X)
     if(use.progress.bar){ setTxtProgressBar(pb, i) }
-    cat("\n", "qr extracted: index", scan.index[i], "complete ---------- final index of this extraction:", length(loci), "\n")
+    cat("\n", "qr extracted: index", i, "complete ---------- final index of this extraction:", length(loci), "\n")
   }
   names(qr.list) <- loci
   
