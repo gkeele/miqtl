@@ -23,12 +23,12 @@
 #' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
 #' @param just.these.loci DEFAULT: NULL. Specifies a reduced set of loci to fit. If loci is just one locus, the alternative model fit
 #' will also be output as fit1.
-#' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar
+#' @param use.progress.bar DEFAULT: FALSE. Results in a progress bar
 #' @export
 #' @examples extract.qr()
 extract.qr <- function(genomecache, id="SUBJECT.NAME",
                        data, formula, model=c("additive", "full"), condition.loci=NULL,
-                       chr="all", just.these.loci=NULL, use.progress.bar=TRUE){
+                       chr="all", just.these.loci=NULL, use.progress.bar=FALSE){
   K <- NULL
   
   h <- DiploprobReader$new(genomecache)
@@ -70,6 +70,7 @@ extract.qr <- function(genomecache, id="SUBJECT.NAME",
     X <- cbind(X.0, X[,keep.col])
     qr.list[[i]] <- qr(X)
     if(use.progress.bar){ setTxtProgressBar(pb, i) }
+    cat("\n", "qr extracted: index", scan.index[i], "complete ---------- final index of this extraction:", length(loci), "\n")
   }
   names(qr.list) <- loci
   
@@ -248,13 +249,13 @@ generate.qr.permutation.index.matrix <- function(qr.scan.object, num.samples, se
 #' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
 #' @param just.these.loci DEFAULT: NULL. DEFAULT: NULL. Specifies a reduced set of loci to fit. If loci is just one locus, the alternative model fit
 #' will also be output as fit1.
-#' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar while code runs.
+#' @param use.progress.bar DEFAULT: FALSE. Results in a progress bar while code runs.
 #' @export
 #' @examples run.qr.permutation.threshold.scans()
 run.qr.permutation.threshold.scans <- function(perm.ind.matrix, qr.object,
                                                phenotype, data,
                                                keep.full.scans=FALSE, scan.index=NULL, id="SUBJECT.NAME",
-                                               chr="all", just.these.loci=NULL, use.progress.bar=TRUE,
+                                               chr="all", just.these.loci=NULL, use.progress.bar=FALSE,
                                                ...){
   if(is.null(scan.index)){ scan.index <- 1:ncol(perm.ind.matrix) }
   
