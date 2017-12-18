@@ -6,7 +6,7 @@
 \usage{
 extract.qr(genomecache, id = "SUBJECT.NAME", data, formula,
   model = c("additive", "full"), condition.loci = NULL, chr = "all",
-  just.these.loci = NULL, use.progress.bar = FALSE)
+  just.these.loci = NULL, use.progress.bar = TRUE)
 }
 \arguments{
 \item{genomecache}{The path to the genome cache directory. The genome cache is a particularly structured
@@ -37,7 +37,7 @@ the loci effects with condition.out.locus.for.scan(), which does not require a n
 \item{just.these.loci}{DEFAULT: NULL. Specifies a reduced set of loci to fit. If loci is just one locus, the alternative model fit
 will also be output as fit1.}
 
-\item{use.progress.bar}{DEFAULT: FALSE. Results in a progress bar}
+\item{use.progress.bar}{DEFAULT: TRUE. Results in a progress bar}
 }
 \description{
 This function calculates the QR decomposition for the null model, and all alternative models (per locus)

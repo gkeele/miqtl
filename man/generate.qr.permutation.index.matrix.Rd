@@ -5,10 +5,14 @@
 \title{Outputs a matrix of permuted indeces for permutation scans, allowing for the same permutations of individuals
 across different outcomes.}
 \usage{
-generate.qr.permutation.index.matrix(qr.scan.object, num.samples, seed = 1)
+generate.qr.permutation.index.matrix(qr.scan.object = NULL, n = NULL,
+  num.samples, seed = 1)
 }
 \arguments{
-\item{qr.scan.object}{Output object from scan.qr().}
+\item{qr.scan.object}{DEFAULT: NULL. Output object from scan.qr(). If NULL, function expects the number of individuals being
+permutated.}
+
+\item{n}{DEFAULT: NULL. Alternative to qr.scan.object. If NULL, function expects a qr.scan object.}
 
 \item{num.samples}{The number of permutations of the index to create - ultimately the number of columns in the
 output matrix.}
