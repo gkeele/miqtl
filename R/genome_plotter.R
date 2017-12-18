@@ -195,7 +195,7 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
 #' @param just.these.chr DEFAULT: NULL. Specifies a subset of the chromosomes to be plotted. NULL results in all chromosomes being plotted.
 #' @param scale DEFAULT: "Mb". Specifies the scale of genomic position to be plotted. Either Mb or cM are expected.
 #' @param main.colors DEFAULT: "black". The color of the main association score to be plotted.
-#' @param distinguish.chr.type DEFAULT: "box". The default specifies rectangular block backgrounds to distinguish adjacent chromosomes. The "color" option 
+#' @param distinguish.chr.type DEFAULT: "color". The default specifies rectangular block backgrounds to distinguish adjacent chromosomes. The "color" option 
 #' specifies alternating colors.
 #' @param distinguish.box.col DEFAULT: "gray88". If distinguish.chr.type="box" is specified, this argument provides the color of the background rectangle.
 #' @param distinguish.chr.col DEFAULT: "gray60". If distinguish.chr.type="color" is specified, this argument provides the alternating color. Multiple
@@ -221,7 +221,7 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
 #' @examples genome.plotter.whole()
 genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  scale="Mb", main.colors=c("black", "cyan", "darkgreen"),
-                                 distinguish.chr.type=c("box", "color"), distinguish.box.col="gray88", 
+                                 distinguish.chr.type=c("color", "box"), distinguish.box.col="gray88", 
                                  distinguish.chr.col=c("gray60", "#008080", "greenyellow"),
                                  use.legend=TRUE, main="",
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.lty=1, my.legend.pos="topright",

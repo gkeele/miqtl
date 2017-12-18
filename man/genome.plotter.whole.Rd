@@ -6,16 +6,17 @@
 \usage{
 genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
   scale = "Mb", main.colors = c("black", "cyan", "darkgreen"),
-  distinguish.chr.type = c("box", "color"), distinguish.box.col = "gray88",
+  distinguish.chr.type = c("color", "box"), distinguish.box.col = "gray88",
   distinguish.chr.col = c("gray60", "#008080", "greenyellow"),
   use.legend = TRUE, main = "", my.legend.cex = 0.6,
-  my.legend.lwd = NULL, my.legend.pos = "topright", y.max.manual = NULL,
-  my.y.line = 2, my.y.axis.cex = 1, my.y.lab.cex = 0.7,
-  my.x.lab.cex = 0.7, my.x.labels = TRUE, no.title = FALSE,
-  override.title = NULL, my.title.line = NA, title.cex = 1,
-  hard.thresholds = NULL, thresholds.col = "red",
+  my.legend.lwd = NULL, my.legend.lty = 1, my.legend.pos = "topright",
+  y.max.manual = NULL, my.y.line = 2, my.y.axis.cex = 1,
+  my.y.lab.cex = 0.7, my.x.lab.cex = 0.7, my.x.labels = TRUE,
+  no.title = FALSE, override.title = NULL, my.title.line = NA,
+  title.cex = 1, hard.thresholds = NULL, thresholds.col = "red",
   thresholds.legend = NULL, thresholds.legend.pos = "topleft",
-  add.chr.to.label = FALSE, axis.cram = TRUE, include.x.axis.line = TRUE)
+  add.chr.to.label = FALSE, axis.cram = TRUE, include.x.axis.line = TRUE,
+  mark.locus = NULL, mark.locus.col = "red")
 }
 \arguments{
 \item{scan.list}{A list of scan.h2lmm() objects that are to be plotted within the same genome scan plot.}
@@ -28,7 +29,7 @@ genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
 
 \item{main.colors}{DEFAULT: "black". The color of the main association score to be plotted.}
 
-\item{distinguish.chr.type}{DEFAULT: "box". The default specifies rectangular block backgrounds to distinguish adjacent chromosomes. The "color" option 
+\item{distinguish.chr.type}{DEFAULT: "color". The default specifies rectangular block backgrounds to distinguish adjacent chromosomes. The "color" option 
 specifies alternating colors.}
 
 \item{distinguish.box.col}{DEFAULT: "gray88". If distinguish.chr.type="box" is specified, this argument provides the color of the background rectangle.}
