@@ -204,7 +204,6 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix,
   #y <- model.frame(formula, data=data)
   #names(y)[1] <- "y"
   #y <- y[,c(1, ncol(y))]
-  #formula.string <- Reduce(paste, deparse(formula))
   #perm.formula <- formula(paste0("y ~ ", unlist(strsplit(formula.string, split="~"))[-1]))
   for(i in 1:length(scan.index)){
     this.data <- data
