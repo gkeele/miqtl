@@ -206,7 +206,7 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix,
   #y <- y[,c(1, ncol(y))]
   #perm.formula <- formula(paste0("y ~ ", unlist(strsplit(formula.string, split="~"))[-1]))
   y <- model.frame(formula, data=data)[,1]
-  data <- data[,grepl(pattern="^gene_", perl=TRUE, x=colnames(data))]
+  data <- data[,!grepl(pattern="^gene_", perl=TRUE, x=colnames(data))]
   permute.var <- !(colnames(data) %in% all.vars(formula)[-1])
   for(i in 1:length(scan.index)){
     ## Permuting all variables but covariates
