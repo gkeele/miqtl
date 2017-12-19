@@ -150,6 +150,7 @@ scan.qr <- function(qr.object,
         "Setting return.allele.effects to FALSE\n")
   }
   
+  ## Matching the subject order in the data with the qr object
   reorder <- match(subjects, data[,id])
   data <- data[reorder,]
   n <- nrow(data)
@@ -301,13 +302,10 @@ run.qr.permutation.threshold.scans <- function(perm.ind.matrix,
                       cM=qr.object$pos$cM[loci])
   }
   min.p <- rep(NA, length(scan.index))
-  
-  this.data <- data
-
   for(i in 1:length(scan.index)){
-    this.data$new_y <- model.frame(formula, data=data)[perm.ind.matrix[,scan.index[i]], 1]
+    data$new_y <- model.frame(formula, data=data)[perm.ind.matrix[,scan.index[i]], 1]
 
-    this.scan <- scan.qr(qr.object=qr.object, data=this.data, 
+    this.scan <- scan.qr(qr.object=qr.object, data=data, 
                          phenotype="new_y", id=id, chr=chr, 
                          return.allele.effects=FALSE, use.progress.bar=use.progress.bar,
                          ...)

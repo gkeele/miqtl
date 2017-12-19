@@ -102,8 +102,9 @@ mediation.scan.qr <- function(mediation.qr.object,
         "Setting return.allele.effects to FALSE\n")
   }
   
-  rownames(data) <- as.character(data[,id])
-  data <- data[subjects,]
+  ## Matching the subject order in the data with the qr object
+  reorder <- match(subjects, data[,id])
+  data <- data[reorder,]
   n <- nrow(data)
   
   if(chr[1] != "all"){
@@ -199,25 +200,29 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix,
                       cM=mediation.qr.object$pos$cM[chromatin.chr %in% chr.levels])
   }
   min.p <- max.p <- rep(NA, length(scan.index))
-  
-  y <- model.frame(formula, data=data)
-  names(y)[1] <- "y"
-  y <- y[,c(1, ncol(y))]
-  formula.string <- Reduce(paste, deparse(formula))
-  perm.formula <- formula(paste0("y ~ ", unlist(strsplit(formula.string, split="~"))[-1]))
+  #this.data <- data
+  #y <- model.frame(formula, data=data)
+  #names(y)[1] <- "y"
+  #y <- y[,c(1, ncol(y))]
+  #formula.string <- Reduce(paste, deparse(formula))
+  #perm.formula <- formula(paste0("y ~ ", unlist(strsplit(formula.string, split="~"))[-1]))
   for(i in 1:length(scan.index)){
+    this.data <- data
     ## Permuting all variables but covariates
-    permute.var <- !(colnames(data) %in% all.vars(formula)[-1])
-    perm.data <- data[perm.ind.matrix[,scan.index[i]],permute.var]
-    nonperm.data <- data[,!permute.var]
-    perm.data <- cbind(perm.data, nonperm.data)
+    permute.var <- !(colnames(this.data) %in% all.vars(formula)[-1])
+    #perm.data <- data[perm.ind.matrix[,scan.index[i]],permute.var]
+    this.data[, permute.var] <- this.data[perm.ind.matrix[,scan.index[i]], permute.var]
+    #nonperm.data <- data[,!permute.var]
+    #perm.data <- cbind(perm.data, nonperm.data)
     
-    this.data <- merge(x=y, y=perm.data, by=id, all.x=TRUE)
+    #this.data <- merge(x=y, y=perm.data, by=id, all.x=TRUE)
+    #data$new_y <- model.frame(formula, data=data)[perm.ind.matrix[,scan.index[i]], 1]
     this.mediation.qr.object <- extract.mediation.qr(genomecache=genomecache, id=id,
-                                                     data=this.data, formula=as.formula(rh.formula), model=model, condition.loci=condition.loci,
+                                                     data=this.data, formula=as.formula(rh.formula), 
+                                                     model=model, condition.loci=condition.loci,
                                                      chr=chr, locus=locus, use.progress.bar=FALSE)
     this.scan <- mediation.scan.qr(mediation.qr.object=this.mediation.qr.object, data=this.data, 
-                                   phenotype="y", id=id, chr=chr, 
+                                   phenotype=phenotype, id=id, chr=chr, 
                                    return.allele.effects=FALSE, use.progress.bar=use.progress.bar,
                                    ...)
     if(keep.full.scans){
