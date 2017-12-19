@@ -205,10 +205,12 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix,
   #names(y)[1] <- "y"
   #y <- y[,c(1, ncol(y))]
   #perm.formula <- formula(paste0("y ~ ", unlist(strsplit(formula.string, split="~"))[-1]))
+  y <- model.frame(formula, data=data)[,1]
+  data <- data[,grepl(pattern="^gene_", perl=TRUE, x=colnames(data))]
+  permute.var <- !(colnames(data) %in% all.vars(formula)[-1])
   for(i in 1:length(scan.index)){
     ## Permuting all variables but covariates
-    permute.var <- !(colnames(data) %in% all.vars(formula)[-1])
-    this.data <- cbind(data[,all.vars(formula)[1]], data[perm.ind.matrix[,scan.index[i]], permute.var])
+    this.data <- data.frame(y=y, data[perm.ind.matrix[,scan.index[i]], permute.var], data[, !permute.var])
     #perm.data <- data[perm.ind.matrix[,scan.index[i]],permute.var]
     #this.data[, permute.var] <- this.data[perm.ind.matrix[,scan.index[i]], permute.var]
     #nonperm.data <- data[,!permute.var]
@@ -221,7 +223,7 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix,
                                                      model=model, condition.loci=condition.loci,
                                                      chr=chr, locus=locus, use.progress.bar=FALSE)
     this.scan <- mediation.scan.qr(mediation.qr.object=this.mediation.qr.object, data=this.data, 
-                                   phenotype=phenotype, id=id, chr=chr, 
+                                   phenotype="y", id=id, chr=chr, 
                                    return.allele.effects=FALSE, use.progress.bar=use.progress.bar,
                                    ...)
     if(keep.full.scans){
