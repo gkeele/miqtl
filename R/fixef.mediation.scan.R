@@ -200,24 +200,12 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix,
                       cM=mediation.qr.object$pos$cM[chromatin.chr %in% chr.levels])
   }
   min.p <- max.p <- rep(NA, length(scan.index))
-  #this.data <- data
-  #y <- model.frame(formula, data=data)
-  #names(y)[1] <- "y"
-  #y <- y[,c(1, ncol(y))]
-  #perm.formula <- formula(paste0("y ~ ", unlist(strsplit(formula.string, split="~"))[-1]))
   y <- model.frame(formula, data=data)[,1]
   data <- data[,!grepl(pattern="^gene_", perl=TRUE, x=colnames(data))]
   permute.var <- !(colnames(data) %in% all.vars(formula)[-1])
   for(i in 1:length(scan.index)){
     ## Permuting all variables but covariates
     this.data <- data.frame(y=y, data[perm.ind.matrix[,scan.index[i]], permute.var], data[, !permute.var])
-    #perm.data <- data[perm.ind.matrix[,scan.index[i]],permute.var]
-    #this.data[, permute.var] <- this.data[perm.ind.matrix[,scan.index[i]], permute.var]
-    #nonperm.data <- data[,!permute.var]
-    #perm.data <- cbind(perm.data, nonperm.data)
-    
-    #this.data <- merge(x=y, y=perm.data, by=id, all.x=TRUE)
-    #data$new_y <- model.frame(formula, data=data)[perm.ind.matrix[,scan.index[i]], 1]
     this.mediation.qr.object <- extract.mediation.qr(genomecache=genomecache, id=id,
                                                      data=this.data, formula=as.formula(rh.formula), 
                                                      model=model, condition.loci=condition.loci,
