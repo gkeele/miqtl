@@ -206,11 +206,11 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix,
   #y <- y[,c(1, ncol(y))]
   #perm.formula <- formula(paste0("y ~ ", unlist(strsplit(formula.string, split="~"))[-1]))
   for(i in 1:length(scan.index)){
-    this.data <- data
     ## Permuting all variables but covariates
-    permute.var <- !(colnames(this.data) %in% all.vars(formula)[-1])
+    permute.var <- !(colnames(data) %in% all.vars(formula)[-1])
+    this.data <- cbind(data[,all.vars(formula)[1]], this.data[perm.ind.matrix[,scan.index[i]], permute.var])
     #perm.data <- data[perm.ind.matrix[,scan.index[i]],permute.var]
-    this.data[, permute.var] <- this.data[perm.ind.matrix[,scan.index[i]], permute.var]
+    #this.data[, permute.var] <- this.data[perm.ind.matrix[,scan.index[i]], permute.var]
     #nonperm.data <- data[,!permute.var]
     #perm.data <- cbind(perm.data, nonperm.data)
     
