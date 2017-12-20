@@ -6,7 +6,8 @@
 #' @param prop DEFAULT: 0.5. This allows Inf to not be returned for the maximum of phenotype.
 #' @export
 #' @examples rint()
-rint <- function(phenotype, prop=0.5){
+rint <- function(phenotype, 
+                 prop=0.5){
   rint_phenotype <- qnorm((rank(phenotype, na.last="keep")-prop)/sum(!is.na(phenotype)))
   return(rint_phenotype)
 }
@@ -66,7 +67,10 @@ grab.locus.from.scan <- function(scan.object,
 #' with mediation scans for direct mediations (p-value drop).
 #' @export
 #' @examples get.gev.thresholds()
-get.gev.thresholds <- function(threshold.scans, use.lod=FALSE, percentile=0.95, type=c("min", "max")){
+get.gev.thresholds <- function(threshold.scans, 
+                               use.lod=FALSE, 
+                               percentile=0.95, 
+                               type=c("min", "max")){
   type <- type[1]
   if(!use.lod){
     if(is.na(threshold.scans$max.statistics$p.value[type])){
@@ -85,7 +89,10 @@ get.gev.thresholds <- function(threshold.scans, use.lod=FALSE, percentile=0.95, 
 }
 
 #' @export
-get.gev.padjust <- function(p.value, threshold.scans, use.lod = FALSE){
+get.gev.padjust <- function(p.value, 
+                            threshold.scans, 
+                            use.lod = FALSE,
+                            right.side=TRUE){
   if(!use.lod){
     extreme.values <- -log10(threshold.scans$max.statistics$p.value)
   }
@@ -93,12 +100,16 @@ get.gev.padjust <- function(p.value, threshold.scans, use.lod = FALSE){
     extreme.values <- threshold.scans$max.statistics$LOD
   }
   evd.pars <- as.numeric(evir::gev(extreme.values)$par.est)
-  adj.p <- 1 - evir::pgev(q=-log10(p.value), xi=evd.pars[1], sigma=evd.pars[2], mu=evd.pars[3])
+  adj.p <- evir::pgev(q=-log10(p.value), xi=evd.pars[1], sigma=evd.pars[2], mu=evd.pars[3])
+  if(right.side){
+    adj.p <- 1 - adj.p
+  }
   return(adj.p)
 }
 
 #' @export
-ci.median <- function(x, conf=0.95){ # from R/asbio
+ci.median <- function(x, 
+                      conf=0.95){ # from R/asbio
   n <- nrow(as.matrix(x))
   if(qbinom((1 - conf)/2, n, 0.5) == 0){ stop("CI not calculable") }
   L <- qbinom((1 - conf)/2, n, 0.5)
@@ -110,7 +121,9 @@ ci.median <- function(x, conf=0.95){ # from R/asbio
 }
 
 #' @export
-ci.mean <- function(x, alpha=0.05, na.rm=TRUE){
+ci.mean <- function(x, 
+                    alpha=0.05, 
+                    na.rm=TRUE){
   n <- sum(!is.na(x))
   if(n > 1){ # need more than one observation for confint
     n <- ifelse(n != 0, n, NA)
@@ -125,7 +138,11 @@ ci.mean <- function(x, alpha=0.05, na.rm=TRUE){
   return(ci)
 }
 
-predict.lmmbygls <- function(fit0.no.augment, original.n, augment.n, covariates, weights){
+predict.lmmbygls <- function(fit0.no.augment,
+                             original.n, 
+                             augment.n, 
+                             covariates,
+                             weights){
   e <- rnorm(augment.n, 0, sd=sqrt(fit0.no.augment$sigma2.mle))
   if(!is.null(weights)){
     e <- sqrt(weights[-(1:original.n)]) * e
@@ -207,7 +224,8 @@ straineff.mapping.matrix <- function(M=8){
   return(t(mapping))
 }
 
-run.imputation <- function(diplotype.probs, impute.map){
+run.imputation <- function(diplotype.probs, 
+                           impute.map){
   if(!all(as.character(impute.map[,1]) == as.character(impute.map[,2]))){
     pheno.id <- names(impute.map)[1]
     geno.id <- names(impute.map)[2]
@@ -229,7 +247,8 @@ run.imputation <- function(diplotype.probs, impute.map){
   return(full.imputation)
 }
   
-process_eigen_decomposition <- function(eigen.decomp, tol=1e-6){
+process_eigen_decomposition <- function(eigen.decomp, 
+                                        tol=1e-6){
   # from Robert, who took it from MASS::mvrnorm()
   if(!all(eigen.decomp$values >= -tol * abs(eigen.decomp$values[1L]))){
     stop("K is not positive definite")
@@ -250,7 +269,9 @@ replicates.eigen <- function(Z, K) {
 }
 
 #' @export
-get.f.stat.p.val <- function(qr.alt, qr.null, y){
+get.f.stat.p.val <- function(qr.alt, 
+                             qr.null, 
+                             y){
   rss0 <- sum(qr.resid(qr.null, y)^2)
   rss1 <- sum(qr.resid(qr.alt, y)^2)
   df1 <- qr.alt$rank - qr.null$rank
@@ -264,7 +285,9 @@ get.f.stat.p.val <- function(qr.alt, qr.null, y){
 }
 
 #' @export
-get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA", "LRT.random.locus"),
+get.p.value <- function(fit0, 
+                        fit1, 
+                        method=c("LRT", "ANOVA", "LRT.random.locus"),
                         round.tol=10){
   method <- method[1]
   if(method == "LRT"){
@@ -281,8 +304,11 @@ get.p.value <- function(fit0, fit1, method=c("LRT", "ANOVA", "LRT.random.locus")
 }
 
 #' @export
-get.allele.effects.from.fixef <- function(fit, founders, allele.in.intercept, 
-                                          center=TRUE, scale=FALSE){
+get.allele.effects.from.fixef <- function(fit, 
+                                          founders, 
+                                          allele.in.intercept, 
+                                          center=TRUE, 
+                                          scale=FALSE){
   effects <- fit$coefficients[founders]
   names(effects) <- founders
   
@@ -292,8 +318,10 @@ get.allele.effects.from.fixef <- function(fit, founders, allele.in.intercept,
 }
 
 #' @export
-get.allele.effects.from.ranef <- function(fit, founders=NULL, 
-                                          center=TRUE, scale=FALSE){
+get.allele.effects.from.ranef <- function(fit, 
+                                          founders=NULL, 
+                                          center=TRUE, 
+                                          scale=FALSE){
   ## Big time savings potentially
   if(fit$locus.h2 == 0){
     effects <- rep(0, 8)
