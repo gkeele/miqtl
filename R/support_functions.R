@@ -21,8 +21,8 @@ rint <- function(phenotype,
 #' on median are plotted.
 #' @param use.lod DEFAULT: FALSE. Specifies whether loci should be selected based on LOD scores or p-values.
 #' @param chr DEFAULT: "all". The portion of the scan that loci are being pulled from.
-#' @param criterion DEFAULT: "min". The criterion by which loci are selected. Currently only "min" is 
-#' available, which selects the locus with the minimum statistical score. 
+#' @param criterion DEFAULT: "min". The criterion by which loci are selected. "min" selects the locus with the minimum statistical score.
+#' "max" selects the locus with the maximum statistical score.
 #' @param return.value DEFAULT: "marker". If "marker", returns the marker name. If "positions", returns the position in both cM and Mb.
 #' If "chr", returns the chr of the peak. If "index", returns the index of the vector.
 #' @export
@@ -30,7 +30,7 @@ rint <- function(phenotype,
 grab.locus.from.scan <- function(scan.object, 
                                  use.lod=FALSE, 
                                  chr="all", 
-                                 criterion="min", 
+                                 criterion=c("min", "max"), 
                                  return.value=c("marker", "position", "chr", "index")){
   return.value <- return.value[1]
   if(use.lod){ outcome <- scan.object$LOD }
@@ -54,6 +54,23 @@ grab.locus.from.scan <- function(scan.object,
       result <- which.min(outcome[keep])
     }
   }
+  
+  if(criterion == "max"){
+    if(return.value == "marker"){
+      result <- scan.object$loci[keep][which.max(outcome[keep])]
+    }
+    else if(return.value == "position"){
+      result <- c(scan.object$pos$cM[keep][which.max(outcome[keep])], scan.object$pos$Mb[keep][which.max(outcome[keep])])
+      names(result) <- c("cM", "Mb")
+    }
+    else if(return.value == "chr"){
+      result <- scan.object$chr[keep][which.max(outcome[keep])]
+    }
+    else if(return.value == "index"){
+      result <- which.max(outcome[keep])
+    }
+  }
+  
   return(result)
 }
 
