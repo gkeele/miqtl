@@ -33,6 +33,7 @@ grab.locus.from.scan <- function(scan.object,
                                  criterion=c("min", "max"), 
                                  return.value=c("marker", "position", "chr", "index")){
   return.value <- return.value[1]
+  criterion <- criterion[1]
   if(use.lod){ outcome <- scan.object$LOD }
   else{ outcome <- scan.object$p.value }
   
