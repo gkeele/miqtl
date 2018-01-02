@@ -239,10 +239,14 @@ extract.chr.max.statistics.from.genomewide <- function(full.perm.scans,
   statistic.type <- ifelse(use.lod, "LOD", "p.value")
   full.results <- full.perm.scans$full.results[[statistic.type]][,full.perm.scans$full.results$chr == chr]
   
-  min.statistics <- apply(full.results, 1, function(x) min(x))
-  max.statistics <- apply(full.results, 1, function(x) max(x))
+  if(type == "min"){
+    extreme.statistics <- apply(full.results, 1, function(x) min(x, na.rm=TRUE))
+  }
+  else if(type == "max"){
+    extreme.statistics <- apply(full.results, 1, function(x) max(x, na.rm=TRUE))
+  }
+  
   return(list(full.results=NULL,
               max.statistics=list(LOD=NULL,
-                                  p.value=list(min=min.statistics,
-                                               max=max.statistics))))
+                                  p.value=extreme.statistics)))
 }
