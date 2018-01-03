@@ -123,6 +123,7 @@ get.gev.padjust <- function(p.value,
     else{
       extreme.values <- -log10(threshold.scans$max.statistics$p.value[[type]])
     }
+  }
   else{
     extreme.values <- threshold.scans$max.statistics$LOD
   }
