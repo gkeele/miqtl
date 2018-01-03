@@ -113,10 +113,16 @@ get.gev.thresholds <- function(threshold.scans,
 get.gev.padjust <- function(p.value, 
                             threshold.scans, 
                             use.lod = FALSE,
+                            type=c("min", "max"),
                             right.side=TRUE){
+  type <- type[1]
   if(!use.lod){
-    extreme.values <- -log10(threshold.scans$max.statistics$p.value)
-  }
+    if(is.na(threshold.scans$max.statistics$p.value[type])){
+      extreme.values <- -log10(threshold.scans$max.statistics$p.value)
+    }
+    else{
+      extreme.values <- -log10(threshold.scans$max.statistics$p.value[[type]])
+    }
   else{
     extreme.values <- threshold.scans$max.statistics$LOD
   }
