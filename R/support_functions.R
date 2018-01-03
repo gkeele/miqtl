@@ -117,7 +117,7 @@ get.gev.padjust <- function(p.value,
                             right.side=TRUE){
   type <- type[1]
   if(!use.lod){
-    if(is.na(threshold.scans$max.statistics$p.value[type])){
+    if(!is.list(threshold.scans$max.statistics$p.value)){
       extreme.values <- -log10(threshold.scans$max.statistics$p.value)
     }
     else{
