@@ -94,7 +94,7 @@ get.gev.thresholds <- function(threshold.scans,
                                type=c("min", "max")){
   type <- type[1]
   if(!use.lod){
-    if(is.na(threshold.scans$max.statistics$p.value[type])){
+    if(!is.list(threshold.scans$max.statistics$p.value)){
       extreme.values <- -log10(threshold.scans$max.statistics$p.value)
     }
     else{
@@ -129,11 +129,15 @@ get.gev.padjust <- function(p.value,
   }
   evd.pars <- as.numeric(evir::gev(extreme.values)$par.est)
   adj.p <- evir::pgev(q=-log10(p.value), xi=evd.pars[1], sigma=evd.pars[2], mu=evd.pars[3])
+  ## Rough handling of extreme adjusted p-values
+  if (is.nan(adj.p) | adj.p == 1) { adj.p <- 1 - .Machine$double.eps }
+  else if (adj.p == 0) { adj.p <- .Machine$double.eps }
   if(right.side){
     adj.p <- 1 - adj.p
   }
   return(adj.p)
 }
+
 
 #' @export
 ci.median <- function(x, 
