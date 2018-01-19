@@ -231,7 +231,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                  thresholds.legend.pos="topleft",
                                  add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE,
-                                 mark.locus=NULL, mark.locus.col="red"){
+                                 mark.locus=NULL, mark.locus.col="red",
+                                 mark.pos=NULL){
   # If list has no names, use.legend is set to FALSE
   if(is.null(names(scan.list))){ use.legend=FALSE }
   if(is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
@@ -756,5 +757,91 @@ grab.max.statistic.from.scan <- function(scan.object, outcome="p.value", chr=NUL
 }
 
 
+#' Plot whole genome and single chromosome windows of haplotype-based genome scan in a PDF output document
+#'
+#' This function takes the genome scan output from scan.h2lmm() and plots the whole genome and single chromosome zoom-ins for 
+#' all the specified chromosomes. When multiple imputations are used, includes the 95\% confidence band on the median in the zoomed-in
+#' plots.
+#'
+#' @param scan.object A scan.h2lmm() object (ROP or multiple imputations). If multiple imputations, median and confidence interval 
+#' on median are plotted. Expected to the scan of the actual data.
+#' @param qtl.ci.object A run.positional.scans() object. Should contain single chromosome scans from some form of sampling process, such as a parametric bootstrap.
+#' @param ci.type Positional confidence interval to be included in the title. Example: "Parametric Bootstrap".
+#' @param scan.type Scan type to be included in the title. Example: "ROP".
+#' @param these.col Colors to be used for individual artificial scans.
+#' @param scale DEFAULT: "Mb". Specifies the scale of genomic position to be plotted. Either "Mb" or "cM" is expected.
+#' @param alpha DEFAULT: 0.05. The specified alpha level of the positional confidence interval.
+#' @export
+#' @examples single.chr.plotter.w.ci()
+single.chr.plotter.w.ci <- function(scan.object, qtl.ci.object, 
+                                    ci.type, scan.type, 
+                                    these.col=c("#7BAFD4", "red"), scale="Mb",
+                                    alpha=0.05){
+  
+  outcome <- -log10(scan.object$p.value[scan.object$chr == qtl.ci.object$chr]) 
+  this.ylab <- expression("-log"[10]*"P")
+  
+  pos <- qtl.ci.object$full.results$pos[[scale]]
+  
+  order.i <- order(pos)
+  pos <- pos[order.i]
+  outcome <- outcome[order.i]
+  
+  all.loci <- colnames(qtl.ci.object$full.results$p.values)
+  
+  peak.pos <- qtl.ci.object$peak.pos[[scale]]
+  loci <- qtl.ci.object$peak.loci
+  
+  # Process per CI
+  ci <- quantile(qtl.ci.object$peak.loci.pos[[scale]], probs=c(alpha/2, 1 - alpha/2))
+  
+  lb.dist <- pos - ci[1]
+  low.locus <- all.loci[lb.dist <= 0][which.max(lb.dist[lb.dist <= 0])]
+  low.locus.pos <- pos[which(all.loci == low.locus)]
+  ub.dist <- pos - ci[2]
+  high.locus <- all.loci[ub.dist >= 0][which.min(ub.dist[ub.dist >= 0])]
+  high.locus.pos <- pos[which(all.loci == high.locus)]
+  
+  actual.p.value <- scan.object$p.value[scan.object$chr == qtl.ci.object$chr]
+  actual.loci <- scan.object$loci[scan.object$chr == qtl.ci.object$chr]
+  actual.pos <- scan.object$pos[[scale]][scan.object$chr == qtl.ci.object$chr]
+  region <- actual.pos >= low.locus.pos & actual.pos <= high.locus.pos
+  peak.locus <- all.loci[region][which.min(actual.p.value[region])]
+  peak.locus.pos <- actual.pos[region][which.min(actual.p.value[region])]
+  
+  main.title <- c(paste0(scan.type, ": ", scan.object$formula, " + locus (", scan.object$model.type, ")"),
+                  paste0("QTL interval type: ", (1-alpha)*100, "% ", ci.type),
+                  paste0("Width: ", round(high.locus.pos - low.locus.pos, 2), scale),
+                  paste0("peak locus: ", peak.locus, " (", round(peak.locus.pos, 3), scale, ")"),
+                  paste0("(closest) lower locus: ", low.locus, " (", round(low.locus.pos, 3), scale, ")"),
+                  paste0("(closest) upper locus: ", high.locus, " (", round(high.locus.pos, 3), scale, ")"))
+  full.results <- qtl.ci.object$full.results$p.values
+  this.xlab <- paste("Chr", qtl.ci.object$chr, paste0("(", scale, ")"))
+  if(!is.null(full.results)){ y.max <- max(outcome, -log10(full.results)) }
+  else{ y.max <- max(outcome) }
+  plot(1, 
+       xlim=c(0, max(pos)), 
+       ylim=c(0, y.max), 
+       xlab=this.xlab, ylab=this.ylab, main=main.title,
+       frame.plot=FALSE, type="l", pch=20, cex=0.5, las=1, cex.main=0.8)
+  
+  polygon(c(rep(low.locus.pos, 2), rep(high.locus.pos, 2)), c(0, rep(ceiling(max(outcome)), 2), 0), col="gray", border=NA)
+  peaks <- qtl.ci.object$peak.loci.pos[[scale]]
+  
+  for(i in 1:nrow(full.results)){
+    lines(pos, -log10(full.results[i,]), lwd=0.5, col=scales::alpha(these.col[i], 0.5))
+  }
+  rug(qtl.ci.object$peak.loci.pos[[scale]], col=scales::alpha("black", 0.5))
+  
+  lines(pos, outcome, lwd=1.5)
+}
 
+inspect.ci.genome.plotter.whole <- function(ci.object, scan.type.label, which.ci=1, ...){
+  this.scan <- list(p.value = ci.object$full.results[which.ci,],
+                    chr=rep(ci.object$chr, length(ci.object$full.results[which.ci,])),
+                    pos = ci.object$pos)
+  this.scan.list <- list()
+  this.scan.list[[scan.type.label]] <- this.scan
+  genome.plotter.whole(scan.list=this.scan.list, use.lod=FALSE, scale="cM", ...)
+}
 
