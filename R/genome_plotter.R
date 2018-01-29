@@ -229,7 +229,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  my.x.lab.cex=0.7, my.x.labels=TRUE,
                                  no.title=FALSE, override.title=NULL, my.title.line=NA, title.cex=1,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
-                                 thresholds.lwd=NULL, thresholds.legend.pos="topleft",
+                                 thresholds.lwd=NULL, thresholds.legend.pos="topleft", thresholds.lty=NULL,
                                  add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE,
                                  mark.locus=NULL, mark.locus.col="red", which.mark=1,
                                  add.polygon=FALSE, which.polygon=1){
@@ -237,6 +237,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   if (is.null(names(scan.list))){ use.legend=FALSE }
   if (is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
   if (is.null(thresholds.lwd)){ thresholds.lwd <- rep(1, ifelse(is.null(hard.thresholds), 0, length(hard.thresholds))) }
+  if (is.null(thresholds.lty)){ thresholds.lty <- rep(2, ifelse(is.null(hard.thresholds), 0, length(hard.thresholds))) }
   if (length(my.legend.lty) == 1) { my.legend.lty <- rep(my.legend.lty, length(scan.list)) }
   
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
@@ -515,11 +516,11 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   }
   if (!is.null(hard.thresholds)) {
     for (i in 1:length(hard.thresholds)) {
-      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=2, lwd=thresholds.lwd[i])
+      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=thresholds.lty[i], lwd=thresholds.lwd[i])
     }
   }
   if (!is.null(thresholds.legend)) {
-    legend(thresholds.legend.pos, legend=thresholds.legend, col=thresholds.col, lty=rep(2, length(thresholds.legend)),
+    legend(thresholds.legend.pos, legend=thresholds.legend, col=thresholds.col, lty=thresholds.lty,
            lwd=thresholds.lwd, bty="n", cex=my.legend.cex)
   }
 }
