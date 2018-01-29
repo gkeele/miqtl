@@ -229,14 +229,15 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  my.x.lab.cex=0.7, my.x.labels=TRUE,
                                  no.title=FALSE, override.title=NULL, my.title.line=NA, title.cex=1,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
-                                 thresholds.legend.pos="topleft",
+                                 thresholds.lwd=NULL, thresholds.legend.pos="topleft",
                                  add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE,
-                                 mark.locus=NULL, mark.locus.col="red",
-                                 mark.pos=NULL){
+                                 mark.locus=NULL, mark.locus.col="red", which.mark=1,
+                                 add.polygon=FALSE, which.polygon=1){
   # If list has no names, use.legend is set to FALSE
-  if(is.null(names(scan.list))){ use.legend=FALSE }
-  if(is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
-  if(length(my.legend.lty) == 1){ my.legend.lty <- rep(my.legend.lty, length(scan.list)) }
+  if (is.null(names(scan.list))){ use.legend=FALSE }
+  if (is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
+  if (is.null(thresholds.lwd)){ thresholds.lwd <- rep(1, ifelse(is.null(hard.thresholds), 0, length(hard.thresholds))) }
+  if (length(my.legend.lty) == 1) { my.legend.lty <- rep(my.legend.lty, length(scan.list)) }
   
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
   
@@ -343,6 +344,13 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex)
   
+  if (which.polygon == 1 & add.polygon) {
+    polygon(expand.for.polygon.x(pos[pre.chr==chr.types[1]]), 
+            expand.for.polygon.y(outcome[pre.chr==chr.types[1]]), 
+            col=main.colors[1],
+            border=NA)
+  }
+  
   label.spots <- max.pos[1]/2
   x.tick.spots <- c(0, max.pos[1])
   shift <- max.pos[1]
@@ -367,6 +375,12 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       label.spots <- c(label.spots, shift + max.pos[i]/2)
       x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
       points(this.pos, outcome[pre.chr==chr.types[i]], type="l", lty=my.legend.lty[1], lwd=my.legend.lwd[1], col=this.col[pre.chr==chr.types[i]])
+      if (which.polygon == 1 & add.polygon) {
+        polygon(expand.for.polygon.x(this.pos), 
+                expand.for.polygon.y(outcome[pre.chr==chr.types[i]]), 
+                col=this.col[pre.chr==chr.types[i]],
+                border=NA)
+      }
       shift <- shift + max.pos[i]
     }
   }
@@ -374,7 +388,6 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   # Plot other method's statistics
   if(length(scan.list) > 1){
     for(i in 2:length(scan.list)){
-        
       this.scan <- scan.list[[i]]
       if(use.lod){
         compar.outcome <- this.scan$LOD
@@ -383,7 +396,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
         compare.outcome <- -log10(this.scan$p.value)
       }
       pos <- ifelse(rep(scale=="Mb", length(compare.outcome)), this.scan$pos$Mb, this.scan$pos$cM)
-        
+    
       ## Resetting for new scan objects
       chr <- this.scan$chr
       if(!is.null(just.these.chr)){
@@ -422,69 +435,92 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       points(pos[pre.chr==chr.types[1]], compare.outcome[pre.chr==chr.types[1]], type="l", 
              col=this.col[pre.chr==chr.types[1]], lwd=my.legend.lwd[i], lty=my.legend.lty[i])
       
-      if(length(chr.types) > 1){
-        for(j in 2:length(chr.types)){
+      if (which.polygon == i & add.polygon) {
+        polygon(expand.for.polygon.x(pos[pre.chr==chr.types[1]]), 
+                expand.for.polygon.y(compare.outcome[pre.chr==chr.types[1]]), 
+                col=this.col[pre.chr==chr.types[1]],
+                border=NA)
+      }
+      
+      ## For later plotting, like mark.locus
+      if (i == which.mark) {
+        updated.pos <- rep(NA, length(compare.outcome))
+        names(updated.pos) <- names(compare.outcome)
+        updated.pos[pre.chr==chr.types[1]] <- pos[pre.chr==chr.types[1]]
+      }
+      
+      if (length(chr.types) > 1) {
+        for (j in 2:length(chr.types)) {
           points(pos[pre.chr==chr.types[j]] + compare.shift, compare.outcome[pre.chr==chr.types[j]], type="l", 
                  col=this.col[pre.chr==chr.types[j]], 
                  lwd=my.legend.lwd[i],
                  lty=my.legend.lty[i])
-          compare.shift <- compare.shift + max.pos[j]
+          if (which.polygon == i & add.polygon) {
+            polygon(expand.for.polygon.x(pos[pre.chr==chr.types[j]] + compare.shift), 
+                    expand.for.polygon.y(compare.outcome[pre.chr==chr.types[j]]), 
+                    col=this.col[pre.chr==chr.types[j]],
+                    border=NA)
+          }
+          if (i == which.mark) {
+            updated.pos[pre.chr==chr.types[j]] <- pos[pre.chr==chr.types[j]] + compare.shift
+            compare.shift <- compare.shift + max.pos[j]
+          }
         }
       }
     }
   }
-  if(has.X){
+  if (has.X) {
     axis.label <- c(chr.types[-length(chr.types)], "X")
   }
-  else{
+  else {
     axis.label <- chr.types
   }
   
-  if(include.x.axis.line){
+  if (include.x.axis.line) {
     axis(side=1, tick=TRUE, line=NA, at=x.tick.spots, 
          labels=NA, xpd=TRUE)
   }
   
-  if(add.chr.to.label){
+  if (add.chr.to.label) {
     axis.label <- paste("Chr", axis.label)
   }
-  else{
+  else {
     axis.label <- c("Chr", axis.label)
     label.spots <- c(-0.04*x.max, label.spots)
   }
   
-  if(axis.cram){
+  if (axis.cram) {
     odd.axis.label <- axis.label[(1:length(axis.label) %% 2) == 1]
     odd.label.spots <- label.spots[(1:length(label.spots) %% 2) == 1]
     
     even.axis.label <- axis.label[(1:length(axis.label) %% 2) == 0]
     even.label.spots <- label.spots[(1:length(label.spots) %% 2) == 0]
     
-    if(!my.x.labels){ even.axis.label <- FALSE; odd.axis.label <- FALSE }
+    if (!my.x.labels) { even.axis.label <- FALSE; odd.axis.label <- FALSE }
     
     axis(side=1, tick=FALSE, line=NA, at=odd.label.spots, labels=odd.axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE)
     axis(side=1, tick=FALSE, line=NA, at=even.label.spots, labels=even.axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE)
   }
-  else{
-    if(!my.x.labels){ axis.label <- FALSE }
+  else {
+    if (!my.x.labels) { axis.label <- FALSE }
     axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE)
   }
-  if(!is.null(mark.locus)){
-    rug(x=updated.pos[which(names(outcome) == mark.locus)], lwd=4, col=mark.locus.col)
+  if (!is.null(mark.locus)) {
+    rug(x=updated.pos[which(names(updated.pos) == mark.locus)], lwd=4, col=mark.locus.col)
   }
-  if(use.legend){
+  if (use.legend) {
     legend(my.legend.pos, legend=names(scan.list), 
            lty=my.legend.lty, lwd=my.legend.lwd, 
            col=main.colors[1:length(scan.list)], bty="n", cex=my.legend.cex)
   }
-  if(!is.null(hard.thresholds)){
-    for(i in 1:length(hard.thresholds)){
-      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=2)
+  if (!is.null(hard.thresholds)) {
+    for (i in 1:length(hard.thresholds)) {
+      abline(h=hard.thresholds[i], col=thresholds.col[i], lty=2, lwd=thresholds.lwd[i])
     }
   }
-  if(!is.null(thresholds.legend)){
+  if (!is.null(thresholds.legend)) {
     legend(thresholds.legend.pos, legend=thresholds.legend, col=thresholds.col, lty=rep(2, length(thresholds.legend)),
-           bty="n", cex=my.legend.cex)
+           lwd=thresholds.lwd, bty="n", cex=my.legend.cex)
   }
 }
 
@@ -843,5 +879,12 @@ inspect.ci.genome.plotter.whole <- function(ci.object, scan.type.label, which.ci
   this.scan.list <- list()
   this.scan.list[[scan.type.label]] <- this.scan
   genome.plotter.whole(scan.list=this.scan.list, use.lod=FALSE, scale="cM", ...)
+}
+
+expand.for.polygon.x <- function(x){
+  return(c(x[1], x, x[length(x)]))
+}
+expand.for.polygon.y <- function(x){
+  return(c(0, x, 0))
 }
 
