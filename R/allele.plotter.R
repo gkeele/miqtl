@@ -280,27 +280,6 @@ allele.plotter.whole <- function(scan.object, just.these.chr=NULL,
   }
 }
 
-
-polygon.with.nas <- function(x, y.ci.max, y.ci.min, col){
-  enc <- rle(!is.na(y.ci.max))
-  endIdxs <- cumsum(enc$lengths)
-  for(i in 1:length(enc$lengths)){
-    if(enc$values[i]){
-      endIdx <- endIdxs[i]
-      startIdx <- endIdx - enc$lengths[i] + 1
-      
-      subx <- x[startIdx:endIdx]
-      suby.max <- y.ci.max[startIdx:endIdx]
-      suby.min <- y.ci.min[startIdx:endIdx]
-
-      reduced.x <- c(subx, rev(subx))
-      reduced.y <- c(suby.max, rev(suby.min))
-      
-      polygon(x=reduced.x, y=reduced.y, col=col, border=NA)
-    }
-  }
-}
-
 #' @export
 allele.plotter.region <- function(scan.object,
                                   scale="Mb", 
@@ -477,7 +456,6 @@ allele.plotter.region <- function(scan.object,
   }
 }
 
-
 polygon.with.nas <- function(x, y.ci.max, y.ci.min, col){
   enc <- rle(!is.na(y.ci.max))
   endIdxs <- cumsum(enc$lengths)
@@ -497,5 +475,4 @@ polygon.with.nas <- function(x, y.ci.max, y.ci.min, col){
     }
   }
 }
-
 
