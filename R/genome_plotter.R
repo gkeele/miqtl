@@ -345,7 +345,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex)
   
-  if (which.polygon == 1 & add.polygon) {
+  if (1 %in% which.polygon & add.polygon) {
     polygon(expand.for.polygon.x(pos[pre.chr==chr.types[1]]), 
             expand.for.polygon.y(outcome[pre.chr==chr.types[1]]), 
             col=main.colors[1],
@@ -376,7 +376,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       label.spots <- c(label.spots, shift + max.pos[i]/2)
       x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
       points(this.pos, outcome[pre.chr==chr.types[i]], type="l", lty=my.legend.lty[1], lwd=my.legend.lwd[1], col=this.col[pre.chr==chr.types[i]])
-      if (which.polygon == 1 & add.polygon) {
+      if (1 %in% which.polygon & add.polygon) {
         polygon(expand.for.polygon.x(this.pos), 
                 expand.for.polygon.y(outcome[pre.chr==chr.types[i]]), 
                 col=this.col[pre.chr==chr.types[i]],
@@ -436,7 +436,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       points(pos[pre.chr==chr.types[1]], compare.outcome[pre.chr==chr.types[1]], type="l", 
              col=this.col[pre.chr==chr.types[1]], lwd=my.legend.lwd[i], lty=my.legend.lty[i])
       
-      if (which.polygon == i & add.polygon) {
+      if (i %in% which.polygon & add.polygon) {
         polygon(expand.for.polygon.x(pos[pre.chr==chr.types[1]]), 
                 expand.for.polygon.y(compare.outcome[pre.chr==chr.types[1]]), 
                 col=this.col[pre.chr==chr.types[1]],
@@ -456,7 +456,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                  col=this.col[pre.chr==chr.types[j]], 
                  lwd=my.legend.lwd[i],
                  lty=my.legend.lty[i])
-          if (which.polygon == i & add.polygon) {
+          if (i %in% which.polygon & add.polygon) {
             polygon(expand.for.polygon.x(pos[pre.chr==chr.types[j]] + compare.shift), 
                     expand.for.polygon.y(compare.outcome[pre.chr==chr.types[j]]), 
                     col=this.col[pre.chr==chr.types[j]],
