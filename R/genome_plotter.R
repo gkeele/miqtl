@@ -510,9 +510,31 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     rug(x=updated.pos[which(names(updated.pos) == mark.locus)], lwd=4, col=mark.locus.col)
   }
   if (use.legend) {
-    legend(my.legend.pos, legend=names(scan.list), 
-           lty=my.legend.lty, lwd=my.legend.lwd, 
-           col=main.colors[1:length(scan.list)], bty="n", cex=my.legend.cex)
+    if (add.polygon) {
+      these.lty <- my.legend.lty
+      these.lwd <- my.legend.lwd
+      these.fill.col <- main.colors
+      these.fill.border <- main.colors
+      these.lty[which.polygon] <- these.lwd[which.polygon] <- NA
+      these.fill.col[!(1:length(scan.list) %in% which.polygon)] <- these.fill.border[!(1:length(scan.list) %in% which.polygon)] <-  NA
+      this.x.intersp=ifelse(is.na(these.fill.col), 2, 0.5)
+      
+      legend(my.legend.pos, 
+             legend=names(scan.list), 
+             lty=these.lty, 
+             lwd=these.lwd,
+             fill=these.fill.col,
+             border=these.fill.border,
+             x.intersp=this.x.intersp,
+             col=main.colors[1:length(scan.list)], bty="n", cex=my.legend.cex)
+    }
+    else {
+      legend(my.legend.pos, 
+             legend=names(scan.list), 
+             lty=my.legend.lty, 
+             lwd=my.legend.lwd, 
+             col=main.colors[1:length(scan.list)], bty="n", cex=my.legend.cex)
+    }
   }
   if (!is.null(hard.thresholds)) {
     for (i in 1:length(hard.thresholds)) {
@@ -524,6 +546,14 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
            lwd=thresholds.lwd, bty="n", cex=my.legend.cex)
   }
 }
+
+expand.for.polygon.x <- function(x){
+  return(c(x[1], x, x[length(x)]))
+}
+expand.for.polygon.y <- function(x){
+  return(c(0, x, 0))
+}
+
 
 #' Plot user-specified windows of haplotype-based and snp-based genome scans
 #'
@@ -880,12 +910,5 @@ inspect.ci.genome.plotter.whole <- function(ci.object, scan.type.label, which.ci
   this.scan.list <- list()
   this.scan.list[[scan.type.label]] <- this.scan
   genome.plotter.whole(scan.list=this.scan.list, use.lod=FALSE, scale="cM", ...)
-}
-
-expand.for.polygon.x <- function(x){
-  return(c(x[1], x, x[length(x)]))
-}
-expand.for.polygon.y <- function(x){
-  return(c(0, x, 0))
 }
 
