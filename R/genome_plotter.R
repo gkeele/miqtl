@@ -464,8 +464,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
           }
           if (i == which.mark) {
             updated.pos[pre.chr==chr.types[j]] <- pos[pre.chr==chr.types[j]] + compare.shift
-            compare.shift <- compare.shift + max.pos[j]
           }
+          compare.shift <- compare.shift + max.pos[j]
         }
       }
     }
