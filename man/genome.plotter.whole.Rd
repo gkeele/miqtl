@@ -14,9 +14,11 @@ genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
   my.y.lab.cex = 0.7, my.x.lab.cex = 0.7, my.x.labels = TRUE,
   no.title = FALSE, override.title = NULL, my.title.line = NA,
   title.cex = 1, hard.thresholds = NULL, thresholds.col = "red",
-  thresholds.legend = NULL, thresholds.legend.pos = "topleft",
+  thresholds.legend = NULL, thresholds.lwd = NULL,
+  thresholds.legend.pos = "topleft", thresholds.lty = NULL,
   add.chr.to.label = FALSE, axis.cram = TRUE, include.x.axis.line = TRUE,
-  mark.locus = NULL, mark.locus.col = "red")
+  mark.locus = NULL, mark.locus.col = "red", which.mark = 1,
+  add.polygon = FALSE, which.polygon = 1)
 }
 \arguments{
 \item{scan.list}{A list of scan.h2lmm() objects that are to be plotted within the same genome scan plot.}
