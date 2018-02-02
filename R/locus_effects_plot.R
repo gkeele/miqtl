@@ -12,8 +12,8 @@
 #' rgb(16, 16, 240, maxColorValue=255), rgb(0, 160, 240, maxColorValue=255), rgb(0, 160, 0, maxColorValue=255), rgb(240, 0, 0, maxColorValue=255), 
 #' rgb(144, 0, 224, maxColorValue=255)). These are the established Collaborative Cross colors.
 #' @export
-#' @examples plot.locus.effect.from.scan()
-plot.locus.effect.from.scan <- function(scan.object, locus,
+#' @examples plot_locus.effect.from.scan()
+plot_locus.effect.from.scan <- function(scan.object, locus,
                                         main="",
                                         names=c("ACI", "BN", "BUF", "F344", "M520", "MR", "WKY", "WN"),
                                         col=c(rgb(240, 240, 0, maxColorValue=255), 
