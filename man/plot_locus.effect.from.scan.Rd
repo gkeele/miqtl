@@ -9,7 +9,9 @@ plot_locus.effect.from.scan(scan.object, locus, main = "", names = c("ACI",
   maxColorValue = 255), rgb(128, 128, 128, maxColorValue = 255), rgb(240, 128,
   128, maxColorValue = 255), rgb(16, 16, 240, maxColorValue = 255), rgb(0, 160,
   240, maxColorValue = 255), rgb(0, 160, 0, maxColorValue = 255), rgb(240, 0, 0,
-  maxColorValue = 255), rgb(144, 0, 224, maxColorValue = 255)))
+  maxColorValue = 255), rgb(144, 0, 224, maxColorValue = 255)),
+  add.connect.line = TRUE, connect.lwd = 2, connect.col = "black",
+  add = FALSE, ...)
 }
 \arguments{
 \item{scan.object}{A scan object from scan.h2lmm(). Can work for ROP or multiple imputation.}
@@ -23,6 +25,15 @@ plot_locus.effect.from.scan(scan.object, locus, main = "", names = c("ACI",
 \item{col}{DEFAULT: c(rgb(240, 240, 0, maxColorValue=255), rgb(128, 128, 128, maxColorValue=255), rgb(240, 128, 128, maxColorValue=255), 
 rgb(16, 16, 240, maxColorValue=255), rgb(0, 160, 240, maxColorValue=255), rgb(0, 160, 0, maxColorValue=255), rgb(240, 0, 0, maxColorValue=255), 
 rgb(144, 0, 224, maxColorValue=255)). These are the established Collaborative Cross colors.}
+
+\item{add.connect.line}{DEFAULT: TRUE. Adds a connection line between the effects (or their mean).}
+
+\item{connect.lwd}{DEFAULT: 2. The line width of the connection line, if it is included}
+
+\item{connect.col}{DEFAULT: "black". The color of the connection line, if it is included}
+
+\item{add}{DEFAULT: FALSE. If TRUE, a new plot is not initiated. The purpose is to allow multiple sets of
+effects to be included on a single plot.}
 }
 \description{
 This function takes a scan object from scan.h2lmm() and plots out allele effect estimates
