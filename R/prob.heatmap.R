@@ -91,14 +91,14 @@ prob.heatmap.from.matrix = function(geno.matrix, marker=NULL, marker.line=2.5,
   # plot heatmap
   ## save original par settings
   cols <- rev(gray(10000:1/10000))
-  if(include.ramp){
+  if (include.ramp) {
     op <- par(no.readonly=TRUE)
     oplt <- par()$plt
     par(fig=c(0.1, 0.85, 0.05, 0.95),
         mai=c(0.4, 0.05, 0.7, 0.05))    ##set the margin  
   }
-  if(model == "additive"){ z.val <- 2 - probs; z.lim <- c(0, 2) }
-  else{ z.val <- 1 - probs; z.lim <- c(0, 1) }
+  if (model == "additive") { z.val <- 2 - probs; z.lim <- c(0, 2) }
+  else { z.val <- 1 - probs; z.lim <- c(0, 1) }
   image(z=z.val, axes=FALSE, col=cols, zlim=z.lim)
   box()
   # axis(2, at=seq(0, num.col, 1+1/num.col)/num.col, 
@@ -113,28 +113,28 @@ prob.heatmap.from.matrix = function(geno.matrix, marker=NULL, marker.line=2.5,
   axis(1, at=0.5, labels=parse(text=paste('"-" %<-%', gsub(x=phenotype, pattern=" ", replacement="~"), '%->% "+"')), 
        tick=FALSE, cex.axis=phenotype.lab.cex, line=phenotype.line)
   
-  if(include.phenotype.axis){
+  if (include.phenotype.axis) {
     axis(3, at=c(0, 0.25, 0.5, 0.75, 1), labels=c(s1, s2, s3, s5, s6), cex.axis=phenotype.num.cex, line=phenotype.num.line, padj=phenotype.num.padj)
   }
-  if(!is.null(marker)){
-    if(is.null(p.value)){
+  if (!is.null(marker)) {
+    if (is.null(p.value)) {
       this.title <- marker
     }
-    else{
+    else {
       this.title <- bquote(.(paste0(marker, ":")) ~ -log[10]*P ~ .(paste("=", p.value)))
     }
     title(this.title, line=marker.line)
   }
   
-  if(include.ramp){
+  if (include.ramp) {
     ramp.label <- ifelse(model == "additive", "Haplotype Dose", "Diplotype Prob")
     par(fig=c(0.89, 0.92, 0.33, 0.66), 
         mai=c(0.1, 0.05, 0.5, 0.05), 
         new=TRUE)
-    if(model == "additive"){ image(y=seq(from=0, to=2, length.out=length(cols)), z=matrix(seq(from=0, to=2, length.out=length(cols)), nrow=1), 
-                                   zlim=c(0, 2), ylim=c(0, 2), axes=FALSE, col=rev(cols), main="", cex.main=0.77) } #for the legend 
-    if(model == "full"){ image(y=seq(from=0, to=1, length.out=length(cols)), z=matrix(seq(from=0, to=1, length.out=length(cols)), nrow=1), 
-                               zlim=c(0, 1), ylim=c(0, 1), axes=FALSE, col=rev(cols), main="", cex.main=0.77) }
+    if (model == "additive") { image(y=seq(from=0, to=2, length.out=length(cols)), z=matrix(seq(from=0, to=2, length.out=length(cols)), nrow=1), 
+                                     zlim=c(0, 2), ylim=c(0, 2), axes=FALSE, col=rev(cols), main="", cex.main=0.77) } #for the legend 
+    if (model == "full") { image(y=seq(from=0, to=1, length.out=length(cols)), z=matrix(seq(from=0, to=1, length.out=length(cols)), nrow=1), 
+                                 zlim=c(0, 1), ylim=c(0, 1), axes=FALSE, col=rev(cols), main="", cex.main=0.77) }
     box()
     axis(4, las=1, cex.axis=prob.axis.cex)
     mtext(text=ramp.label, side=1, line=ramp.label.line, cex=ramp.label.cex)
