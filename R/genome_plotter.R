@@ -223,7 +223,9 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  scale="Mb", main.colors=c("black", "cyan", "darkgreen"),
                                  distinguish.chr.type=c("color", "box"), distinguish.box.col="gray88", 
                                  distinguish.chr.col=c("gray60", "#008080", "greenyellow"),
-                                 use.legend=TRUE, main="",
+                                 override.col=NULL,
+                                 use.legend=TRUE, 
+                                 main="",
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.lty=1, my.legend.pos="topright",
                                  y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.7,
                                  my.x.lab.cex=0.7, my.x.labels=TRUE,
@@ -336,11 +338,22 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   updated.pos[pre.chr==chr.types[1]] <- pos[pre.chr==chr.types[1]]
   
   x.max <- sum(max.pos)+(length(chr.types)-1)
+  
+  if (distinguish.chr.type == "box") { 
+    this.col <- rep(main.colors[1], length(outcome)) 
+  }
+  else if (distinguish.chr.type == "color") { 
+    this.col <- c(main.colors[1], distinguish.chr.col[1])[(as.numeric(as.character(pre.chr)) %% 2 == 0) + 1]
+  }
+  if (!is.null(override.col)) {
+    this.col <- override.col[(as.numeric(as.character(pre.chr)))]
+  }
+  
   plot(pos[pre.chr==chr.types[1]], outcome[pre.chr==chr.types[1]], 
        xlim=c(0, x.max), 
        ylim=c(-0.1, y.max), 
        xaxt="n", yaxt="n", ylab="", xlab="", main=NA,
-       frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], lty=my.legend.lty[1], col=main.colors[1])
+       frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], lty=my.legend.lty[1], col=this.col[1])
   title(main=this.title, line=my.title.line, cex.main=title.cex)
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex)
@@ -356,12 +369,6 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   x.tick.spots <- c(0, max.pos[1])
   shift <- max.pos[1]
   
-  if(distinguish.chr.type == "box"){ 
-    this.col <- rep(main.colors[1], length(outcome)) 
-  }
-  else if(distinguish.chr.type == "color"){ 
-    this.col <- c(main.colors[1], distinguish.chr.col[1])[(as.numeric(as.character(pre.chr)) %% 2 == 0) + 1]
-  }
   if(length(chr.types) > 1){
     for(i in 2:length(chr.types)){
       this.pos <- pos[pre.chr==chr.types[i]] + shift
@@ -430,6 +437,9 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       }
       else if(distinguish.chr.type == "color"){ 
         this.col <- c(main.colors[i], distinguish.chr.col[i])[(as.numeric(as.character(pre.chr)) %% 2 == 0) + 1]
+      }
+      if (!is.null(override.col)) {
+        this.col <- override.col[(as.numeric(as.character(pre.chr)))]
       }
       
       compare.shift <- max.pos[1]
