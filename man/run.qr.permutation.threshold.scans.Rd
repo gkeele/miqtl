@@ -7,7 +7,8 @@ pre-computed QR decompositions for all the models.}
 \usage{
 run.qr.permutation.threshold.scans(perm.ind.matrix, qr.object, phenotype, data,
   keep.full.scans = FALSE, scan.index = NULL, id = "SUBJECT.NAME",
-  chr = "all", just.these.loci = NULL, use.progress.bar = FALSE, ...)
+  chr = "all", just.these.loci = NULL, use.progress.bar = FALSE,
+  report.perm.scans = FALSE, ...)
 }
 \arguments{
 \item{perm.ind.matrix}{Output object from generate.qr.permutation.index.matrix().}
@@ -36,6 +37,8 @@ in the phenotype data. This should be unique for each data point.}
 will also be output as fit1.}
 
 \item{use.progress.bar}{DEFAULT: FALSE. Results in a progress bar while code runs.}
+
+\item{report.perm.scans}{DEFAULT: FALSE. Outputs the completion of permutation scans.}
 }
 \description{
 This function runs permutation scans in order to calculate significance thresholds. Its results are most valid when
