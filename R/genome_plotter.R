@@ -359,8 +359,9 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex)
   
   if (1 %in% which.polygon & add.polygon) {
-    polygon(expand.for.polygon.x(pos[pre.chr==chr.types[1]]), 
-            expand.for.polygon.y(outcome[pre.chr==chr.types[1]]), 
+    polygon.x.and.y <- expand.for.polygon(x=pos[pre.chr==chr.types[1]], y=outcome[pre.chr==chr.types[1]])
+    polygon(polygon.x.and.y$x, 
+            polygon.x.and.y$y, 
             col=main.colors[1],
             border=NA)
   }
@@ -384,9 +385,10 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
       points(this.pos, outcome[pre.chr==chr.types[i]], type="l", lty=my.legend.lty[1], lwd=my.legend.lwd[1], col=this.col[pre.chr==chr.types[i]])
       if (1 %in% which.polygon & add.polygon) {
-        polygon(expand.for.polygon.x(this.pos), 
-                expand.for.polygon.y(outcome[pre.chr==chr.types[i]]), 
-                col=this.col[pre.chr==chr.types[i]],
+        polygon.x.and.y <- expand.for.polygon(x=this.pos, y=outcome[pre.chr==chr.types[i]])
+        polygon(polygon.x.and.y$x, 
+                polygon.x.and.y$y, 
+                col=this.col[pre.chr==chr.types[i]][1],
                 border=NA)
       }
       shift <- shift + max.pos[i]
@@ -447,9 +449,10 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
              col=this.col[pre.chr==chr.types[1]], lwd=my.legend.lwd[i], lty=my.legend.lty[i])
       
       if (i %in% which.polygon & add.polygon) {
-        polygon(expand.for.polygon.x(pos[pre.chr==chr.types[1]]), 
-                expand.for.polygon.y(compare.outcome[pre.chr==chr.types[1]]), 
-                col=this.col[pre.chr==chr.types[1]],
+        polygon.x.and.y <- expand.for.polygon(x=pos[pre.chr==chr.types[1]], y=compare.outcome[pre.chr==chr.types[1]])
+        polygon(polygon.x.and.y$x, 
+                polygon.x.and.y$y, 
+                col=this.col[pre.chr==chr.types[1]][1],
                 border=NA)
       }
       
@@ -467,9 +470,10 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                  lwd=my.legend.lwd[i],
                  lty=my.legend.lty[i])
           if (i %in% which.polygon & add.polygon) {
-            polygon(expand.for.polygon.x(pos[pre.chr==chr.types[j]] + compare.shift), 
-                    expand.for.polygon.y(compare.outcome[pre.chr==chr.types[j]]), 
-                    col=this.col[pre.chr==chr.types[j]],
+            polygon.x.and.y <- expand.for.polygon(x=pos[pre.chr==chr.types[j]] + compare.shift, y=compare.outcome[pre.chr==chr.types[j]])
+            polygon(polygon.x.and.y$x, 
+                    polygon.x.and.y$y, 
+                    col=this.col[pre.chr==chr.types[j]][1],
                     border=NA)
           }
           if (i == which.mark) {
@@ -557,13 +561,17 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   }
 }
 
-expand.for.polygon.x <- function(x){
-  return(c(x[1], x, x[length(x)]))
+expand.for.polygon <- function(x, y){
+  if(any(is.na(x)) | any(is.na(y))){
+    remove.na.x <- which(is.na(x))
+    remove.na.y <- which(is.na(y))
+    remove.na <- sort(c(remove.na.x, remove.na.y))
+    x <- x[-remove.na]
+    y <- y[-remove.na]
+  }
+  return(list(x=c(x[1], x, x[length(x)]),
+              y=c(0, y, 0)))
 }
-expand.for.polygon.y <- function(x){
-  return(c(0, x, 0))
-}
-
 
 #' Plot user-specified windows of haplotype-based and snp-based genome scans
 #'
