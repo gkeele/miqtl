@@ -226,7 +226,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  override.col=NULL,
                                  use.legend=TRUE, 
                                  main="",
-                                 my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.lty=1, my.legend.pos="topright",
+                                 my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.lty=1, my.legend.pos="topright", my.legend.bty="n",
                                  y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.7,
                                  my.x.lab.cex=0.7, my.x.labels=TRUE,
                                  no.title=FALSE, override.title=NULL, my.title.line=NA, title.cex=1,
@@ -234,7 +234,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  thresholds.lwd=NULL, thresholds.legend.pos="topleft", thresholds.lty=NULL,
                                  add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE,
                                  mark.locus=NULL, mark.locus.col="red", which.mark=1,
-                                 add.polygon=FALSE, which.polygon=1){
+                                 add.polygon=FALSE, which.polygon=1,
+                                 my.type="l", my.pch=20, my.cex=0.5){
   # If list has no names, use.legend is set to FALSE
   if (is.null(names(scan.list))){ use.legend=FALSE }
   if (is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
@@ -243,6 +244,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   if (length(my.legend.lty) == 1) { my.legend.lty <- rep(my.legend.lty, length(scan.list)) }
   
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
+  if(length(my.type) < length(scan.list)) { my.type <- rep(my.type, length(scan.list)) } 
+  if(length(my.pch) < length(scan.list)) { my.pch <- rep(my.pch, length(scan.list)) } 
   
   distinguish.chr.type <- distinguish.chr.type[1]
   main.object <- scan.list[[1]]
@@ -278,9 +281,18 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   pre.chr <- pre.chr[order.i]
   pos <- pos[order.i]
 
-  min.pos <- tapply(pos, pre.chr, function(x) min(x, na.rm=TRUE))
-  max.pos <- tapply(pos, pre.chr, function(x) max(x, na.rm=TRUE))
   chr.types <- levels(pre.chr)
+  
+  ## Build scaffold
+  shift.vector <- build.position.scaffold(scan.list=scan.list, scale=scale)
+  if (!is.null(just.these.chr)) { shift.vector <- shift.vector[just.these.chr]}
+
+  updated.pos <- rep(NA, length(outcome))
+  names(updated.pos) <- names(outcome)
+  updated.pos[pre.chr==chr.types[1]] <- pos[pre.chr==chr.types[1]]
+  
+  #x.max <- sum(max.pos)+(length(chr.types)-1)
+  x.max <- sum(shift.vector)
   
   # Finding max y of plot window
   y.max <- ceiling(max(outcome, hard.thresholds)) 
@@ -332,13 +344,6 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     }
   }
   
-  ## For later plotting, like mark.locus
-  updated.pos <- rep(NA, length(outcome))
-  names(updated.pos) <- names(outcome)
-  updated.pos[pre.chr==chr.types[1]] <- pos[pre.chr==chr.types[1]]
-  
-  x.max <- sum(max.pos)+(length(chr.types)-1)
-  
   if (distinguish.chr.type == "box") { 
     this.col <- rep(main.colors[1], length(outcome)) 
   }
@@ -353,7 +358,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
        xlim=c(0, x.max), 
        ylim=c(-0.1, y.max), 
        xaxt="n", yaxt="n", ylab="", xlab="", main=NA,
-       frame.plot=FALSE, type="l", pch=20, cex=0.5, lwd=my.legend.lwd[1], lty=my.legend.lty[1], col=this.col[1])
+       frame.plot=FALSE, type=my.type[1], pch=my.pch[1], cex=my.cex, lwd=my.legend.lwd[1], lty=my.legend.lty[1], col=this.col[1])
   title(main=this.title, line=my.title.line, cex.main=title.cex)
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex)
@@ -366,9 +371,9 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
             border=NA)
   }
   
-  label.spots <- max.pos[1]/2
-  x.tick.spots <- c(0, max.pos[1])
-  shift <- max.pos[1]
+  label.spots <- shift.vector[1]/2
+  x.tick.spots <- c(0, shift.vector[1])
+  shift <- shift.vector[1]
   
   if(length(chr.types) > 1){
     for(i in 2:length(chr.types)){
@@ -381,9 +386,10 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
           
         }
       }
-      label.spots <- c(label.spots, shift + max.pos[i]/2)
-      x.tick.spots <- c(x.tick.spots, max.pos[i] + shift)
-      points(this.pos, outcome[pre.chr==chr.types[i]], type="l", lty=my.legend.lty[1], lwd=my.legend.lwd[1], col=this.col[pre.chr==chr.types[i]])
+      label.spots <- c(label.spots, shift + shift.vector[i]/2)
+      x.tick.spots <- c(x.tick.spots, shift + shift.vector[i])
+      points(this.pos, outcome[pre.chr==chr.types[i]], type=my.type[1], pch=my.pch[1],
+             lty=my.legend.lty[1], cex=my.cex, lwd=my.legend.lwd[1], col=this.col[pre.chr==chr.types[i]])
       if (1 %in% which.polygon & add.polygon) {
         polygon.x.and.y <- expand.for.polygon(x=this.pos, y=outcome[pre.chr==chr.types[i]])
         polygon(polygon.x.and.y$x, 
@@ -391,7 +397,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                 col=this.col[pre.chr==chr.types[i]][1],
                 border=NA)
       }
-      shift <- shift + max.pos[i]
+      shift <- shift + shift.vector[i]
     }
   }
   
@@ -429,8 +435,6 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       pre.chr <- pre.chr[order.i]
       pos <- pos[order.i]
         
-      min.pos <- tapply(pos, pre.chr, function(x) min(x, na.rm=TRUE))
-      max.pos <- tapply(pos, pre.chr, function(x) max(x, na.rm=TRUE))
       chr.types <- levels(pre.chr)
       
       ## Setting up colors for additional scans
@@ -444,8 +448,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
         this.col <- override.col[(as.numeric(as.character(pre.chr)))]
       }
       
-      compare.shift <- max.pos[1]
-      points(pos[pre.chr==chr.types[1]], compare.outcome[pre.chr==chr.types[1]], type="l", 
+      compare.shift <- shift.vector[1]
+      points(pos[pre.chr==chr.types[1]], compare.outcome[pre.chr==chr.types[1]], type=my.type[i], cex=my.cex, pch=my.pch[i],
              col=this.col[pre.chr==chr.types[1]], lwd=my.legend.lwd[i], lty=my.legend.lty[i])
       
       if (i %in% which.polygon & add.polygon) {
@@ -465,7 +469,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       
       if (length(chr.types) > 1) {
         for (j in 2:length(chr.types)) {
-          points(pos[pre.chr==chr.types[j]] + compare.shift, compare.outcome[pre.chr==chr.types[j]], type="l", 
+          points(pos[pre.chr==chr.types[j]] + compare.shift, compare.outcome[pre.chr==chr.types[j]], 
+                 type=my.type[i], cex=my.cex, pch=my.pch[i],
                  col=this.col[pre.chr==chr.types[j]], 
                  lwd=my.legend.lwd[i],
                  lty=my.legend.lty[i])
@@ -479,7 +484,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
           if (i == which.mark) {
             updated.pos[pre.chr==chr.types[j]] <- pos[pre.chr==chr.types[j]] + compare.shift
           }
-          compare.shift <- compare.shift + max.pos[j]
+          compare.shift <- compare.shift + shift.vector[j]
         }
       }
     }
@@ -526,28 +531,36 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   if (use.legend) {
     if (add.polygon) {
       these.lty <- my.legend.lty
+      these.lty[my.type != "l"] <- 0
+      these.pch <- my.pch
+      these.pch[my.type != "p"] <- NA
       these.lwd <- my.legend.lwd
       these.fill.col <- main.colors
       these.fill.border <- main.colors
       these.lty[which.polygon] <- these.lwd[which.polygon] <- NA
       these.fill.col[!(1:length(scan.list) %in% which.polygon)] <- these.fill.border[!(1:length(scan.list) %in% which.polygon)] <-  NA
-      this.x.intersp=ifelse(is.na(these.fill.col), 2, 0.5)
-      
+      this.x.intersp=sapply(1:length(these.fill.col), function(x) ifelse(is.na(these.fill.col[x]) & my.type[x] == "l", 2, 0.5))
       legend(my.legend.pos, 
              legend=names(scan.list), 
              lty=these.lty, 
+             pch=these.pch,
              lwd=these.lwd,
              fill=these.fill.col,
              border=these.fill.border,
              x.intersp=this.x.intersp,
-             col=main.colors[1:length(scan.list)], bty="n", cex=my.legend.cex)
+             col=main.colors[1:length(scan.list)], bty=my.legend.bty, cex=my.legend.cex)
     }
     else {
+      these.lty <- my.legend.lty
+      these.lty[my.type != "l"] <- 0
+      these.pch <- my.pch
+      these.pch[my.type != "p"] <- NA
       legend(my.legend.pos, 
              legend=names(scan.list), 
-             lty=my.legend.lty, 
+             lty=these.lty, 
+             pch=these.pch,
              lwd=my.legend.lwd, 
-             col=main.colors[1:length(scan.list)], bty="n", cex=my.legend.cex)
+             col=main.colors[1:length(scan.list)], bty=my.legend.bty, cex=my.legend.cex)
     }
   }
   if (!is.null(hard.thresholds)) {
@@ -557,8 +570,31 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   }
   if (!is.null(thresholds.legend)) {
     legend(thresholds.legend.pos, legend=thresholds.legend, col=thresholds.col, lty=thresholds.lty,
-           lwd=thresholds.lwd, bty="n", cex=my.legend.cex)
+           lwd=thresholds.lwd, bty=my.legend.bty, cex=my.legend.cex)
   }
+}
+
+build.position.scaffold <- function(scan.list, scale) {
+  for (i in 1:length(scan.list)) {
+    chr <- scan.list[[i]]$chr
+    pos <- scan.list[[i]]$pos[[scale]]
+    ## Handling X
+    has.X <- FALSE
+    if(any(chr=="X")){
+      has.X <- TRUE
+      chr[chr=="X"] <- max(as.numeric(unique(chr[chr != "X"]))) + 1
+    }
+    
+    pre.chr <- as.factor(as.numeric(chr))
+    max.pos <- tapply(pos, pre.chr, function(x) max(x, na.rm=TRUE))
+    if (i == 1) {
+      total.max.pos <- rep(0, length(max.pos))
+    }
+    total.max.pos <- sapply(1:length(max.pos), function(x) max(max.pos[x], total.max.pos[x]))
+  }
+  names(total.max.pos) <- names(max.pos)
+  if (has.X) { names(total.max.pos)[length(total.max.pos)] <- "X" }
+  return(total.max.pos)
 }
 
 expand.for.polygon <- function(x, y){
@@ -613,7 +649,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
                                   y.max.manual=NULL,
                                   my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.5,
                                   my.x.line=2, my.x.axis.cex=1, my.xlab.cex=1, x.padj=-0.3,
-                                  my.x.labels=TRUE, override.xlab=NULL, 
+                                  my.x.labels=TRUE, override.xlab=NULL, include.x.ticks=TRUE, drop.x.tick=FALSE,
                                   my.title.line=0.5, my.title.cex=1,
                                   hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL, thresholds.lwd=2,
                                   use.legend=TRUE, my.legend.cex=0.6, my.legend.pos="topright", my.bty="n",
@@ -745,7 +781,15 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   x.ticks <- seq(x.min, x.max, length.out=5)
   x.ticks <- round(x.ticks)
   this.xlab <- ifelse(is.null(override.xlab), paste("Chr", chr, paste0("(", scale, ")")), override.xlab)
-  axis(side=1, tick=TRUE, cex.axis=my.x.axis.cex, labels=my.x.labels, padj=x.padj)
+  
+  if (!drop.x.tick) {
+    axis(side=1, tick=include.x.ticks, cex.axis=my.x.axis.cex, labels=my.x.labels, padj=x.padj)
+  }
+  else {
+    axis(side=1, tick=include.x.ticks, lwd.ticks=0,
+         cex.axis=my.x.axis.cex, labels=my.x.labels, padj=x.padj)
+  }
+  
   mtext(text=this.xlab, side=1, line=my.x.line, cex=my.xlab.cex)
 
   axis(side=2, las=2, cex.axis=my.y.axis.cex)
