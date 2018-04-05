@@ -130,13 +130,15 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
   #-----------------------------
   # Rename map data columns
   #-----------------------------
-  marker <- map[,map.locus_name.colname]
-  chr <- map[,map.chr.colname]
-  bp <- map[,map.physical_dist.colname]
-  pos <- map[,map.genetic_dist.colname]
+  map.chr <- as.character(map[,map.chr.colname])
+  keep <- map.chr %in% chr
+  map.chr <- as.character(map[,map.chr.colname])[keep]
+  marker <- as.character(map[,map.locus_name.colname])[keep]
+  bp <- map[,map.physical_dist.colname][keep]
+  pos <- map[,map.genetic_dist.colname][keep]
   
-  map <- cbind(marker, chr, bp, pos)
-  colnames(map) <- c("marker", "chr", "bp", "pos")
+  map <- data.frame(marker=marker, chr=map.chr, bp=bp, pos=pos, stringsAsFactors=FALSE)
+  names(map) <- c("marker", "chr", "bp", "pos")
   
   #-----------------------------
   # Combining data of individuals
@@ -148,14 +150,15 @@ convert.DOQTL.to.HAPPY <- function(DOQTL.recon.output.path,
       if(in.log.scale){
         prsmth <- exp(prsmth)
       }
-      marker <- rownames(prsmth)
+      data.marker <- rownames(prsmth)
       subject <- rep(samples[j], nrow(prsmth))
-      one.sample.data <- data.frame(marker, subject,  prsmth)
-      combined.data <- merge(x=map, y=one.sample.data, by.x="marker", by.y="marker")[,c(1:5,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
+      one.sample.data <- data.frame(marker=data.marker, subject=subject, prsmth, stringsAsFactors=FALSE)
+      this.map <- map[map$chr %in% chr[i],]
+      combined.data <- merge(x=this.map, y=one.sample.data, by.x="marker", by.y="marker")[,c(1:5,c(1,9,16,22,27,31,34,36,2,3,10,4,11,
                                                                                               17,5,12,18,23,6,13,19,24,28,7,14,
                                                                                               20,25,29,32,8,15,21,26,30,33,35)+5)]
       if(physical_dist.is.Mb){ combined.data$bp <- combined.data$bp*1000000 }
-      combined.data <- combined.data[combined.data$chr == chr[i],]
+      #combined.data <- combined.data[combined.data$chr == chr[i],]
     
       if(!exists('all.subjects')){
         all.subjects <- combined.data
