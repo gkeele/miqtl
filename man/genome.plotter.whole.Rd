@@ -19,8 +19,8 @@ genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
   thresholds.legend.pos = "topleft", thresholds.lty = NULL,
   add.chr.to.label = FALSE, axis.cram = TRUE, include.x.axis.line = TRUE,
   mark.locus = NULL, mark.locus.col = "red", which.mark = 1,
-  add.polygon = FALSE, which.polygon = 1, my.type = "l", my.pch = 20,
-  my.cex = 0.5)
+  mark.manual = list(chr = NULL, pos = NULL), add.polygon = FALSE,
+  which.polygon = 1, my.type = "l", my.pch = 20, my.cex = 0.5)
 }
 \arguments{
 \item{scan.list}{A list of scan.h2lmm() objects that are to be plotted within the same genome scan plot.}

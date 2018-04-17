@@ -234,6 +234,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  thresholds.lwd=NULL, thresholds.legend.pos="topleft", thresholds.lty=NULL,
                                  add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE,
                                  mark.locus=NULL, mark.locus.col="red", which.mark=1,
+                                 mark.manual=list(chr=NULL,
+                                                  pos=NULL),
                                  add.polygon=FALSE, which.polygon=1,
                                  my.type="l", my.pch=20, my.cex=0.5){
   # If list has no names, use.legend is set to FALSE
@@ -258,6 +260,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     plot.this <- "p.value"
     this.ylab <- expression("-log"[10]*"P")
   }
+  if (is.null(names(outcome))) { names(outcome) <- main.object$loci } # Option for SNP scan
+  
   chr <- main.object$chr
   pos <- ifelse(rep(scale=="Mb", length(outcome)), main.object$pos$Mb, main.object$pos$cM)
   
@@ -283,7 +287,9 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
 
   chr.types <- levels(pre.chr)
   
-  ## Build scaffold
+  ##################################################################
+  ######################### Build scaffold ######################### 
+  ##################################################################
   shift.vector <- build.position.scaffold(scan.list=scan.list, scale=scale)
   if (!is.null(just.these.chr)) { shift.vector <- shift.vector[just.these.chr]}
 
@@ -291,8 +297,9 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   names(updated.pos) <- names(outcome)
   updated.pos[pre.chr==chr.types[1]] <- pos[pre.chr==chr.types[1]]
   
-  #x.max <- sum(max.pos)+(length(chr.types)-1)
   x.max <- sum(shift.vector)
+  ##################################################################
+  ##################################################################
   
   # Finding max y of plot window
   y.max <- ceiling(max(outcome, hard.thresholds)) 
@@ -526,7 +533,10 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE)
   }
   if (!is.null(mark.locus)) {
-    rug(x=updated.pos[which(names(updated.pos) == mark.locus)], lwd=4, col=mark.locus.col)
+    rug(x=updated.pos[which(names(updated.pos) %in% mark.locus)], lwd=4, col=mark.locus.col)
+  }
+  if (!is.null(mark.manual$chr)) {
+    rug(x=calc.manual.mark.locus(shift.vector=shift.vector, mark.manual=mark.manual), lwd=4, col=mark.locus.col)
   }
   if (use.legend) {
     if (add.polygon) {
@@ -607,6 +617,17 @@ expand.for.polygon <- function(x, y){
   }
   return(list(x=c(x[1], x, x[length(x)]),
               y=c(0, y, 0)))
+}
+
+calc.manual.mark.locus <- function(shift.vector, mark.manual) {
+  here <- which(names(shift.vector) == mark.manual$chr)
+  if (here == 1) {
+    new.pos <- mark.manual$pos
+  }
+  else {
+    new.pos <- sum(shift.vector[1:(here - 1)]) + mark.manual$pos
+  }
+  return(new.pos)
 }
 
 #' Plot user-specified windows of haplotype-based and snp-based genome scans
