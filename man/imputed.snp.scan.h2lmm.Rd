@@ -5,7 +5,7 @@
 \title{Run a SNP-based genome scan from probabilities stored in a genome cache directory and founder strain
 alleles stored .allele files}
 \usage{
-imputed.snp.scan.h2lmm(data, formula, K, allele.dir, genomecache,
+imputed.snp.scan.h2lmm(data, formula, K, allele.dir = NULL, genomecache,
   model = c("additive", "full"), use.par = "h2", chr = "all",
   brute = TRUE, use.fix.par = FALSE, just.these.loci = NULL,
   print.locus.fit = FALSE, use.progress.bar = TRUE, condition.loci = NULL,
@@ -23,8 +23,8 @@ based on SNP genotypes or the founder haplotype probabilities. Colnames and rown
 the SUBJECT.NAME column in the data frame. If no K matrix is specified, either lmer is used (if sparse random effects
 are included in the formula) or a fixed effect model (equivalent to lm).}
 
-\item{allele.dir}{The path to the directory of .allele files that specify which SNP alleles correspond
-to which founder haplotype. .allele files for a format used by HAPPY.}
+\item{allele.dir}{DEFAULT: NULL. The path to the directory of .allele files that specify which SNP alleles correspond
+to which founder haplotype. If NULL, X.list must be provided.}
 
 \item{genomecache}{The path to the genome cache directory. The genome cache is a particularly structured
 directory that stores the haplotype probabilities/dosages at each locus. It has an additive model

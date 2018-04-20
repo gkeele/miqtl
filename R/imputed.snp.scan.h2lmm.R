@@ -11,8 +11,8 @@
 #' based on SNP genotypes or the founder haplotype probabilities. Colnames and rownames should match
 #' the SUBJECT.NAME column in the data frame. If no K matrix is specified, either lmer is used (if sparse random effects
 #' are included in the formula) or a fixed effect model (equivalent to lm).
-#' @param allele.dir The path to the directory of .allele files that specify which SNP alleles correspond
-#' to which founder haplotype. .allele files for a format used by HAPPY.
+#' @param allele.dir DEFAULT: NULL. The path to the directory of .allele files that specify which SNP alleles correspond
+#' to which founder haplotype. If NULL, X.list must be provided.
 #' @param genomecache The path to the genome cache directory. The genome cache is a particularly structured
 #' directory that stores the haplotype probabilities/dosages at each locus. It has an additive model
 #' subdirectory and a full model subdirectory. Each contains subdirectories for each chromosome, which then
@@ -40,7 +40,8 @@
 #' @export
 #' @examples imputed.snp.scan.h2lmm()
 imputed.snp.scan.h2lmm <- function(data, formula, K,
-                                   allele.dir, genomecache,
+                                   allele.dir=NULL, 
+                                   genomecache,
                                    model=c("additive", "full"),
                                    use.par="h2", chr="all", brute=TRUE, use.fix.par=FALSE, 
                                    just.these.loci=NULL,
