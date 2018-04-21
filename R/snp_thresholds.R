@@ -54,7 +54,8 @@ snp.null.par.bs.threshold.scan <- function(scan.object,
                                           use.par=use.par, chr=chr, brute=brute, use.fix.par=use.fix.par, seed=seed, 
                                           use.chol=use.chol,
                                           just.these.loci=NULL, print.locus.fit=print.locus.fit,
-                                          X.list=scan.object$X.list, return.X.list=FALSE, ..)
+                                          X.list=scan.object$X.list, return.X.list=FALSE,
+                                          ...)
     if(keep.full.scans){
       full.results[i,] <- par.bs.scan$p.value
     }
