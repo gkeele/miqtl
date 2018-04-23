@@ -5,9 +5,9 @@
 \title{Calculate the r^2 (squared correlation coefficient) between the genotype at all loci on a chromosome 
 and a specified SNP marker.}
 \usage{
-pairwise.cor.snp.scan(data, formula, K, allele.dir, genomecache,
-  model = c("additive", "full"), chr, point.locus, just.these.loci = NULL,
-  print.progress = FALSE, exclusion.freq = .Machine$double.eps, X.list, ...)
+pairwise.cor.snp.scan(data, formula, K, genomecache, model = c("additive",
+  "full"), chr, point.locus, just.these.loci = NULL, print.progress = FALSE,
+  exclusion.freq = .Machine$double.eps, X.list, ...)
 }
 \arguments{
 \item{data}{A data frame with outcome and potential covariates. Should also have individual IDs
@@ -19,9 +19,6 @@ that link to IDs in the genome cache  with a column named "SUBJECT.NAME".}
 based on SNP genotypes or the founder haplotype probabilities. Colnames and rownames should match
 the SUBJECT.NAME column in the data frame. If no K matrix is specified, either lmer is used (if sparse random effects
 are included in the formula) or a fixed effect model (equivalent to lm).}
-
-\item{allele.dir}{The path to the directory of .allele files that specify which SNP alleles correspond
-to which founder haplotype. .allele files for a format used by HAPPY.}
 
 \item{genomecache}{The path to the genome cache directory. The genome cache is a particularly structured
 directory that stores the haplotype probabilities/dosages at each locus. It has an additive model
@@ -44,7 +41,7 @@ the peak SNP from a scan.}
 \item{exclusion.freq}{DEFAULT: .Machine$double.eps. Loci with observed minor allele frequencies beneath
 the specified value are removed from the scan.}
 
-\item{X.list}{DEFAULT: NULL. This specifies the SNP-based design matrices for all the loci. If a scan
+\item{X.list}{This specifies the SNP-based design matrices for all the loci. If a scan
 of the same population with the same markers has been performed, this option can save a lot of time.}
 }
 \description{

@@ -12,8 +12,6 @@
 #' based on SNP genotypes or the founder haplotype probabilities. Colnames and rownames should match
 #' the SUBJECT.NAME column in the data frame. If no K matrix is specified, either lmer is used (if sparse random effects
 #' are included in the formula) or a fixed effect model (equivalent to lm).
-#' @param allele.dir The path to the directory of .allele files that specify which SNP alleles correspond
-#' to which founder haplotype. .allele files for a format used by HAPPY.
 #' @param genomecache The path to the genome cache directory. The genome cache is a particularly structured
 #' directory that stores the haplotype probabilities/dosages at each locus. It has an additive model
 #' subdirectory and a full model subdirectory. Each contains subdirectories for each chromosome, which then
@@ -28,12 +26,12 @@
 #' @param print.progress DEFAULT: FALSE. If TRUE, prints out how many loci have been fit currently.
 #' @param exclusion.freq DEFAULT: .Machine$double.eps. Loci with observed minor allele frequencies beneath
 #' the specified value are removed from the scan.
-#' @param X.list DEFAULT: NULL. This specifies the SNP-based design matrices for all the loci. If a scan
+#' @param X.list This specifies the SNP-based design matrices for all the loci. If a scan
 #' of the same population with the same markers has been performed, this option can save a lot of time.
 #' @export
 #' @examples pairwise.cor.snp.scan()
 pairwise.cor.snp.scan <- function(data, formula, K,
-                                  allele.dir, genomecache,
+                                  genomecache,
                                   model=c("additive", "full"), chr, point.locus,
                                   just.these.loci=NULL,
                                   print.progress=FALSE,
