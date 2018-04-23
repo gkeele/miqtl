@@ -237,7 +237,7 @@ calc.mi.LRT <- function(){
 }
 ###########################
 
-#' @export
+#' @export straineff.mapping.matrix
 straineff.mapping.matrix <- function(M=8){
   T <- M*(M+1)/2
   mapping <- matrix(rep(0, T*M), M, T)
@@ -335,7 +335,7 @@ get.p.value <- function(fit0,
   return(p.value)
 }
 
-#' @export
+#' @export get.allele.effects.from.fixef
 get.allele.effects.from.fixef <- function(fit, 
                                           founders, 
                                           allele.in.intercept, 
@@ -349,7 +349,7 @@ get.allele.effects.from.fixef <- function(fit,
   return(as.vector(scale(effects, center=center, scale=scale)))
 }
 
-#' @export
+#' @export get.allele.effects.from.ranef
 get.allele.effects.from.ranef <- function(fit, 
                                           founders=NULL, 
                                           center=TRUE, 

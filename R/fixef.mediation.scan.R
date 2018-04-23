@@ -1,4 +1,4 @@
-#' @export
+#' @export extract.mediation.qr
 extract.mediation.qr <- function(genomecache, 
                                  id="SUBJECT.NAME", 
                                  locus,
@@ -78,7 +78,7 @@ extract.mediation.qr <- function(genomecache,
                     formula=Reduce(paste, deparse(formula)))
 }
 
-#' @export
+#' @export mediation.scan.qr
 mediation.scan.qr <- function(mediation.qr.object, 
                               data, 
                               phenotype,
@@ -172,7 +172,7 @@ mediation.scan.qr <- function(mediation.qr.object,
   return(output)
 }
 
-#' @export
+#' @export run.qr.permutation.threshold.mediation.scans
 run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix, 
                                                          mediation.qr.object, 
                                                          genomecache,
@@ -241,7 +241,7 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix,
                                                max=max.p))))
 }
 
-#' @export
+#' @export extract.chr.max.statistics.from.genomewide
 extract.chr.max.statistics.from.genomewide <- function(full.perm.scans, 
                                                        chr, 
                                                        use.lod=FALSE){
@@ -254,7 +254,7 @@ extract.chr.max.statistics.from.genomewide <- function(full.perm.scans,
                                                max=apply(full.results, 1, function(x) max(x, na.rm=TRUE))))))
 }
 
-#' @export
+#' @export extract.mediation.expression.qr
 extract.mediation.expression.qr <- function(genomecache, 
                                             id="SUBJECT.NAME", 
                                             locus,

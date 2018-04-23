@@ -24,7 +24,7 @@
 #' @param just.these.loci DEFAULT: NULL. Specifies a reduced set of loci to fit. If loci is just one locus, the alternative model fit
 #' will also be output as fit1.
 #' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar
-#' @export
+#' @export extract.qr
 #' @examples extract.qr()
 extract.qr <- function(genomecache, 
                        id="SUBJECT.NAME",
@@ -124,7 +124,7 @@ get.allele.effects.from.fixef.eQTL <- function(qr.alt, y, founders, intercept.al
 #' @param debug.single.fit DEFAULT: FALSE. If TRUE, a browser() call is activated after the first locus is fit. This option
 #' allows developers to more easily debug while still using the actual R package.
 #' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar while code runs.
-#' @export
+#' @export scan.qr
 #' @examples scan.qr()
 scan.qr <- function(qr.object, 
                     data, 
@@ -227,7 +227,7 @@ scan.qr <- function(qr.object,
 #' output matrix.
 #' @param seed DEFAULT: 1. Samplings of the index is a random process, thus a seed is necessary
 #' to produce the same results over multiple runs and different machines.
-#' @export
+#' @export generate.qr.permutation.index.matrix
 #' @examples generate.qr.permutation.index.matrix()
 generate.qr.permutation.index.matrix <- function(qr.scan.object=NULL, 
                                                  n=NULL, 
@@ -267,7 +267,7 @@ generate.qr.permutation.index.matrix <- function(qr.scan.object=NULL,
 #' will also be output as fit1.
 #' @param use.progress.bar DEFAULT: FALSE. Results in a progress bar while code runs.
 #' @param report.perm.scans DEFAULT: FALSE. Outputs the completion of permutation scans.
-#' @export
+#' @export run.qr.permutation.threshold.scans
 #' @examples run.qr.permutation.threshold.scans()
 run.qr.permutation.threshold.scans <- function(perm.ind.matrix, 
                                                qr.object,
