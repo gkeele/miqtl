@@ -173,9 +173,13 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
   return(output)
 }
 
-extract.imputed.design.matrix.from.doqtl.genotype <- function(probs, allele.dir, 
-                                                              snp, snp.chr, model, 
-                                                              founders, mapping.matrix){
+extract.imputed.design.matrix.from.doqtl.genotype <- function(probs, 
+                                                              allele.dir, 
+                                                              snp, 
+                                                              snp.chr, 
+                                                              model, 
+                                                              founders, 
+                                                              mapping.matrix){
   grep.command <- paste0("grep -A 3 '", snp, "' ", 
                          paste0(allele.dir, "/chr", snp.chr, ".alleles"))
   founder.alleles.table <- system(grep.command, intern=TRUE)
@@ -190,7 +194,7 @@ extract.imputed.design.matrix.from.doqtl.genotype <- function(probs, allele.dir,
                           as.numeric(full.ref.allele.count == 0))
   colnames(full.genotypes) <- c("ref.hom", "het", "alt.hom")
   genotype.probs <- probs %*% full.genotypes
-  if((2*sum(genotype.probs[,1] + sum(genotype.probs[,2])))/(2*nrow(genotype.probs)) > 0.5){
+  if((2*sum(genotype.probs[,1]) + sum(genotype.probs[,2]))/(2*nrow(genotype.probs)) > 0.5){
     X <- cbind(genotype.probs[,3], genotype.probs[,2])
   }
   else{
