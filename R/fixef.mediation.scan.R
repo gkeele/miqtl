@@ -340,7 +340,7 @@ extract.mediation.expression.qr <- function(genomecache,
                     formula=Reduce(paste, deparse(formula)))
 }
 
-#' @export run.qr.permutation.threshold.mediation.scans
+#' @export run.qr.permutation.threshold.mediation.expression.scans
 run.qr.permutation.threshold.mediation.expression.scans <- function(perm.ind.matrix, 
                                                                     mediation.qr.object, 
                                                                     genomecache,
