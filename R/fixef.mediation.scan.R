@@ -381,13 +381,14 @@ run.qr.permutation.threshold.mediation.expression.scans <- function(perm.ind.mat
   }
   min.p <- max.p <- rep(NA, length(scan.index))
   y <- model.frame(formula, data=data)[,1]
-  data <- data[,!grepl(pattern="^gene_", perl=TRUE, x=colnames(data))]
   permute.var <- !(colnames(data) %in% all.vars(formula)[-1])
   for(i in 1:length(scan.index)){
     ## Permuting all variables but covariates
     this.data <- data.frame(y=y, data[perm.ind.matrix[,scan.index[i]], permute.var], data[, !permute.var])
     this.mediation.qr.object <- extract.mediation.expression.qr(genomecache=genomecache, id=id,
-                                                                data=this.data, gene.data=gene.data, formula=as.formula(rh.formula), 
+                                                                data=this.data, 
+                                                                gene.data=gene.data, 
+                                                                formula=as.formula(rh.formula), 
                                                                 model=model, condition.loci=condition.loci,
                                                                 chr=chr, locus=locus, use.progress.bar=FALSE)
     this.scan <- mediation.scan.qr(mediation.qr.object=this.mediation.qr.object, data=this.data, 
