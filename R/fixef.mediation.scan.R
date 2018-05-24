@@ -275,7 +275,6 @@ extract.mediation.expression.qr <- function(genomecache,
   ref.genes <- paste0("gene_", gene.data[,4])
   ref.genes <- chartr(old="()-", new="...", ref.genes)
   
-  
   gene.index <- unlist(sapply(1:length(genes), function(x) which(genes[x] == ref.genes)))
   gene.chr <- gene.data[,1][gene.index]
   gene.chr <- gsub(gene.chr, pattern="^chr", replacement="", perl=TRUE)
@@ -340,4 +339,75 @@ extract.mediation.expression.qr <- function(genomecache,
                     subjects=subjects,
                     formula=Reduce(paste, deparse(formula)))
 }
+
+#' @export run.qr.permutation.threshold.mediation.scans
+run.qr.permutation.threshold.mediation.expression.scans <- function(perm.ind.matrix, 
+                                                                    mediation.qr.object, 
+                                                                    genomecache,
+                                                                    phenotype, 
+                                                                    data,
+                                                                    gene.data,
+                                                                    keep.full.scans=FALSE, 
+                                                                    scan.index=NULL, 
+                                                                    id="SUBJECT.NAME",
+                                                                    chr="all", 
+                                                                    use.progress.bar=TRUE,
+                                                                    ...){
+  
+  if(is.null(scan.index)){ scan.index <- 1:ncol(perm.ind.matrix) }
+  
+  model <- mediation.qr.object$model
+  condition.loci <- mediation.qr.object$condition.loci
+  locus <- mediation.qr.object$locus
+  
+  genes <- names(mediation.qr.object$qr.0.list)
+  rh.formula <- mediation.qr.object$formula
+  genes.chr <- mediation.qr.object$chr
+  if(chr[1] != "all"){
+    genes <- genes[genes.chr %in% chr]
+  }
+  formula.string <- paste(phenotype, rh.formula, "+", id)
+  formula <- formula(formula.string)
+  
+  if(chr == "all"){ chr.levels <- unique(genes.chr) }
+  else{ chr.levels <- chr }
+  
+  full.p <- these.pos <- NULL
+  if(keep.full.scans){
+    full.p <- matrix(NA, nrow=length(scan.index), ncol=length(genes))
+    colnames(full.p) <- genes
+    these.pos <- list(Mb=mediation.qr.object$pos$Mb[genes.chr %in% chr.levels],
+                      cM=mediation.qr.object$pos$cM[genes.chr %in% chr.levels])
+  }
+  min.p <- max.p <- rep(NA, length(scan.index))
+  y <- model.frame(formula, data=data)[,1]
+  data <- data[,!grepl(pattern="^gene_", perl=TRUE, x=colnames(data))]
+  permute.var <- !(colnames(data) %in% all.vars(formula)[-1])
+  for(i in 1:length(scan.index)){
+    ## Permuting all variables but covariates
+    this.data <- data.frame(y=y, data[perm.ind.matrix[,scan.index[i]], permute.var], data[, !permute.var])
+    this.mediation.qr.object <- extract.mediation.expression.qr(genomecache=genomecache, id=id,
+                                                                data=this.data, gene.data=gene.data, formula=as.formula(rh.formula), 
+                                                                model=model, condition.loci=condition.loci,
+                                                                chr=chr, locus=locus, use.progress.bar=FALSE)
+    this.scan <- mediation.scan.qr(mediation.qr.object=this.mediation.qr.object, data=this.data, 
+                                   phenotype="y", id=id, chr=chr, 
+                                   return.allele.effects=FALSE, use.progress.bar=use.progress.bar,
+                                   ...)
+    if(keep.full.scans){
+      full.p[i,] <- this.scan$p.value
+    }
+    min.p[i] <-  min(this.scan$p.value)
+    max.p[i] <- max(this.scan$p.value)
+    cat("\n", "Threshold scan: index", scan.index[i], "complete ---------- final index of this run:", scan.index[length(scan.index)], "\n")
+  }
+  return(list(full.results=list(LOD=NULL,
+                                p.value=full.p,
+                                chr=gene.chr[gene.chr %in% chr.levels], 
+                                pos=these.pos), 
+              max.statistics=list(LOD=NULL,
+                                  p.value=list(min=min.p,
+                                               max=max.p))))
+}
+
 

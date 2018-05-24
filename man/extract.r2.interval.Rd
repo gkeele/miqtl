@@ -5,7 +5,7 @@
 \title{Calculate the r^2 (squared correlation coefficient) between the genotype at all loci on a chromosome 
 and a specified SNP marker.}
 \usage{
-\method{extract}{r2.interval}(scan.object, r2.scan.object, r2.level = 0.6)
+extract.r2.interval(scan.object, r2.scan.object, r2.level = 0.6)
 }
 \arguments{
 \item{scan.object}{An SNP scan object produced by imputed.snp.scan.h2lmm().}
