@@ -404,7 +404,7 @@ run.qr.permutation.threshold.mediation.expression.scans <- function(perm.ind.mat
   }
   return(list(full.results=list(LOD=NULL,
                                 p.value=full.p,
-                                chr=gene.chr[gene.chr %in% chr.levels], 
+                                chr=genes.chr[genes.chr %in% chr.levels], 
                                 pos=these.pos), 
               max.statistics=list(LOD=NULL,
                                   p.value=list(min=min.p,
