@@ -279,7 +279,7 @@ extract.mediation.expression.qr <- function(genomecache,
   gene.chr <- gene.data[,1][gene.index]
   gene.chr <- gsub(gene.chr, pattern="^chr", replacement="", perl=TRUE)
   
-  ## Extracting chromatin position
+  ## Extracting gene position
   pos <- gene.data[,2][gene.index]/1e6
 
   h <- DiploprobReader$new(genomecache)

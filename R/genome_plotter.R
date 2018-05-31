@@ -245,9 +245,10 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   if (is.null(thresholds.lty)){ thresholds.lty <- rep(2, ifelse(is.null(hard.thresholds), 0, length(hard.thresholds))) }
   if (length(my.legend.lty) == 1) { my.legend.lty <- rep(my.legend.lty, length(scan.list)) }
   
-  if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
-  if(length(my.type) < length(scan.list)) { my.type <- rep(my.type, length(scan.list)) } 
-  if(length(my.pch) < length(scan.list)) { my.pch <- rep(my.pch, length(scan.list)) } 
+  if (length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
+  if (length(my.type) < length(scan.list)) { my.type <- rep(my.type, length(scan.list)) } 
+  if (length(my.pch) < length(scan.list)) { my.pch <- rep(my.pch, length(scan.list)) } 
+  if (length(mark.locus.col) == 1) { mark.locus.col <- rep(mark.locus.col, 2) }
   
   distinguish.chr.type <- distinguish.chr.type[1]
   main.object <- scan.list[[1]]
@@ -533,10 +534,10 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE)
   }
   if (!is.null(mark.locus)) {
-    rug(x=updated.pos[which(names(updated.pos) %in% mark.locus)], lwd=4, col=mark.locus.col)
+    rug(x=updated.pos[which(names(updated.pos) %in% mark.locus)], lwd=4, col=mark.locus.col[1])
   }
   if (!is.null(mark.manual$chr)) {
-    rug(x=calc.manual.mark.locus(shift.vector=shift.vector, mark.manual=mark.manual), lwd=4, col=mark.locus.col)
+    rug(x=calc.manual.mark.locus(shift.vector=shift.vector, mark.manual=mark.manual), lwd=4, col=mark.locus.col[2])
   }
   if (use.legend) {
     if (add.polygon) {
