@@ -180,7 +180,7 @@ extract.imputed.design.matrix.from.doqtl.genotype <- function(probs,
                                                               model, 
                                                               founders, 
                                                               mapping.matrix){
-  grep.command <- paste0("grep -A 3 '", snp, "' ", 
+  grep.command <- paste0("grep -w -A 3 '", snp, "' ", 
                          paste0(allele.dir, "/chr", snp.chr, ".alleles"))
   founder.alleles.table <- system(grep.command, intern=TRUE)
   founder.alleles.table <- matrix(unlist(strsplit(x=founder.alleles.table[-1], split="\t", fixed=TRUE)), nrow=3, byrow=TRUE)[,-1] # Remove column of "allele"
