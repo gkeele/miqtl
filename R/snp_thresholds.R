@@ -36,9 +36,11 @@ snp.null.par.bs.threshold.scan <- function(scan.object,
   set.seed(seed)
   new.y.matrix <- matrix(NA, nrow=length(Xb), ncol=num.bs.scans)
   for(i in 1:num.bs.scans){
-    u <- c(mnormt::rmnorm(1, mean=rep(0, nrow(null.fit$x)), varcov=null.fit$K*null.fit$tau2.mle))
-    e <- rnorm(n=nrow(null.fit$x), mean=0, sd=sqrt(null.fit$sigma2.mle))
-    new.y.matrix[,i] <- Xb + u + e
+    #u <- c(mnormt::rmnorm(1, mean=rep(0, nrow(null.fit$x)), varcov=null.fit$K*null.fit$tau2.mle))
+    #e <- rnorm(n=nrow(null.fit$x), mean=0, sd=sqrt(null.fit$sigma2.mle))
+    # Occasionally u is singular, but u + e is not - seems to work
+    error <- c(mnormt::rmnorm(1, mean=rep(0, nrow(null.fit$x)), varcov=null.fit$K*null.fit$tau2.mle + diag(nrow(null.fit$K*null.fit$sigma2.mle))))
+    new.y.matrix[,i] <- Xb + error
   }
   for(i in 1:num.bs.scans){
     new.y <- data.frame(new.y=new.y.matrix[,i], SUBJECT.NAME=colnames(null.fit$K))
