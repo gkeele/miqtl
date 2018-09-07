@@ -168,6 +168,7 @@ mediation.scan.qr <- function(mediation.qr.object,
                  model.type=model,
                  p.value.method="ANOVA",
                  locus.effect.type="fixed",
+                 locus=locus,
                  n=length(y))
   return(output)
 }
