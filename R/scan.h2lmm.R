@@ -78,7 +78,7 @@ scan.h2lmm <- function(genomecache, data,
   ## Case where there are replicates and K is not specified, 
   ## then K is forced to be identity
   if(pheno.id != geno.id & is.null(K)){
-    K <- diag(unique(data[,geno.id]))
+    K <- diag(length(unique(data[,geno.id])))
     rownames(K) <- colnames(K) <- unique(data[,geno.id])
   }
   
