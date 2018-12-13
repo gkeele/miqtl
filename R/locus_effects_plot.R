@@ -13,6 +13,7 @@
 #' rgb(144, 0, 224, maxColorValue=255)). These are the established Collaborative Cross colors.
 #' @param add.connect.line DEFAULT: TRUE. Adds a connection line between the effects (or their mean).
 #' @param connect.lwd DEFAULT: 2. The line width of the connection line, if it is included
+#' @param connect.ltt DEFAULT: 1. The line type of the connection line, if it is included
 #' @param connect.col DEFAULT: "black". The color of the connection line, if it is included
 #' @param add DEFAULT: FALSE. If TRUE, a new plot is not initiated. The purpose is to allow multiple sets of
 #' effects to be included on a single plot.
@@ -29,7 +30,8 @@ plot_locus.effect.from.scan <- function(scan.object, locus,
                                               rgb(0, 160, 0, maxColorValue =255),
                                               rgb(240, 0, 0, maxColorValue = 255), 
                                               rgb(144, 0, 224, maxColorValue = 255)),
-                                        add.connect.line=TRUE, connect.lwd=2, connect.col="black",
+                                        add.connect.line=TRUE, connect.lwd=2, connect.lty = 1, 
+                                        connect.col="black",
                                         add=FALSE,
                                         ...){
   allele.effects <- scan.object$allele.effects
@@ -77,7 +79,8 @@ plot.ci <- function(midvals,
                     type="p",
                     use.this.lim=NULL,
                     main="",
-                    add.connect.line=TRUE, connect.lwd=2, connect.col="black",
+                    add.connect.line=TRUE, connect.lwd=2, connect.lty = 1, connect.col="black",
+                    lty=1,
                     ...)
 {
   nvals <- length(midvals)
@@ -103,7 +106,7 @@ plot.ci <- function(midvals,
   if("p"==type){
     pos <- nvals - 1:nvals + 0.5 + shift
     if (add.connect.line) {
-      lines(midvals, pos, col=connect.col, lwd=connect.lwd)
+      lines(midvals, pos, col=connect.col, lwd=connect.lwd, lty = connect.lty)
     }
     for(i in 1:nvals){
       #pos <- nvals-i + 0.5 + shift

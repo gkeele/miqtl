@@ -4,17 +4,18 @@
 \alias{genome.plotter.chr}
 \title{Plot single chromosome windows of haplotype-based genome scan}
 \usage{
-genome.plotter.chr(scan.object, chr, use.lod = FALSE, scale = c("Mb", "cM"),
-  main.col = "black", median.band.col = "gray88", main = "",
+genome.plotter.chr(scan.object, chr, use.lod = FALSE, scale = c("Mb",
+  "cM"), main.col = "black", median.band.col = "gray88", main = "",
   no.title = FALSE, override.title = NULL, my.y.line = 2,
   my.y.axis.cex = 1, y.max.manual = NULL, make.y.axis.sparse = FALSE,
-  my.ylab.cex = 1, my.x.line = 2, my.x.axis.cex = 1, my.xlab.cex = 1,
-  x.padj = 1, my.x.labels = TRUE, override.xlab = NULL,
-  my.title.line = 0.5, title.cex = 1, my.lwd = 1.5,
-  override.ylab = NULL, my.legend.cex = 0.6, my.type = "l",
-  point.cex = 0.5, hard.thresholds = NULL, thresholds.col = "red",
-  thresholds.legend = NULL, include.qtl.rug = FALSE, rug.pos = NULL,
-  rug.col = "gray50", physical.dist.is.Mb = TRUE)
+  my.ylab.cex = 1, my.x.line = 3, my.x.axis.cex = 1,
+  my.xlab.cex = 1, x.padj = 1, my.x.labels = TRUE,
+  override.xlab = NULL, my.title.line = 0.5, title.cex = 1,
+  my.lwd = 1.5, override.ylab = NULL, my.legend.cex = 0.6,
+  my.type = "l", point.cex = 0.5, hard.thresholds = NULL,
+  thresholds.col = "red", thresholds.legend = NULL,
+  include.qtl.rug = FALSE, rug.pos = NULL, rug.col = "gray50",
+  physical.dist.is.Mb = TRUE)
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object (ROP or multiple imputations). If multiple imputations, median and confidence interval 

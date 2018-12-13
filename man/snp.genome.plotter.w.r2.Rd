@@ -4,16 +4,16 @@
 \alias{snp.genome.plotter.w.r2}
 \title{Plot a single chromosome window of a SNP-based genome scan overlayed with r^2 information}
 \usage{
-snp.genome.plotter.w.r2(snp.scan, r2.object, scale = "Mb", zoom.in = FALSE,
-  zoom.in.by = 0.1, y.max.manual = NULL, my.y.line = 2,
-  my.y.axis.cex = 1, title = "", override.title = NULL,
-  my.title.line = NA, title.cex = 1, alt.col = NULL, this.cex = 1,
-  hard.thresholds = NULL, thresholds.col = "red",
-  thresholds.legend = NULL, my.legend.cex = 0.6,
-  my.legend.pos = "topleft", thresholds.lty = 2, thresholds.lwd = 1,
-  my.bty = "n", r2.bounds = NULL, bounds.col = "gray",
-  high.color = "red", low.color = "blue", add.outline = FALSE,
-  include.ramp = TRUE, ramp.cex = 0.7)
+snp.genome.plotter.w.r2(snp.scan, r2.object, scale = "Mb",
+  zoom.in = FALSE, zoom.in.by = 0.1, y.max.manual = NULL,
+  my.y.line = 2, my.y.axis.cex = 1, title = "",
+  override.title = NULL, my.title.line = NA, title.cex = 1,
+  alt.col = NULL, this.cex = 1, hard.thresholds = NULL,
+  thresholds.col = "red", thresholds.legend = NULL,
+  my.legend.cex = 0.6, my.legend.pos = "topleft", thresholds.lty = 2,
+  thresholds.lwd = 1, my.bty = "n", r2.bounds = NULL,
+  bounds.col = "gray", high.color = "red", low.color = "blue",
+  add.outline = FALSE, include.ramp = TRUE, ramp.cex = 0.7)
 }
 \arguments{
 \item{snp.scan}{An imputed.snp.scan.h2lmm() object.}

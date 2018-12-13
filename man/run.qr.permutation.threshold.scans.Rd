@@ -5,10 +5,10 @@
 \title{Runs permutation scans for significance thresholds based on an index permutation matrix object, the phenotype data, and
 pre-computed QR decompositions for all the models.}
 \usage{
-run.qr.permutation.threshold.scans(perm.ind.matrix, qr.object, phenotype, data,
-  keep.full.scans = FALSE, scan.index = NULL, id = "SUBJECT.NAME",
-  chr = "all", just.these.loci = NULL, use.progress.bar = FALSE,
-  report.perm.scans = FALSE, ...)
+run.qr.permutation.threshold.scans(perm.ind.matrix, qr.object, phenotype,
+  data, keep.full.scans = FALSE, scan.index = NULL,
+  id = "SUBJECT.NAME", chr = "all", just.these.loci = NULL,
+  use.progress.bar = FALSE, report.perm.scans = FALSE, ...)
 }
 \arguments{
 \item{perm.ind.matrix}{Output object from generate.qr.permutation.index.matrix().}

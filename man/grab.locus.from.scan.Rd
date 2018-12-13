@@ -5,8 +5,8 @@
 \title{Pulls loci from scan objects based on specified criteria}
 \usage{
 grab.locus.from.scan(scan.object, use.lod = FALSE, chr = "all",
-  criterion = c("min", "max"), return.value = c("marker", "position", "chr",
-  "index"))
+  criterion = c("min", "max"), return.value = c("marker", "position",
+  "chr", "index"))
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object (ROP or multiple imputations). If multiple imputations, median and confidence interval 

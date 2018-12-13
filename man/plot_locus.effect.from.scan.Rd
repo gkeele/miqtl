@@ -4,13 +4,14 @@
 \alias{plot_locus.effect.from.scan}
 \title{Plot the regression coefficients as allele effects for a single locus as a caterpillar plot from a scan object}
 \usage{
-plot_locus.effect.from.scan(scan.object, locus, main = "", names = c("ACI",
-  "BN", "BUF", "F344", "M520", "MR", "WKY", "WN"), col = c(rgb(240, 240, 0,
-  maxColorValue = 255), rgb(128, 128, 128, maxColorValue = 255), rgb(240, 128,
-  128, maxColorValue = 255), rgb(16, 16, 240, maxColorValue = 255), rgb(0, 160,
-  240, maxColorValue = 255), rgb(0, 160, 0, maxColorValue = 255), rgb(240, 0, 0,
-  maxColorValue = 255), rgb(144, 0, 224, maxColorValue = 255)),
-  add.connect.line = TRUE, connect.lwd = 2, connect.col = "black",
+plot_locus.effect.from.scan(scan.object, locus, main = "",
+  names = c("ACI", "BN", "BUF", "F344", "M520", "MR", "WKY", "WN"),
+  col = c(rgb(240, 240, 0, maxColorValue = 255), rgb(128, 128, 128,
+  maxColorValue = 255), rgb(240, 128, 128, maxColorValue = 255), rgb(16,
+  16, 240, maxColorValue = 255), rgb(0, 160, 240, maxColorValue = 255),
+  rgb(0, 160, 0, maxColorValue = 255), rgb(240, 0, 0, maxColorValue = 255),
+  rgb(144, 0, 224, maxColorValue = 255)), add.connect.line = TRUE,
+  connect.lwd = 2, connect.lty = 1, connect.col = "black",
   add = FALSE, ...)
 }
 \arguments{
@@ -34,6 +35,8 @@ rgb(144, 0, 224, maxColorValue=255)). These are the established Collaborative Cr
 
 \item{add}{DEFAULT: FALSE. If TRUE, a new plot is not initiated. The purpose is to allow multiple sets of
 effects to be included on a single plot.}
+
+\item{connect.ltt}{DEFAULT: 1. The line type of the connection line, if it is included}
 }
 \description{
 This function takes a scan object from scan.h2lmm() and plots out allele effect estimates

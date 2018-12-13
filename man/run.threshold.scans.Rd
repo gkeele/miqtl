@@ -5,8 +5,8 @@
 \title{Runs threshold scans from a matrix of outcomes, either parametric bootstraps from the null model or permutations}
 \usage{
 run.threshold.scans(sim.threshold.object, outcome.type = c("outcome",
-  "index"), keep.full.scans = TRUE, scan.index = NULL, genomecache, data,
-  use.multi.impute = TRUE, num.imp = 11, chr = "all",
+  "index"), keep.full.scans = TRUE, scan.index = NULL, genomecache,
+  data, use.multi.impute = TRUE, num.imp = 11, chr = "all",
   just.these.loci = NULL, scan.seed = 1, ...)
 }
 \arguments{

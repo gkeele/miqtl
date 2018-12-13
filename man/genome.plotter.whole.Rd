@@ -6,21 +6,22 @@
 \usage{
 genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
   scale = "Mb", main.colors = c("black", "cyan", "darkgreen"),
-  distinguish.chr.type = c("color", "box"), distinguish.box.col = "gray88",
-  distinguish.chr.col = c("gray60", "#008080", "greenyellow"),
-  override.col = NULL, use.legend = TRUE, main = "",
-  my.legend.cex = 0.6, my.legend.lwd = NULL, my.legend.lty = 1,
-  my.legend.pos = "topright", my.legend.bty = "n", y.max.manual = NULL,
-  my.y.line = 2, my.y.axis.cex = 1, my.y.lab.cex = 0.7,
-  my.x.lab.cex = 0.7, my.x.labels = TRUE, no.title = FALSE,
-  override.title = NULL, my.title.line = NA, title.cex = 1,
-  hard.thresholds = NULL, thresholds.col = "red",
+  distinguish.chr.type = c("color", "box"),
+  distinguish.box.col = "gray88", distinguish.chr.col = c("gray60",
+  "#008080", "greenyellow"), override.col = NULL, use.legend = TRUE,
+  main = "", my.legend.cex = 0.6, my.legend.lwd = NULL,
+  my.legend.lty = 1, my.legend.pos = "topright", my.legend.bty = "n",
+  y.max.manual = NULL, my.y.line = 2, my.y.axis.cex = 1,
+  my.y.lab.cex = 0.7, my.x.lab.cex = 0.7, my.x.labels = TRUE,
+  no.title = FALSE, override.title = NULL, my.title.line = NA,
+  title.cex = 1, hard.thresholds = NULL, thresholds.col = "red",
   thresholds.legend = NULL, thresholds.lwd = NULL,
   thresholds.legend.pos = "topleft", thresholds.lty = NULL,
-  add.chr.to.label = FALSE, axis.cram = TRUE, include.x.axis.line = TRUE,
-  mark.locus = NULL, mark.locus.col = "red", which.mark = 1,
-  mark.manual = list(chr = NULL, pos = NULL), add.polygon = FALSE,
-  which.polygon = 1, my.type = "l", my.pch = 20, my.cex = 0.5)
+  add.chr.to.label = FALSE, axis.cram = TRUE,
+  include.x.axis.line = TRUE, mark.locus = NULL,
+  mark.locus.col = "red", which.mark = 1, mark.manual = list(chr =
+  NULL, pos = NULL), add.polygon = FALSE, which.polygon = 1,
+  my.type = "l", my.pch = 20, my.cex = 0.5)
 }
 \arguments{
 \item{scan.list}{A list of scan.h2lmm() objects that are to be plotted within the same genome scan plot.}
