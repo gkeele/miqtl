@@ -46,7 +46,9 @@ plot_locus.effect.from.scan <- function(scan.object, locus,
     if (length(col) == 1) { col <- rep(col, nrow(effect.matrix)) }
     
     plot.ci(midvals=mean.effects, narrow.intervals=effects.75, wide.intervals=effects.95,
-            names=names, col=col, add=add, connect.col=connect.col, ...) 
+            names=names, col=col, add=add, 
+            connect.col=connect.col, connect.lwd = connect.lwd, connect.lty = connect.lty,
+            ...) 
   }
   else if (length(dim(allele.effects)) == 2) {
     effect.vector <- allele.effects[,locus]
@@ -56,7 +58,9 @@ plot_locus.effect.from.scan <- function(scan.object, locus,
     if (length(col) == 1) { col <- rep(col, length(effect.vector)) }
     
     plot.ci(midvals=effect.vector, narrow.intervals=effects.95.junk, wide.intervals=effects.95.junk,
-            names=names, col=col, add=add, connect.col=connect.col, ...) 
+            names=names, col=col, add=add, 
+            connect.col=connect.col, connect.lwd = connect.lwd, connect.lty = connect.lty,
+            ...) 
   }
   abline(v=0, lty=2)
   title(main)
