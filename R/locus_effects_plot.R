@@ -80,7 +80,6 @@ plot.ci <- function(midvals,
                     use.this.lim=NULL,
                     main="",
                     add.connect.line=TRUE, connect.lwd=2, connect.lty = 1, connect.col="black",
-                    lty=1,
                     ...)
 {
   nvals <- length(midvals)
