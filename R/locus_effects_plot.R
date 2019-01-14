@@ -71,7 +71,8 @@ plot.ci <- function(midvals,
                     wide.intervals,
                     names=1:length(midvals),
                     add=FALSE,
-                    xlab="Estimate", xlab.line=2.5, x.cex=1, x.padj=1, x.labels=TRUE, xlab.cex=1,
+                    xlab="Estimate", 
+                    xlab.line=2.5, x.cex=1, x.padj=1, x.labels=TRUE, xlab.cex=1,
                     ylab="", y.cex=1,
                     yaxis=TRUE,
                     name.margin=6,
@@ -98,7 +99,7 @@ plot.ci <- function(midvals,
       lim <- use.this.lim
     }
     
-    plot(lim, c(0,nvals+0.5), type="n", axes=FALSE, ylab=ylab, xlab="", main=main, ...)
+    plot(lim, c(0,nvals+0.5), type="n", axes=FALSE, ylab = ylab, xlab = "", main=main, ...)
     mtext(text=xlab, side=1, line=xlab.line, cex=xlab.cex)
     axis(1, cex.axis=x.cex, padj=x.padj, labels=x.labels)
     if(yaxis){

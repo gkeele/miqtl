@@ -12,6 +12,12 @@ rint <- function(phenotype,
   return(rint_phenotype)
 }
 
+#' @export
+rankZ = function(x) {
+  x = rank(x, na.last = "keep", ties.method = "average") / (sum(!is.na(x)) + 1)
+  return(qnorm(x))
+} # Dan Gatti's version of rint()
+
 #' Pulls loci from scan objects based on specified criteria
 #' 
 #' This function parses a scan object and returns loci, for instance, the locus with the minimum
