@@ -817,7 +817,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   
   mtext(text=this.xlab, side=1, line=my.x.line, cex=my.xlab.cex, font = ifelse(use_bold_axis, 2, 1))
 
-  axis(side=2, las=2, cex.axis=my.y.axis.cex)
+  axis(side=2, las=2, cex.axis=my.y.axis.cex, font = ifelse(use_bold_axis, 2, 1))
   mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex, font = ifelse(use_bold_axis, 2, 1))
   
   ## Adding associations
