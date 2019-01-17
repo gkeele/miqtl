@@ -11,14 +11,15 @@ genome.plotter.region(haplotype.association = NULL,
   median.band.col = c("cyan", "pink"), snp.col = c("black", "gray"),
   snp.pch = 20, snp.cex = 0.9, main = "", no.title = FALSE,
   override.title = NULL, y.max.manual = NULL, use_bold_axis = FALSE,
-  my.y.line = 2, my.y.axis.cex = 1, my.y.lab.cex = 0.5,
-  my.x.line = 2, my.x.axis.cex = 1, my.xlab.cex = 1, x.padj = -0.3,
-  my.x.labels = TRUE, override.xlab = NULL, include.x.ticks = TRUE,
-  drop.x.tick = FALSE, my.title.line = 0.5, my.title.cex = 1,
-  hard.thresholds = NULL, thresholds.col = "red",
-  thresholds.legend = NULL, thresholds.lwd = 2, use.legend = TRUE,
-  my.legend.cex = 0.6, my.legend.pos = "topright", my.bty = "n",
-  rug.pos = NULL, rug.col = "gray50")
+  include_y_axis = TRUE, my.y.line = 2, my.y.axis.cex = 1,
+  my.y.lab.cex = 0.5, my.x.line = 2, my.x.axis.cex = 1,
+  my.xlab.cex = 1, x.padj = -0.3, my.x.labels = TRUE,
+  override.xlab = NULL, include.x.ticks = TRUE, drop.x.tick = FALSE,
+  my.title.line = 0.5, my.title.cex = 1, hard.thresholds = NULL,
+  thresholds.col = "red", thresholds.legend = NULL,
+  thresholds.lwd = 2, use.legend = TRUE, my.legend.cex = 0.6,
+  my.legend.pos = "topright", my.bty = "n", rug.pos = NULL,
+  rug.col = "gray50")
 }
 \arguments{
 \item{haplotype.association}{DEFAULT: NULL. A list of scan.h2lmm() objects (ROP or multiple imputations). If multiple imputations, median and confidence interval 

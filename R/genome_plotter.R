@@ -669,7 +669,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
                                   snp.col=c("black", "gray"), snp.pch=20, snp.cex=0.9,
                                   main="", no.title=FALSE, override.title=NULL,
                                   y.max.manual=NULL,
-                                  use_bold_axis = FALSE,
+                                  use_bold_axis = FALSE, include_y_axis = TRUE,
                                   my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.5,
                                   my.x.line=2, my.x.axis.cex=1, my.xlab.cex=1, x.padj=-0.3,
                                   my.x.labels=TRUE, override.xlab=NULL, include.x.ticks=TRUE, drop.x.tick=FALSE,
@@ -817,9 +817,11 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   
   mtext(text=this.xlab, side=1, line=my.x.line, cex=my.xlab.cex, font = ifelse(use_bold_axis, 2, 1))
 
-  axis(side=2, las=2, cex.axis=my.y.axis.cex, font = ifelse(use_bold_axis, 2, 1))
-  mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex, font = ifelse(use_bold_axis, 2, 1))
-  
+  if (include_y_axis) {
+    axis(side=2, las=2, cex.axis=my.y.axis.cex, font = ifelse(use_bold_axis, 2, 1))
+    mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex, font = ifelse(use_bold_axis, 2, 1))
+  }
+    
   ## Adding associations
   if(!is.null(haplotype.association)){
     ## Plotting haplotype intervals
