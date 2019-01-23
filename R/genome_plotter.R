@@ -705,7 +705,7 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
     thresholds.lwd <- rep(thresholds.lwd, length(hard.thresholds))
   }
   
-  if (use_lod) {
+  if (use.lod) {
     this.ylab <- ifelse(use_bold_axis, expression(bold("LOD")), "LOD")
   }
   else {
