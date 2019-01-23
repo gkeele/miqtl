@@ -510,14 +510,16 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   
   if (include.x.axis.line) {
     axis(side=1, tick=TRUE, line=NA, at=x.tick.spots, 
-         labels=NA, xpd=TRUE, , font = ifelse(use_bold_axis, 2, 1))
+         labels=NA, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1))
   }
   
   if (add.chr.to.label) {
     axis.label <- paste("Chr", axis.label)
   }
   else {
-    axis.label <- c("Chr", axis.label)
+    if (include_y_axis) {
+      axis.label <- c("Chr", axis.label)
+    }
     label.spots <- c(-0.04*x.max, label.spots)
   }
   
