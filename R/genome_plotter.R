@@ -372,8 +372,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   title(main=this.title, line=my.title.line, cex.main=title.cex)
   if (include_y_axis) {
     axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex, font = ifelse(use_bold_axis, 2, 1))
+    mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex, font = ifelse(use_bold_axis, 2, 1))
   }
-  mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex, font = ifelse(use_bold_axis, 2, 1))
   
   if (1 %in% which.polygon & add.polygon) {
     polygon.x.and.y <- expand.for.polygon(x=pos[pre.chr==chr.types[1]], y=outcome[pre.chr==chr.types[1]])
