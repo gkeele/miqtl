@@ -705,7 +705,12 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
     thresholds.lwd <- rep(thresholds.lwd, length(hard.thresholds))
   }
   
-  this.ylab <- ifelse(use.lod, "LOD", expression("-log"[10]*"P"))
+  if (use_lod) {
+    this.ylab <- ifelse(use_bold_axis, expression(bold("LOD")), "LOD")
+  }
+  else {
+    this.ylab <- ifelse(use_bold_axis, expression(bold("-log"[10]*"P")), expression("-log"[10]*"P"))
+  }
   outcome.type <- ifelse(use.lod, "LOD", "p.value")
   
   ## Finding plot bounds and processing scans
