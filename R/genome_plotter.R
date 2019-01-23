@@ -255,12 +255,13 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   main.object <- scan.list[[1]]
   if(use.lod){
     outcome <- main.object$LOD
-    plot.this <- this.ylab <- "LOD"
+    plot.this <- "LOD"
+    this.ylab <- ifelse(use_bold_axis, expression(bold("LOD")), "LOD")
   }
   if(!use.lod){
     outcome <- -log10(main.object$p.value)
     plot.this <- "p.value"
-    this.ylab <- expression("-log"[10]*"P")
+    this.ylab <- ifelse(use_bold_axis, expression(bold("-log"[10]*"P")), expression("-log"[10]*"P")) 
   }
   if (is.null(names(outcome))) { names(outcome) <- main.object$loci } # Option for SNP scan
   
