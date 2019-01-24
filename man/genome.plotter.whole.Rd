@@ -19,10 +19,10 @@ genome.plotter.whole(scan.list, use.lod = FALSE, just.these.chr = NULL,
   thresholds.legend.pos = "topleft", thresholds.lty = NULL,
   add.chr.to.label = FALSE, axis.cram = TRUE,
   include.x.axis.line = TRUE, mark.locus = NULL,
-  mark.locus.col = "red", which.mark = 1, mark.manual = list(chr =
-  NULL, pos = NULL), add.polygon = FALSE, which.polygon = 1,
-  my.type = "l", my.pch = 20, my.cex = 0.5, use_bold_axis = FALSE,
-  include_y_axis = TRUE)
+  mark.locus.col = "red", which.mark = 1, mark.lwd = 4,
+  mark.manual = list(chr = NULL, pos = NULL), add.polygon = FALSE,
+  which.polygon = 1, my.type = "l", my.pch = 20, my.cex = 0.5,
+  use_bold_axis = FALSE, axis_lwd = 1, include_y_axis = TRUE)
 }
 \arguments{
 \item{scan.list}{A list of scan.h2lmm() objects that are to be plotted within the same genome scan plot.}

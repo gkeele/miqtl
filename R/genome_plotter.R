@@ -233,7 +233,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                  thresholds.lwd=NULL, thresholds.legend.pos="topleft", thresholds.lty=NULL,
                                  add.chr.to.label=FALSE, axis.cram=TRUE, include.x.axis.line=TRUE,
-                                 mark.locus=NULL, mark.locus.col="red", which.mark=1,
+                                 mark.locus=NULL, mark.locus.col="red", which.mark=1, mark.lwd = 4,
                                  mark.manual=list(chr=NULL,
                                                   pos=NULL),
                                  add.polygon=FALSE, which.polygon=1,
@@ -544,10 +544,10 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
          cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
   }
   if (!is.null(mark.locus)) {
-    rug(x=updated.pos[which(names(updated.pos) %in% mark.locus)], lwd=4, col=mark.locus.col[1])
+    rug(x=updated.pos[which(names(updated.pos) %in% mark.locus)], lwd=mark.lwd, col=mark.locus.col[1])
   }
   if (!is.null(mark.manual$chr)) {
-    rug(x=calc.manual.mark.locus(shift.vector=shift.vector, mark.manual=mark.manual), lwd=4, col=mark.locus.col[2])
+    rug(x=calc.manual.mark.locus(shift.vector=shift.vector, mark.manual=mark.manual), lwd=mark.lwd, col=mark.locus.col[2])
   }
   if (use.legend) {
     if (add.polygon) {
