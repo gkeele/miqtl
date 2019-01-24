@@ -238,7 +238,8 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                                   pos=NULL),
                                  add.polygon=FALSE, which.polygon=1,
                                  my.type="l", my.pch=20, my.cex=0.5,
-                                 use_bold_axis = FALSE, include_y_axis = TRUE){
+                                 use_bold_axis = FALSE, axis_lwd = 1,
+                                 include_y_axis = TRUE){
   # If list has no names, use.legend is set to FALSE
   if (is.null(names(scan.list))){ use.legend=FALSE }
   if (is.null(my.legend.lwd)){ my.legend.lwd <- rep(1.5, length(scan.list)) }
@@ -371,7 +372,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
        frame.plot=FALSE, type=my.type[1], pch=my.pch[1], cex=my.cex, lwd=my.legend.lwd[1], lty=my.legend.lty[1], col=this.col[1])
   title(main=this.title, line=my.title.line, cex.main=title.cex)
   if (include_y_axis) {
-    axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex, font = ifelse(use_bold_axis, 2, 1))
+    axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
     mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex, font = ifelse(use_bold_axis, 2, 1))
   }
   
@@ -510,7 +511,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
   
   if (include.x.axis.line) {
     axis(side=1, tick=TRUE, line=NA, at=x.tick.spots, 
-         labels=NA, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1))
+         labels=NA, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
   }
   
   if (add.chr.to.label) {
@@ -532,12 +533,15 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     
     if (!my.x.labels) { even.axis.label <- FALSE; odd.axis.label <- FALSE }
     
-    axis(side=1, tick=FALSE, line=NA, at=odd.label.spots, labels=odd.axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1))
-    axis(side=1, tick=FALSE, line=NA, at=even.label.spots, labels=even.axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1))
+    axis(side=1, tick=FALSE, line=NA, at=odd.label.spots, labels=odd.axis.label, 
+         cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
+    axis(side=1, tick=FALSE, line=NA, at=even.label.spots, labels=even.axis.label, 
+         cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
   }
   else {
     if (!my.x.labels) { axis.label <- FALSE }
-    axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1))
+    axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, 
+         cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
   }
   if (!is.null(mark.locus)) {
     rug(x=updated.pos[which(names(updated.pos) %in% mark.locus)], lwd=4, col=mark.locus.col[1])
@@ -675,7 +679,8 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
                                   snp.col=c("black", "gray"), snp.pch=20, snp.cex=0.9,
                                   main="", no.title=FALSE, override.title=NULL,
                                   y.max.manual=NULL,
-                                  use_bold_axis = FALSE, include_y_axis = TRUE,
+                                  use_bold_axis = FALSE, axis_lwd = 1,
+                                  include_y_axis = TRUE,
                                   my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.5,
                                   my.x.line=2, my.x.axis.cex=1, my.xlab.cex=1, x.padj=-0.3,
                                   my.x.labels=TRUE, override.xlab=NULL, include.x.ticks=TRUE, drop.x.tick=FALSE,
@@ -818,18 +823,18 @@ genome.plotter.region <- function(haplotype.association=NULL, snp.association=NU
   
   if (!drop.x.tick) {
     axis(side=1, tick=include.x.ticks, cex.axis=my.x.axis.cex, labels=my.x.labels, padj=x.padj, 
-         font = ifelse(use_bold_axis, 2, 1))
+         font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
   }
   else {
     axis(side=1, tick=include.x.ticks, lwd.ticks=0,
          cex.axis=my.x.axis.cex, labels=my.x.labels, padj=x.padj,
-         font = ifelse(use_bold_axis, 2, 1))
+         font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
   }
   
   mtext(text=this.xlab, side=1, line=my.x.line, cex=my.xlab.cex, font = ifelse(use_bold_axis, 2, 1))
 
   if (include_y_axis) {
-    axis(side=2, las=2, cex.axis=my.y.axis.cex, font = ifelse(use_bold_axis, 2, 1))
+    axis(side=2, las=2, cex.axis=my.y.axis.cex, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
     mtext(text=this.ylab, side=2, line=my.y.line, cex=my.y.lab.cex, font = ifelse(use_bold_axis, 2, 1))
   }
     
