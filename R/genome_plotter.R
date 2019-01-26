@@ -228,7 +228,7 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
                                  main="",
                                  my.legend.cex=0.6, my.legend.lwd=NULL, my.legend.lty=1, my.legend.pos="topright", my.legend.bty="n",
                                  y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.7,
-                                 my.x.lab.cex=0.7, my.x.labels=TRUE,
+                                 my.x.lab.cex=0.7, my.x.labels=TRUE, my.x.lab.padj = -1.5,
                                  no.title=FALSE, override.title=NULL, my.title.line=NA, title.cex=1,
                                  hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                  thresholds.lwd=NULL, thresholds.legend.pos="topleft", thresholds.lty=NULL,
@@ -534,14 +534,14 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
     if (!my.x.labels) { even.axis.label <- FALSE; odd.axis.label <- FALSE }
     
     axis(side=1, tick=FALSE, line=NA, at=odd.label.spots, labels=odd.axis.label, 
-         cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
+         cex.axis=my.x.lab.cex, padj=my.x.lab.padj, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
     axis(side=1, tick=FALSE, line=NA, at=even.label.spots, labels=even.axis.label, 
-         cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
+         cex.axis=my.x.lab.cex, padj=my.x.lab.padj, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
   }
   else {
     if (!my.x.labels) { axis.label <- FALSE }
     axis(side=1, tick=FALSE, line=NA, at=label.spots, labels=axis.label, 
-         cex.axis=my.x.lab.cex, padj=-1.5, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
+         cex.axis=my.x.lab.cex, padj=my.x.lab.padj, xpd=TRUE, font = ifelse(use_bold_axis, 2, 1), lwd = axis_lwd)
   }
   if (!is.null(mark.locus)) {
     rug(x=updated.pos[which(names(updated.pos) %in% mark.locus)], lwd=mark.lwd, col=mark.locus.col[1])
