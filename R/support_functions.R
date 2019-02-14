@@ -87,7 +87,7 @@ grab.locus.from.scan <- function(scan.object,
 #' from the null model of no locus effect.
 #'
 #' @param threshold.scans Output object from run.threshold.scans().
-#' @param use.lod DEFAULT: FALSE. "FALSE" specifies LOD scores. "TRUE" specifies p-values.
+#' @param use.lod DEFAULT: FALSE. "TRUE" specifies LOD scores. "FALSE" specifies p-values.
 #' @param percentile DEFAULT: 0.95. The desired alpha level (false positive probability) from the GEV distribution.
 #' @param type DEFAULT: "min". If "min", the minimum statistics are expected, which is usually desired with p-values - though they
 #' are transformed to maxima using -log10(). If "max", the maximum statistics are expected. This is mainly expected to be used

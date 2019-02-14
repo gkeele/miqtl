@@ -10,7 +10,7 @@ get.gev.thresholds(threshold.scans, use.lod = FALSE, percentile = 0.95,
 \arguments{
 \item{threshold.scans}{Output object from run.threshold.scans().}
 
-\item{use.lod}{DEFAULT: FALSE. "FALSE" specifies LOD scores. "TRUE" specifies p-values.}
+\item{use.lod}{DEFAULT: FALSE. "TRUE" specifies LOD scores. "FALSE" specifies p-values.}
 
 \item{percentile}{DEFAULT: 0.95. The desired alpha level (false positive probability) from the GEV distribution.}
 
