@@ -1,6 +1,6 @@
 Package: miqtl
 Title: Suite of QTL Mapping Functions
-Version: 1.1.1.
+Version: 1.1.1
 Authors@R: c(person("William", "Valdar", role = "aut"),
 	     person("Robert", "Corty", role = "aut"), 
              person("Gregory", "Keele", email = "gkeele@gmail.com", role = c("aut", "cre")))
