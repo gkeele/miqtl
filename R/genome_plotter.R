@@ -413,13 +413,12 @@ genome.plotter.whole <- function(scan.list, use.lod=FALSE, just.these.chr=NULL,
       shift <- shift + shift.vector[i]
     }
   }
-  
   # Plot other method's statistics
   if(length(scan.list) > 1){
     for(i in 2:length(scan.list)){
       this.scan <- scan.list[[i]]
       if(use.lod){
-        compar.outcome <- this.scan$LOD
+        compare.outcome <- this.scan$LOD
       }
       if(!use.lod){
         compare.outcome <- -log10(this.scan$p.value)
