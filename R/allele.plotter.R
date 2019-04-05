@@ -297,7 +297,8 @@ allele.plotter.region <- function(scan.object,
                                   set.plot.limit=c(-5, 5), # Null places no limit on y-axis
                                   my.legend.cex=0.7, my.legend.pos="topright", transparency=0.6,
                                   y.max.manual=NULL, y.min.manual=NULL, 
-                                  my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=0.5,
+                                  my.y.lab = "Haplotype effects",
+                                  my.y.line=2, my.y.axis.cex=1, my.y.lab.cex=1,
                                   my.title.line=0.5, my.title.cex=1,
                                   no.title=FALSE, override.title=NULL,
                                   alternative.labels=NULL,
@@ -416,7 +417,7 @@ allele.plotter.region <- function(scan.object,
   x.ticks <- round(x.ticks)
   axis(side=1, tick=TRUE, line=NA, at=x.ticks, xpd=TRUE)
   axis(side=2, at=sort(unique(c(0, y.min, y.min:y.max, y.max))), las=2, cex.axis=my.y.axis.cex)
-  mtext(text="Additive allele effects", side=2, line=my.y.line, cex=my.y.lab.cex)
+  mtext(text = my.y.lab, side=2, line=my.y.line, cex=my.y.lab.cex)
   
   ## Confint
   if(!is.null(imp.confint.alpha)){
