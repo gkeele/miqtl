@@ -110,7 +110,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="b
        xaxt="n", yaxt="n", xlab="", ylab="", main=NA,
        frame.plot=FALSE, type="n")
   title(main=this.title, line=my.title.line, cex.main=title.cex)
-  axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
+  axis(side=2, at=0:y.max, las=1, cex.axis=my.y.axis.cex)
   mtext(text=this.ylab, side=2, line=my.y.line)
   
   label.spots <- max.pos[1]/2
@@ -226,7 +226,7 @@ snp.genome.plotter.whole <- function(snp.scan, just.these.chr=NULL, point.col="b
 #' @examples snp.genome.plotter.w.r2()
 snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
                                     scale="Mb", zoom.in=FALSE, zoom.in.by=0.1,
-                                    y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1,
+                                    y.max.manual=NULL, my.y.line=2, my.y.axis.cex=1, my.ylab.cex = 1,
                                     title="", override.title=NULL, my.title.line=NA, title.cex=1,
                                     alt.col=NULL, this.cex=1,
                                     hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
@@ -311,7 +311,7 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
        frame.plot=FALSE)
   title(main=this.title, line=my.title.line, cex.main=title.cex)
   axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
-  mtext(text=this.ylab, side=2, line=my.y.line)
+  mtext(text=this.ylab, side=2, line=my.y.line, cex = my.ylab.cex)
   if(!is.null(r2.bounds)){
     polygon(c(rep(low.locus.pos, 2), rep(high.locus.pos, 2)), c(0, rep(y.max, 2), 0), col=bounds.col, border=NA)
   }
@@ -324,7 +324,7 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
   
   points(x=point.locus.pos, y=point.locus.outcome, 
          bg=high.color, pch=21, cex=1.5)
-  axis(side=2, at=0:y.max, las=2)
+  #axis(side=2, at=0:y.max, las=2)
   
   if(!is.null(hard.thresholds)){
     for(i in 1:length(hard.thresholds)){

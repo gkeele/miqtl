@@ -6,7 +6,7 @@
 \usage{
 snp.genome.plotter.w.r2(snp.scan, r2.object, scale = "Mb",
   zoom.in = FALSE, zoom.in.by = 0.1, y.max.manual = NULL,
-  my.y.line = 2, my.y.axis.cex = 1, title = "",
+  my.y.line = 2, my.y.axis.cex = 1, my.ylab.cex = 1, title = "",
   override.title = NULL, my.title.line = NA, title.cex = 1,
   alt.col = NULL, this.cex = 1, hard.thresholds = NULL,
   thresholds.col = "red", thresholds.legend = NULL,

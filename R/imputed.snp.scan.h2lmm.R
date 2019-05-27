@@ -237,3 +237,41 @@ make.imputed.design.matrix.list.for.all.loci <- function(loci, loci.chr, n, mode
   return(X.list)
 }
 
+#' @export
+make_genotype_matrix <- function(probs, 
+                                 allele.dir, 
+                                 snp, 
+                                 snp.chr, 
+                                 founders, 
+                                 mapping.matrix){
+  
+  grep.command <- paste0("grep -w -A 3 '", snp, "' ", 
+                         paste0(allele.dir, "/chr", snp.chr, ".alleles"))
+  founder.alleles.table <- system(grep.command, intern=TRUE)
+  founder.alleles.table <- matrix(unlist(strsplit(x=founder.alleles.table[-1], split="\t", fixed=TRUE)), nrow=3, byrow=TRUE)[,-1] # Remove column of "allele"
+  founder.alleles.table <- founder.alleles.table[founder.alleles.table[,1] != "NA",] # Remove NA row
+  founder.alleles <- founder.alleles.table[,1][apply(founder.alleles.table[,-1], 2, function(x) which.max(x))]
+  ref.allele <- founder.alleles.table[1,1]
+  minor.allele <- founder.alleles.table[2,1]
+  ref.allele.founder.count <- as.numeric(founder.alleles == ref.allele)
+  full.ref.allele.count <- as.vector(mapping.matrix %*% matrix(ref.allele.founder.count, ncol=1)) # count of reference allele per 36 diplotypes
+  full.genotypes <- cbind(as.numeric(full.ref.allele.count == 2), 
+                          as.numeric(full.ref.allele.count == 1), 
+                          as.numeric(full.ref.allele.count == 0))
+  colnames(full.genotypes) <- c("ref.hom", "het", "alt.hom")
+  genotype.probs <- probs %*% full.genotypes
+  if((2*sum(genotype.probs[,1]) + sum(genotype.probs[,2]))/(2*nrow(genotype.probs)) > 0.5){
+    X <- cbind(genotype.probs[,3], genotype.probs[,2], genotype.probs[,1])
+  }
+  else{
+    X <- cbind(genotype.probs[,1], genotype.probs[,2], genotype.probs[,3])
+  }
+  colnames(X) <- c(paste(rep(minor.allele, 2), collapse = ""),
+                   paste(c(minor.allele, ref.allele), collapse = ""),
+                   paste(rep(ref.allele, 2), collapse = ""))
+  
+  rownames(X) <- rownames(probs)
+  X
+}
+
+
