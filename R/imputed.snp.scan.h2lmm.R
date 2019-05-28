@@ -84,11 +84,17 @@ imputed.snp.scan.h2lmm <- function(data, formula, K,
     loci <- loci[keep]
     loci.chr <- loci.chr[keep]
   }
-  
   if(!exists("X.list")){
-    X.list <- make.imputed.design.matrix.list.for.all.loci(loci=loci, loci.chr=loci.chr, n=nrow(data), model=model, h=h, 
-                                                           allele.dir=allele.dir, mapping.matrix=mapping.matrix,
-                                                           founders=founders, exclusion.freq=exclusion.freq)
+    X.list <- make.imputed.design.matrix.list.for.all.loci(loci = loci, 
+                                                           loci.chr = loci.chr,
+                                                           subjects = data$SUBJECT.NAME,
+                                                           n = nrow(data), 
+                                                           model = model, 
+                                                           h = h, 
+                                                           allele.dir = allele.dir, 
+                                                           mapping.matrix = mapping.matrix,
+                                                           founders = founders, 
+                                                           exclusion.freq = exclusion.freq)
     keep.loci <- loci %in% names(X.list)
     loci <- loci[keep.loci]
     loci.chr <- loci.chr[keep.loci]
@@ -179,7 +185,7 @@ extract.imputed.design.matrix.from.doqtl.genotype <- function(probs,
                                                               snp.chr, 
                                                               model, 
                                                               founders, 
-                                                              mapping.matrix){
+                                                              mapping.matrix) {
   grep.command <- paste0("grep -w -A 3 '", snp, "' ", 
                          paste0(allele.dir, "/chr", snp.chr, ".alleles"))
   founder.alleles.table <- system(grep.command, intern=TRUE)
@@ -212,17 +218,28 @@ extract.imputed.design.matrix.from.doqtl.genotype <- function(probs,
 }
 
 
-make.imputed.design.matrix.list.for.all.loci <- function(loci, loci.chr, n, model, h, 
-                                                         allele.dir, mapping.matrix,
-                                                         founders, exclusion.freq){
+make.imputed.design.matrix.list.for.all.loci <- function(loci, 
+                                                         loci.chr, 
+                                                         n, 
+                                                         subjects = NULL,
+                                                         model, 
+                                                         h, 
+                                                         allele.dir, 
+                                                         mapping.matrix,
+                                                         founders, 
+                                                         exclusion.freq) {
   p <- length(loci)
   num.col <- ifelse(model == "additive", 1, 2)
   X.list <- rep(list(matrix(NA, nrow=n, ncol=num.col)), p)
   for(i in 1:p){
-    probs <- h$getLocusMatrix(locus=loci[i], model="full")
-    X.list[[i]] <- extract.imputed.design.matrix.from.doqtl.genotype(probs=probs, allele.dir=allele.dir, 
-                                                                     snp=loci[i], snp.chr=loci.chr[i], model=model, 
-                                                                     founders=founders, mapping.matrix=mapping.matrix)
+    probs <- h$getLocusMatrix(locus = loci[i], model = "full", subjects = subjects)
+    X.list[[i]] <- extract.imputed.design.matrix.from.doqtl.genotype(probs=probs, 
+                                                                     allele.dir=allele.dir, 
+                                                                     snp=loci[i], 
+                                                                     snp.chr=loci.chr[i], 
+                                                                     model=model, 
+                                                                     founders=founders, 
+                                                                     mapping.matrix=mapping.matrix)
   }
   names(X.list) <- loci
     
