@@ -186,6 +186,7 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix,
                                                          id="SUBJECT.NAME",
                                                          chr="all", 
                                                          use.progress.bar=TRUE,
+                                                         pos.is.bp = TRUE,
                                                          ...){
   
   if(is.null(scan.index)){ scan.index <- 1:ncol(perm.ind.matrix) }
@@ -223,7 +224,8 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix,
     this.mediation.qr.object <- extract.mediation.qr(genomecache=genomecache, id=id,
                                                      data=this.data, formula=as.formula(rh.formula), 
                                                      model=model, condition.loci=condition.loci,
-                                                     chr=chr, locus=locus, use.progress.bar=FALSE)
+                                                     chr=chr, locus=locus, use.progress.bar=FALSE,
+                                                     pos.is.bp = pos.is.bp)
     this.scan <- mediation.scan.qr(mediation.qr.object=this.mediation.qr.object, data=this.data, 
                                    phenotype="y", id=id, chr=chr, 
                                    return.allele.effects=FALSE, use.progress.bar=use.progress.bar,
@@ -267,6 +269,7 @@ extract.mediation.expression.qr <- function(genomecache,
                                             model=c("additive", "full"), 
                                             condition.loci=NULL,
                                             chr="all", 
+                                            pos.is.bp = TRUE,
                                             use.progress.bar=TRUE){
   K <- NULL
   model <- model[1]
@@ -284,6 +287,9 @@ extract.mediation.expression.qr <- function(genomecache,
   
   ## Extracting gene position
   pos <- gene.data[,2][gene.index]/1e6
+  if (pos.is.bp) {
+    pos <- pos/1e6
+  }
 
   h <- DiploprobReader$new(genomecache)
   founders <- h$getFounders()
@@ -354,6 +360,7 @@ run.qr.permutation.threshold.mediation.expression.scans <- function(perm.ind.mat
                                                                     scan.index=NULL, 
                                                                     id="SUBJECT.NAME",
                                                                     chr="all", 
+                                                                    pos.is.bp=TRUE,
                                                                     use.progress.bar=TRUE,
                                                                     ...){
   
@@ -391,7 +398,8 @@ run.qr.permutation.threshold.mediation.expression.scans <- function(perm.ind.mat
     this.mediation.qr.object <- extract.mediation.expression.qr(genomecache=genomecache, id=id,
                                                                 data=this.data, 
                                                                 gene.data=gene.data, 
-                                                                formula=as.formula(rh.formula), 
+                                                                formula=as.formula(rh.formula),
+                                                                pos.is.bp=pos.is.bp,
                                                                 model=model, condition.loci=condition.loci,
                                                                 chr=chr, locus=locus, use.progress.bar=FALSE)
     this.scan <- mediation.scan.qr(mediation.qr.object=this.mediation.qr.object, data=this.data, 
