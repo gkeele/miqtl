@@ -286,7 +286,7 @@ extract.mediation.expression.qr <- function(genomecache,
   gene.chr <- gsub(gene.chr, pattern="^chr", replacement="", perl=TRUE)
   
   ## Extracting gene position
-  pos <- gene.data[,2][gene.index]/1e6
+  pos <- gene.data[,2][gene.index]
   if (pos.is.bp) {
     pos <- pos/1e6
   }
