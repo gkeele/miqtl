@@ -12,7 +12,8 @@
 #' in incorrect rotation of probabilities into dosages.
 #' @export
 #' @examples convert.qtl2.to.HAPPY()
-convert.qtl2.to.HAPPY <- function(qtl2.object, cross.object,
+convert.qtl2.to.HAPPY <- function(qtl2.object, 
+                                  cross.object,
                                   HAPPY.output.path,
                                   allele.labels=LETTERS[1:8],
                                   chr=c(1:19, "X"),

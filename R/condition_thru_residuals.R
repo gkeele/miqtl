@@ -56,7 +56,7 @@ condition.out.locus.for.scan <- function(locus, new.outcome.name="new.y",
                                          weights=NULL, do.augment=FALSE, use.full.null=FALSE, added.data.points=1, 
                                          ...){
   model <- model[1]
-
+  
   h <- DiploprobReader$new(genomecache)
   founders <- h$getFounders()
   num.founders <- length(founders)
