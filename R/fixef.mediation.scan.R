@@ -1,6 +1,7 @@
 #' @export extract.mediation.qr
 extract.mediation.qr <- function(genomecache, 
                                  id="SUBJECT.NAME", 
+                                 pos.is.bp = TRUE,
                                  locus,
                                  data, 
                                  formula, 
@@ -18,8 +19,9 @@ extract.mediation.qr <- function(genomecache,
   chromatin.chr <- gsub(chromatin.chr, pattern="^chr", replacement="", perl=TRUE)
   ## Extracting chromatin position
   pos <- gsub(chromatin, pattern="^chr[0-9X]+\\.", replacement="", perl=TRUE)
-  pos <- as.numeric(gsub(pos, pattern="\\.[0-9]+\\.", replacement="", perl=TRUE))/1e6
-  
+  if (pos.is.bp) {
+    pos <- as.numeric(gsub(pos, pattern="\\.[0-9]+\\.", replacement="", perl=TRUE))/1e6
+  }
   
   h <- DiploprobReader$new(genomecache)
   founders <- h$getFounders()
