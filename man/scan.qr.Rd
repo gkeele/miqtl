@@ -18,6 +18,8 @@ can be specified with id.}
 \item{phenotype}{The column name (or function of column name) of a variable in data. This will become the outcome
 of the genome scan.}
 
+\item{return.allele.effects}{DEFAULT: FALSE. If TRUE, allele effects, fit as fixed effects, are returned as a matrix.}
+
 \item{chr}{DEFAULT: "all". Specifies which chromosomes to scan.}
 
 \item{id}{DEFAULT: "SUBJECT.NAME". This is the individual-level ID that is associated with data points 

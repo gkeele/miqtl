@@ -23,7 +23,7 @@
 #' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
 #' @param just.these.loci DEFAULT: NULL. Specifies a reduced set of loci to fit. If loci is just one locus, the alternative model fit
 #' will also be output as fit1.
-#' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar
+#' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar being displayed.
 #' @export extract.qr
 #' @examples extract.qr()
 extract.qr <- function(genomecache, 
@@ -116,6 +116,7 @@ get.allele.effects.from.fixef.eQTL <- function(qr.alt, y, founders, intercept.al
 #' can be specified with id.
 #' @param phenotype The column name (or function of column name) of a variable in data. This will become the outcome
 #' of the genome scan.
+#' @param return.allele.effects DEFAULT: FALSE. If TRUE, allele effects, fit as fixed effects, are returned as a matrix.
 #' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
 #' @param id DEFAULT: "SUBJECT.NAME". This is the individual-level ID that is associated with data points 
 #' in the phenotype data. This should be unique for each data point.

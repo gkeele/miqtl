@@ -1,4 +1,35 @@
+#' Pre-compute QR decompositions from genome cache for efficient fixed effect model mediation scans.
+#'
+#' This function calculates the QR decomposition for all null model and alternative models (per chromatin mediators)
+#' for a genome chromatin mediation scan. This is only possible with a model that does not include any random effects.
+#' Currently designed for chromatin mediation (measured by ATAC-seq), though could be generalized.
+#'
+#' @param genomecache The path to the genome cache directory. The genome cache is a particularly structured
+#' directory that stores the haplotype probabilities/dosages at each locus. It has an additive model
+#' subdirectory and a full model subdirectory. Each contains subdirectories for each chromosome, which then
+#' store .RData files for the probabilities/dosages of each locus.
+#' @param id DEFAULT: "SUBJECT.NAME". The is the individual-level ID that is associated with data points 
+#' in the phenotype data. This should be unique for each data point.
+#' @param pos.is.bp DEFAULT: TRUE. If the pos variable in data is bp, use the default. If it is Mb, then
+#' set to FALSE.
+#' @param locus The marker or interval at which the QTL is detected. For the mediation scan, the detected
+#' QTL is fit in the alternative model for each mediator.
+#' @param data A data frame with mediators and potential covariates. Should also have IDs
+#' that link to IDs in the genome cache, often with the individual-level ID named "SUBJECT.NAME", though others
+#' can be specified with pheno.id. Currently designed to filter data to the specified covariates and the 
+#' chromatin variables.
+#' @param formula The right side of an lm-style formula with functions of covariates contained in data frame. First
+#' symbol should be "~". Functions of the outcome will be specified in mediation.scan.qr().
+#' @param model DEFAULT: "additive". Specifies how to model the founder haplotype probabilities. The additive options specifies
+#' use of haplotype dosages, and is most commonly used. The full option regresses the phenotype on the actual
+#' diplotype probabilities.
+#' @param condition.loci DEFAULT: NULL. If loci are specified, they will be included in the null and alternative models.
+#' The loci must be present in the genome cache. Alternatively, conditional scans can be accomplished by regressing out 
+#' the loci effects with condition.out.locus.for.scan(), which does not require a new qr.object.
+#' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
+#' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar being displayed.
 #' @export extract.mediation.qr
+#' @examples extract.mediation.qr()
 extract.mediation.qr <- function(genomecache, 
                                  id="SUBJECT.NAME", 
                                  pos.is.bp = TRUE,
@@ -80,11 +111,29 @@ extract.mediation.qr <- function(genomecache,
                     formula=Reduce(paste, deparse(formula)))
 }
 
+#' Runs genome-wide mediation scan from a QR decomposition object based on a specified QTL and phenotype data file.
+#'
+#' This function runs the genome scan based on a QR decomposition object and phenotype data file. This functionality only
+#' works for fixed effect models. Currently written for chromatin mediation of local-eQTL, though could easily be 
+#' generalized to any pairing of mediator and outcome.
+#'
+#' @param mediation.qr.object Output object from extract.mediation.qr()
+#' @param data A data frame with outcome. Should also have IDs
+#' that link to IDs in the genome cache, often with the individual-level ID named "SUBJECT.NAME", though others
+#' can be specified with pheno.id.
+#' @param phenotype The column name (or function of column name) of a variable in data. This will become the outcome
+#' of the mediation scan.
+#' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
+#' @param id DEFAULT: "SUBJECT.NAME". The is the individual-level ID that is associated with data points 
+#' in the phenotype data. This should be unique for each data point.
+#' @param debug.single.fit DEFAULT: FALSE. If TRUE, a browser() call is activated after the first locus is fit. This option
+#' allows developers to more easily debug while still using the actual R package.
+#' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar being displayed.
 #' @export mediation.scan.qr
+#' @examples mediation.scan.qr()
 mediation.scan.qr <- function(mediation.qr.object, 
                               data, 
                               phenotype,
-                              return.allele.effects=FALSE,
                               chr="all", 
                               id="SUBJECT.NAME",
                               debug.single.fit=FALSE, 
@@ -175,7 +224,35 @@ mediation.scan.qr <- function(mediation.qr.object,
   return(output)
 }
 
+#' Runs mediation permutation scans for significance thresholds based on an index permutation matrix object, the phenotype data, and
+#' pre-computed QR decompositions for all the models.
+#'
+#' This function runs permutation scans in order to calculate significance thresholds for mediation analysis. Its results are most valid when
+#' done in a fixed effect model setting and observations are exchangeable.
+#' 
+#' @param perm.ind.matrix Output object from generate.qr.permutation.index.matrix().
+#' @param mediation.qr.object Output object from extract.mediation.qr().
+#' @param genomecache The path to the genome cache directory. The genome cache is a particularly structured
+#' directory that stores the haplotype probabilities/dosages at each locus. It has an additive model
+#' subdirectory and a full model subdirectory. Each contains subdirectories for each chromosome, which then
+#' store .RData files for the probabilities/dosages of each locus.
+#' @param phenotype The column name (or function of column name) of a variable in data. This will become the outcome
+#' of the genome scan.
+#' @param data A data frame with outcome and potential covariates. Should also have IDs
+#' that link to IDs in the genome cache, often with the individual-level ID named "SUBJECT.NAME", though others
+#' can be specified with id.
+#' @param keep.full.scans DEFAULT: FALSE. If TRUE, all p-values are kept from all loci. If FALSE, only the minimum p-value
+#' is kept from each scan, greatly reducing size of output.
+#' @param scan.index DEFAULT: NULL. If NULL, all permutations are run. Integer vector can be specified to run just a 
+#' subset of the permutations.
+#' @param id DEFAULT: "SUBJECT.NAME". This is the individual-level ID that is associated with data points 
+#' in the phenotype data. This should be unique for each data point.
+#' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
+#' @param use.progress.bar DEFAULT: FALSE. Results in a progress bar while code runs.
+#' @param pos.is.bp DEFAULT: TRUE. If the pos variable in data is bp, use the default. If it is Mb, then
+#' set to FALSE.
 #' @export run.qr.permutation.threshold.mediation.scans
+#' @examples run.qr.permutation.threshold.mediation.scans()
 run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix, 
                                                          mediation.qr.object, 
                                                          genomecache,
@@ -246,7 +323,18 @@ run.qr.permutation.threshold.mediation.scans <- function(perm.ind.matrix,
                                                max=max.p))))
 }
 
+#' Extracts chromosome-level statistics from the full output of genome-wide permutation scans, allowing chromosome-wide and genome-wide significance
+#' to be determined from the same output.
+#'
+#' This function extracts the associations for a specified chromosome from genome-wide permutation scans. This allows both genome-wide and chromosome-wide
+#' thresholds to be determined from the same output.
+#' 
+#' @param full.perm.scans Output object from generate.qr.permutation.index.matrix().
+#' @param chr The chromosome that will have its association scores extracted from the full.perm.scans, essentially
+#' creating permutation scans specific to the chromosome.
+#' @param use.lod DEFAULT: FALSE. If TRUE, LOD scores are recorded. If FALSE, p-values are recorded, either based on the likelihood ratio test or ANOVA.
 #' @export extract.chr.max.statistics.from.genomewide
+#' @examples extract.chr.max.statistics.from.genomewide()
 extract.chr.max.statistics.from.genomewide <- function(full.perm.scans, 
                                                        chr, 
                                                        use.lod=FALSE){
@@ -259,9 +347,44 @@ extract.chr.max.statistics.from.genomewide <- function(full.perm.scans,
                                                max=apply(full.results, 1, function(x) max(x, na.rm=TRUE))))))
 }
 
+#' Pre-compute QR decompositions from genome cache for efficient fixed effect model mediation scans.
+#'
+#' This function calculates the QR decomposition for all null model and alternative models (per gene expression mediators)
+#' for a genome expression mediation scan. This is only possible with a model that does not include any random effects.
+#' Currently designed for gene expression mediation (measured by RNA-seq), though could be generalized, essentially
+#' consolidating extract.mediation.expression.qr() and extract.mediation.qr().
+#'
+#' @param genomecache The path to the genome cache directory. The genome cache is a particularly structured
+#' directory that stores the haplotype probabilities/dosages at each locus. It has an additive model
+#' subdirectory and a full model subdirectory. Each contains subdirectories for each chromosome, which then
+#' store .RData files for the probabilities/dosages of each locus.
+#' @param id DEFAULT: "SUBJECT.NAME". The is the individual-level ID that is associated with data points 
+#' in the phenotype data. This should be unique for each data point.
+#' @param pos.is.bp DEFAULT: TRUE. If the pos variable in gene.data is bp, use the default. If it is Mb, then
+#' set to FALSE.
+#' @param locus The marker or interval at which the QTL is detected. For the mediation scan, the detected
+#' QTL is fit in the alternative model for each mediator.
+#' @param data A data frame with mediators and potential covariates. Should also have IDs
+#' that link to IDs in the genome cache, often with the individual-level ID named "SUBJECT.NAME", though others
+#' can be specified with pheno.id. Currently designed to filter data to the specified covariates and the 
+#' gene expression variables.
+#' @param gene.data Gene annotation data for the gene expression variables in data. Specifically, the gene transcription
+#' start site is needed, named gene.start in gene.data.
+#' @param formula The right side of an lm-style formula with functions of covariates contained in data frame. First
+#' symbol should be "~". Functions of the outcome will be specified in mediation.scan.qr().
+#' @param model DEFAULT: "additive". Specifies how to model the founder haplotype probabilities. The additive options specifies
+#' use of haplotype dosages, and is most commonly used. The full option regresses the phenotype on the actual
+#' diplotype probabilities.
+#' @param condition.loci DEFAULT: NULL. If loci are specified, they will be included in the null and alternative models.
+#' The loci must be present in the genome cache. Alternatively, conditional scans can be accomplished by regressing out 
+#' the loci effects with condition.out.locus.for.scan(), which does not require a new qr.object.
+#' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
+#' @param use.progress.bar DEFAULT: TRUE. Results in a progress bar being displayed.
 #' @export extract.mediation.expression.qr
+#' @examples extract.mediation.expression.qr()
 extract.mediation.expression.qr <- function(genomecache, 
                                             id="SUBJECT.NAME", 
+                                            pos.is.bp = TRUE,
                                             locus,
                                             data, 
                                             gene.data,
@@ -269,7 +392,6 @@ extract.mediation.expression.qr <- function(genomecache,
                                             model=c("additive", "full"), 
                                             condition.loci=NULL,
                                             chr="all", 
-                                            pos.is.bp = TRUE,
                                             use.progress.bar=TRUE){
   K <- NULL
   model <- model[1]
@@ -349,7 +471,35 @@ extract.mediation.expression.qr <- function(genomecache,
                     formula=Reduce(paste, deparse(formula)))
 }
 
+#' Runs mediation permutation scans for significance thresholds based on an index permutation matrix object, the phenotype data, and
+#' pre-computed QR decompositions for all the models. Currently designed for mediation through gene expression.
+#'
+#' This function runs permutation scans in order to calculate significance thresholds for mediation analysis. Its results are most valid when
+#' done in a fixed effect model setting and observations are exchangeable.
+#' 
+#' @param perm.ind.matrix Output object from generate.qr.permutation.index.matrix().
+#' @param mediation.qr.object Output object from extract.mediation.expression.qr().
+#' @param genomecache The path to the genome cache directory. The genome cache is a particularly structured
+#' directory that stores the haplotype probabilities/dosages at each locus. It has an additive model
+#' subdirectory and a full model subdirectory. Each contains subdirectories for each chromosome, which then
+#' store .RData files for the probabilities/dosages of each locus.
+#' @param phenotype The column name (or function of column name) of a variable in data. This will become the outcome
+#' of the genome scan.
+#' @param data A data frame with outcome and potential covariates. Should also have IDs
+#' that link to IDs in the genome cache, often with the individual-level ID named "SUBJECT.NAME", though others
+#' can be specified with id.
+#' @param keep.full.scans DEFAULT: FALSE. If TRUE, all p-values are kept from all loci. If FALSE, only the minimum p-value
+#' is kept from each scan, greatly reducing size of output.
+#' @param scan.index DEFAULT: NULL. If NULL, all permutations are run. Integer vector can be specified to run just a 
+#' subset of the permutations.
+#' @param id DEFAULT: "SUBJECT.NAME". This is the individual-level ID that is associated with data points 
+#' in the phenotype data. This should be unique for each data point.
+#' @param chr DEFAULT: "all". Specifies which chromosomes to scan.
+#' @param use.progress.bar DEFAULT: FALSE. Results in a progress bar while code runs.
+#' @param pos.is.bp DEFAULT: TRUE. If the pos variable in data is bp, use the default. If it is Mb, then
+#' set to FALSE.
 #' @export run.qr.permutation.threshold.mediation.expression.scans
+#' @examples run.qr.permutation.threshold.mediation.expression.scans()
 run.qr.permutation.threshold.mediation.expression.scans <- function(perm.ind.matrix, 
                                                                     mediation.qr.object, 
                                                                     genomecache,
