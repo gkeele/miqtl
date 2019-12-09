@@ -186,12 +186,6 @@ mediation.scan.qr <- function(mediation.qr.object,
                                  qr.null=mediation.qr.object$qr.0.list[[mediator.index[i]]], 
                                  y=y)
     if(is.nan(p.vec[i])){ p.vec[i] <- 1 }
-    if(return.allele.effects){
-      allele.effects[,i] <- get.allele.effects.from.fixef.eQTL(qr.alt=mediation.qr.object$qr.list[[mediator.index[i]]], 
-                                                               y=y, 
-                                                               founders=founders,
-                                                               intercept.allele=mediation.qr.object$intercept.allele[i])
-    }
     if(debug.single.fit){ browser() }
     # Update progress bar
     if(use.progress.bar){ setTxtProgressBar(pb, i) }
@@ -207,7 +201,6 @@ mediation.scan.qr <- function(mediation.qr.object,
                           cM=mediation.qr.object$pos$cM),
                  loci=mediator, 
                  chr=mediator.chr,
-                 allele.effects=allele.effects,
                  y=y,
                  formula=formula.string,
                  model.type=model,
