@@ -171,10 +171,6 @@ mediation.scan.qr <- function(mediation.qr.object,
   allele.effects <- NULL
   p.vec <- rep(NA, length(mediator))
   
-  if(return.allele.effects){ 
-    allele.effects <- matrix(NA, nrow=length(founders), ncol=length(mediator),
-                             dimnames=list(founders, mediator))
-  }
   y <- as.vector(model.frame(formula, data=data)[,1])
   names(y) <- subjects
   # Progress bar
