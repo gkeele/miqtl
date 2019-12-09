@@ -148,12 +148,6 @@ mediation.scan.qr <- function(mediation.qr.object,
   mediator.pos <- mediation.qr.object$pos$Mb
   rh.formula <- mediation.qr.object$formula
   
-  if(model == "full" & return.allele.effects){
-    return.allele.effects <- FALSE
-    cat("Allele effects from regression models currently only available with additive model\n",
-        "Setting return.allele.effects to FALSE\n")
-  }
-  
   ## Matching the subject order in the data with the qr object
   reorder <- match(subjects, data[,id])
   data <- data[reorder,]
