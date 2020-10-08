@@ -138,8 +138,16 @@ scan.h2lmm <- function(genomecache, data,
   ####################### CHECKS
   ###### check that full directory has data
   if(model == "full" | use.multi.impute){
-    if(!file.exists(paste0(genomecache, "/full/chr", h$getChromOfLocus(loci[1]), "/data/", loci[1], ".RData")) |
-       !file.exists(paste0(genomecache, "/full/chr", h$getChromOfLocus(loci[1]), "/", loci[1], ".RData"))){
+    ## Handling different naming conventions of HAPPY
+    happy.locus.old <- paste(loci[1], "RData", sep = ".")
+    happy.locus.new <- paste(gsub("([[:upper:]])", "@\\1", loci[1]), "RData", sep = ".")
+    
+    locus_path <- paste0(genomecache, "/full/chr", h$getChromOfLocus(loci[1]), "/")
+    if (file.exists(paste0(locus_path, "data"))) {
+      locus_path <- paste0(locus_path, "data/")
+    }
+    if(!file.exists(paste0(locus_path, happy.locus.old)) &
+       !file.exists(paste0(locus_path, happy.locus.new))) {
       stop("Full model probabilities not available in genome cache, only additive ROP can be fit", call.=FALSE)
     }
   }
