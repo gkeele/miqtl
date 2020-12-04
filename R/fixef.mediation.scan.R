@@ -148,12 +148,6 @@ mediation.scan.qr <- function(mediation.qr.object,
   mediator.pos <- mediation.qr.object$pos$Mb
   rh.formula <- mediation.qr.object$formula
   
-  if(model == "full" & return.allele.effects){
-    return.allele.effects <- FALSE
-    cat("Allele effects from regression models currently only available with additive model\n",
-        "Setting return.allele.effects to FALSE\n")
-  }
-  
   ## Matching the subject order in the data with the qr object
   reorder <- match(subjects, data[,id])
   data <- data[reorder,]
@@ -177,10 +171,6 @@ mediation.scan.qr <- function(mediation.qr.object,
   allele.effects <- NULL
   p.vec <- rep(NA, length(mediator))
   
-  if(return.allele.effects){ 
-    allele.effects <- matrix(NA, nrow=length(founders), ncol=length(mediator),
-                             dimnames=list(founders, mediator))
-  }
   y <- as.vector(model.frame(formula, data=data)[,1])
   names(y) <- subjects
   # Progress bar
@@ -192,12 +182,6 @@ mediation.scan.qr <- function(mediation.qr.object,
                                  qr.null=mediation.qr.object$qr.0.list[[mediator.index[i]]], 
                                  y=y)
     if(is.nan(p.vec[i])){ p.vec[i] <- 1 }
-    if(return.allele.effects){
-      allele.effects[,i] <- get.allele.effects.from.fixef.eQTL(qr.alt=mediation.qr.object$qr.list[[mediator.index[i]]], 
-                                                               y=y, 
-                                                               founders=founders,
-                                                               intercept.allele=mediation.qr.object$intercept.allele[i])
-    }
     if(debug.single.fit){ browser() }
     # Update progress bar
     if(use.progress.bar){ setTxtProgressBar(pb, i) }
@@ -213,7 +197,6 @@ mediation.scan.qr <- function(mediation.qr.object,
                           cM=mediation.qr.object$pos$cM),
                  loci=mediator, 
                  chr=mediator.chr,
-                 allele.effects=allele.effects,
                  y=y,
                  formula=formula.string,
                  model.type=model,
