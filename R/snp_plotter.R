@@ -300,6 +300,13 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
       span <- high.locus.pos - low.locus.pos
       min.pos <- floor(low.locus.pos - zoom.in.by*span)
       max.pos <- ceiling(high.locus.pos + zoom.in.by*span)
+      
+      # Handling the boundaries
+      min.pos <- max(min(pos), min.pos)
+      max.pos <- min(max(pos), max.pos)
+      
+      new.span <- max.pos - min.pos
+      
       cat(min.pos, "\n", max.pos, "\n")
     }
   }
@@ -335,11 +342,10 @@ snp.genome.plotter.w.r2 <- function(snp.scan, r2.object,
     legend(my.legend.pos, legend=thresholds.legend, col=thresholds.col, lty=rep(thresholds.lty, length(thresholds.legend)),
            lwd=rep(thresholds.lwd, length(thresholds.legend)), bty=my.bty, cex=my.legend.cex)
   }
-  
   if(include.ramp){
-    plotrix::color.legend(xl=floor(0.75*max.pos), yb=y.max, xr=max.pos, yt=y.max+0.5, cex=ramp.cex,
+    plotrix::color.legend(xl=max.pos - 0.25*new.span, yb=y.max, xr=max.pos, yt=y.max+0.5, cex=ramp.cex,
                           legend=c(0, 0.5, 1), rect.col=these.colors, align="rb", gradient="x")  
-    text(x=(max.pos - floor(0.75*max.pos))/2 + floor(0.75*max.pos),
+    text(x=max.pos - 0.125*new.span,
          y=y.max+0.75,
          labels="r2 with peak SNP")
   }
