@@ -4,9 +4,17 @@
 \alias{extract.qr}
 \title{Pre-compute QR decompositions from genome cache for efficient fixed effect model genome scan.}
 \usage{
-extract.qr(genomecache, id = "SUBJECT.NAME", data, formula,
-  model = c("additive", "full"), condition.loci = NULL, chr = "all",
-  just.these.loci = NULL, use.progress.bar = TRUE)
+\method{extract}{qr}(
+  genomecache,
+  id = "SUBJECT.NAME",
+  data,
+  formula,
+  model = c("additive", "full"),
+  condition.loci = NULL,
+  chr = "all",
+  just.these.loci = NULL,
+  use.progress.bar = TRUE
+)
 }
 \arguments{
 \item{genomecache}{The path to the genome cache directory. The genome cache is a particularly structured

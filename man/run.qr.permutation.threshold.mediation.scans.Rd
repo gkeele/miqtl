@@ -5,10 +5,20 @@
 \title{Runs mediation permutation scans for significance thresholds based on an index permutation matrix object, the phenotype data, and
 pre-computed QR decompositions for all the models.}
 \usage{
-run.qr.permutation.threshold.mediation.scans(perm.ind.matrix,
-  mediation.qr.object, genomecache, phenotype, data,
-  keep.full.scans = FALSE, scan.index = NULL, id = "SUBJECT.NAME",
-  chr = "all", use.progress.bar = TRUE, pos.is.bp = TRUE, ...)
+run.qr.permutation.threshold.mediation.scans(
+  perm.ind.matrix,
+  mediation.qr.object,
+  genomecache,
+  phenotype,
+  data,
+  keep.full.scans = FALSE,
+  scan.index = NULL,
+  id = "SUBJECT.NAME",
+  chr = "all",
+  use.progress.bar = TRUE,
+  pos.is.bp = TRUE,
+  ...
+)
 }
 \arguments{
 \item{perm.ind.matrix}{Output object from generate.qr.permutation.index.matrix().}

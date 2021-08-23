@@ -4,8 +4,12 @@
 \alias{get.gev.thresholds}
 \title{Returns a significance threshold based on fitting max LODs or max -log10p to a generalized extreme value (GEV) distribution}
 \usage{
-get.gev.thresholds(threshold.scans, use.lod = FALSE, percentile = 0.95,
-  type = c("min", "max"))
+get.gev.thresholds(
+  threshold.scans,
+  use.lod = FALSE,
+  percentile = 0.95,
+  type = c("min", "max")
+)
 }
 \arguments{
 \item{threshold.scans}{Output object from run.threshold.scans().}

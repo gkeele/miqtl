@@ -4,10 +4,18 @@
 \alias{instability.lm.scan}
 \title{Runs quick fixed effect only scans off of simple bootstrap and permutation samples.}
 \usage{
-instability.lm.scan(simple.sample.object, genomecache,
-  model = c("additive", "full"), seed = 1, use.ROP = TRUE,
-  num.imp = 11, chr = "all", just.these.loci = NULL,
-  print.locus.fit = TRUE, ...)
+instability.lm.scan(
+  simple.sample.object,
+  genomecache,
+  model = c("additive", "full"),
+  seed = 1,
+  use.ROP = TRUE,
+  num.imp = 11,
+  chr = "all",
+  just.these.loci = NULL,
+  print.locus.fit = TRUE,
+  ...
+)
 }
 \arguments{
 \item{simple.sample.object}{An object returned from generate.simple.sample.outcomes.matrix(). This contains the samples and supporting

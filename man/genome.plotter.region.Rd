@@ -4,22 +4,52 @@
 \alias{genome.plotter.region}
 \title{Plot user-specified windows of haplotype-based and snp-based genome scans}
 \usage{
-genome.plotter.region(haplotype.association = NULL,
-  snp.association = NULL, use.lod = FALSE, chr, region.min = NULL,
-  region.max = NULL, scale = c("Mb", "cM"), haplotype.col = c("blue",
-  "red"), haplotype.lwd = 3, haplotype.lty = 1,
-  median.band.col = c("cyan", "pink"), snp.col = c("black", "gray"),
-  snp.pch = 20, snp.cex = 0.9, main = "", no.title = FALSE,
-  override.title = NULL, y.max.manual = NULL, use_bold_axis = FALSE,
-  axis_lwd = 1, include_y_axis = TRUE, my.y.line = 2,
-  my.y.axis.cex = 1, my.y.lab.cex = 0.5, my.x.line = 2,
-  my.x.axis.cex = 1, my.xlab.cex = 1, x.padj = -0.3,
-  my.x.labels = TRUE, override.xlab = NULL, include.x.ticks = TRUE,
-  drop.x.tick = FALSE, my.title.line = 0.5, my.title.cex = 1,
-  hard.thresholds = NULL, thresholds.col = "red",
-  thresholds.legend = NULL, thresholds.lwd = 2, use.legend = TRUE,
-  my.legend.cex = 0.6, my.legend.pos = "topright", my.bty = "n",
-  rug.pos = NULL, rug.col = "gray50")
+genome.plotter.region(
+  haplotype.association = NULL,
+  snp.association = NULL,
+  use.lod = FALSE,
+  chr,
+  region.min = NULL,
+  region.max = NULL,
+  scale = c("Mb", "cM"),
+  haplotype.col = c("blue", "red"),
+  haplotype.lwd = 3,
+  haplotype.lty = 1,
+  median.band.col = c("cyan", "pink"),
+  snp.col = c("black", "gray"),
+  snp.pch = 20,
+  snp.cex = 0.9,
+  main = "",
+  no.title = FALSE,
+  override.title = NULL,
+  y.max.manual = NULL,
+  use_bold_axis = FALSE,
+  axis_lwd = 1,
+  include_y_axis = TRUE,
+  my.y.line = 2,
+  my.y.axis.cex = 1,
+  my.y.lab.cex = 0.5,
+  my.x.line = 2,
+  my.x.axis.cex = 1,
+  my.xlab.cex = 1,
+  x.padj = -0.3,
+  my.x.labels = TRUE,
+  override.xlab = NULL,
+  include.x.ticks = TRUE,
+  drop.x.tick = FALSE,
+  my.title.line = 0.5,
+  my.title.cex = 1,
+  hard.thresholds = NULL,
+  thresholds.col = "red",
+  thresholds.legend = NULL,
+  thresholds.lwd = 2,
+  use.legend = TRUE,
+  my.legend.cex = 0.6,
+  my.legend.pos = "topright",
+  my.bty = "n",
+  rug.pos = NULL,
+  rug.col = "gray50"
+)
 }
 \arguments{
 \item{haplotype.association}{DEFAULT: NULL. A list of scan.h2lmm() objects (ROP or multiple imputations). If multiple imputations, median and confidence interval 
@@ -63,8 +93,6 @@ no threshols legend is used.}
 \item{my.legend.cex}{DEFAULT: 0.6. Specifies the size of the text in the legend.}
 
 \item{my.legend.pos}{DEFAULT: "topright". Specifies where to put the legend, if specified in use.legend.}
-
-\item{my.legend.cex}{DEFAULT: 0.6. Specifies the size of the text in the legend.}
 }
 \description{
 This function takes genome scan association outputs and plots the portion that corresponds to a region of a single chromosome.

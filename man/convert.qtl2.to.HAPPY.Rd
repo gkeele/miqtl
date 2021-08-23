@@ -4,9 +4,14 @@
 \alias{convert.qtl2.to.HAPPY}
 \title{Takes qtl2geno founder haplotype reconstruction output files and re-formats into a HAPPY genome cache}
 \usage{
-convert.qtl2.to.HAPPY(qtl2.object, cross.object, HAPPY.output.path,
-  allele.labels = LETTERS[1:8], chr = c(1:19, "X"),
-  diplotype.order = c("qtl2", "DOQTL", "CC"))
+convert.qtl2.to.HAPPY(
+  qtl2.object,
+  cross.object,
+  HAPPY.output.path,
+  allele.labels = LETTERS[1:8],
+  chr = c(1:19, "X"),
+  diplotype.order = c("qtl2", "DOQTL", "CC")
+)
 }
 \arguments{
 \item{qtl2.object}{The full probabilities output as a list of 3D arrays from qtl2geno.}

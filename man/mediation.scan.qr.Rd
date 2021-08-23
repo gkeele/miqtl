@@ -4,9 +4,16 @@
 \alias{mediation.scan.qr}
 \title{Runs genome-wide mediation scan from a QR decomposition object based on a specified QTL and phenotype data file.}
 \usage{
-mediation.scan.qr(mediation.qr.object, data, phenotype, chr = "all",
-  id = "SUBJECT.NAME", debug.single.fit = FALSE,
-  use.progress.bar = TRUE, ...)
+mediation.scan.qr(
+  mediation.qr.object,
+  data,
+  phenotype,
+  chr = "all",
+  id = "SUBJECT.NAME",
+  debug.single.fit = FALSE,
+  use.progress.bar = TRUE,
+  ...
+)
 }
 \arguments{
 \item{mediation.qr.object}{Output object from extract.mediation.qr()}

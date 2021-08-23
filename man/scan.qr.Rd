@@ -4,9 +4,18 @@
 \alias{scan.qr}
 \title{Runs genome scan from a QR decomposition object and phenotype data file.}
 \usage{
-scan.qr(qr.object, data, phenotype, return.allele.effects = FALSE,
-  chr = "all", id = "SUBJECT.NAME", just.these.loci = NULL,
-  debug.single.fit = FALSE, use.progress.bar = TRUE, ...)
+scan.qr(
+  qr.object,
+  data,
+  phenotype,
+  return.allele.effects = FALSE,
+  chr = "all",
+  id = "SUBJECT.NAME",
+  just.these.loci = NULL,
+  debug.single.fit = FALSE,
+  use.progress.bar = TRUE,
+  ...
+)
 }
 \arguments{
 \item{qr.object}{QR decomposition output from extract.qr().}

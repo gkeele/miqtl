@@ -4,15 +4,34 @@
 \alias{scan.h2lmm}
 \title{Run a haplotype-based genome scan from probabilities stored in a genome cache directory}
 \usage{
-scan.h2lmm(genomecache, data, formula, K = NULL, model = c("additive",
-  "full"), locus.as.fixed = TRUE, return.allele.effects = FALSE,
-  p.value.method = c("LRT", "ANOVA"), use.par = "h2",
-  use.multi.impute = TRUE, num.imp = 11, chr = "all", brute = TRUE,
-  use.fix.par = TRUE, seed = 1, pheno.id = "SUBJECT.NAME",
-  geno.id = "SUBJECT.NAME", weights = NULL, do.augment = FALSE,
-  use.full.null = FALSE, added.data.points = 1,
-  just.these.loci = NULL, print.locus.fit = FALSE,
-  use.progress.bar = TRUE, debug.single.fit = FALSE, ...)
+scan.h2lmm(
+  genomecache,
+  data,
+  formula,
+  K = NULL,
+  model = c("additive", "full"),
+  locus.as.fixed = TRUE,
+  return.allele.effects = FALSE,
+  p.value.method = c("LRT", "ANOVA"),
+  use.par = "h2",
+  use.multi.impute = TRUE,
+  num.imp = 11,
+  chr = "all",
+  brute = TRUE,
+  use.fix.par = TRUE,
+  seed = 1,
+  pheno.id = "SUBJECT.NAME",
+  geno.id = "SUBJECT.NAME",
+  weights = NULL,
+  do.augment = FALSE,
+  use.full.null = FALSE,
+  added.data.points = 1,
+  just.these.loci = NULL,
+  print.locus.fit = FALSE,
+  use.progress.bar = TRUE,
+  debug.single.fit = FALSE,
+  ...
+)
 }
 \arguments{
 \item{genomecache}{The path to the genome cache directory. The genome cache is a particularly structured

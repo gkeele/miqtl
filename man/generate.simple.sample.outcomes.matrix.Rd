@@ -4,9 +4,15 @@
 \alias{generate.simple.sample.outcomes.matrix}
 \title{Returns a matrix of outcome samples, either permutations of the actual data or drawn from the null model of no locus effect}
 \usage{
-generate.simple.sample.outcomes.matrix(formula, data,
-  pheno.id = "SUBJECT.NAME", method = c("bootstrap", "permutation"),
-  use.REML = TRUE, num.samples, seed = 1)
+generate.simple.sample.outcomes.matrix(
+  formula,
+  data,
+  pheno.id = "SUBJECT.NAME",
+  method = c("bootstrap", "permutation"),
+  use.REML = TRUE,
+  num.samples,
+  seed = 1
+)
 }
 \arguments{
 \item{formula}{An lm style formula with functions of outcome and covariates contained in data frame.}

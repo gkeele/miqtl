@@ -5,8 +5,7 @@
 \title{Extracts chromosome-level statistics from the full output of genome-wide permutation scans, allowing chromosome-wide and genome-wide significance
 to be determined from the same output.}
 \usage{
-extract.chr.max.statistics.from.genomewide(full.perm.scans, chr,
-  use.lod = FALSE)
+\method{extract}{chr.max.statistics.from.genomewide}(full.perm.scans, chr, use.lod = FALSE)
 }
 \arguments{
 \item{full.perm.scans}{Output object from generate.qr.permutation.index.matrix().}

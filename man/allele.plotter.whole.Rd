@@ -4,20 +4,37 @@
 \alias{allele.plotter.whole}
 \title{Plot the regression coefficients or BLUPs as allele effects for a genome scan (whole genomes or subset of chromosomes)}
 \usage{
-allele.plotter.whole(scan.object, just.these.chr = NULL, scale = "Mb",
-  imp.confint.alpha = NULL, main.colors = c(rgb(240, 240, 0,
-  maxColorValue = 255), rgb(128, 128, 128, maxColorValue = 255), rgb(240,
-  128, 128, maxColorValue = 255), rgb(16, 16, 240, maxColorValue = 255),
-  rgb(0, 160, 240, maxColorValue = 255), rgb(0, 160, 0, maxColorValue =
-  255), rgb(240, 0, 0, maxColorValue = 255), rgb(144, 0, 224, maxColorValue
-  = 255)), use.legend = TRUE, main = "", my.bty = "n",
-  my.lwd = 1.25, set.plot.limit = c(-10, 10), my.legend.cex = 0.6,
-  my.legend.pos = "topright", transparency = 0.6,
-  y.max.manual = NULL, y.min.manual = NULL, my.y.line = 2,
-  my.y.axis.cex = 1, my.y.lab.cex = 0.7, my.x.lab.cex = 0.7,
-  no.title = FALSE, override.title = NULL, add.chr.to.label = FALSE,
-  alternative.labels = NULL, axis.cram = TRUE,
-  include.x.axis.line = TRUE)
+allele.plotter.whole(
+  scan.object,
+  just.these.chr = NULL,
+  scale = "Mb",
+  imp.confint.alpha = NULL,
+  main.colors = c(rgb(240, 240, 0, maxColorValue = 255), rgb(128, 128, 128,
+    maxColorValue = 255), rgb(240, 128, 128, maxColorValue = 255), rgb(16, 16, 240,
+    maxColorValue = 255), rgb(0, 160, 240, maxColorValue = 255), rgb(0, 160, 0,
+    maxColorValue = 255), rgb(240, 0, 0, maxColorValue = 255), rgb(144, 0, 224,
+    maxColorValue = 255)),
+  use.legend = TRUE,
+  main = "",
+  my.bty = "n",
+  my.lwd = 1.25,
+  set.plot.limit = c(-10, 10),
+  my.legend.cex = 0.6,
+  my.legend.pos = "topright",
+  transparency = 0.6,
+  y.max.manual = NULL,
+  y.min.manual = NULL,
+  my.y.line = 2,
+  my.y.axis.cex = 1,
+  my.y.lab.cex = 0.7,
+  my.x.lab.cex = 0.7,
+  no.title = FALSE,
+  override.title = NULL,
+  add.chr.to.label = FALSE,
+  alternative.labels = NULL,
+  axis.cram = TRUE,
+  include.x.axis.line = TRUE
+)
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object that had return.allele.effects=TRUE.}

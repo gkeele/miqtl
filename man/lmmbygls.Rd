@@ -4,11 +4,28 @@
 \alias{lmmbygls}
 \title{Run a haplotype-based genome scan from probabilities stored in a genome cache directory}
 \usage{
-lmmbygls(formula, data = NULL, y = NULL, X = NULL, K = NULL,
-  eigen.K = NULL, fix.par = NULL, M = NULL, logDetV = NULL,
-  weights = NULL, pheno.id = "SUBJECT.NAME", use.par = c("h2",
-  "h2.REML"), brute = TRUE, subset, na.action, method = "qr",
-  model = TRUE, contrasts = NULL, verbose = FALSE, ...)
+lmmbygls(
+  formula,
+  data = NULL,
+  y = NULL,
+  X = NULL,
+  K = NULL,
+  eigen.K = NULL,
+  fix.par = NULL,
+  M = NULL,
+  logDetV = NULL,
+  weights = NULL,
+  pheno.id = "SUBJECT.NAME",
+  use.par = c("h2", "h2.REML"),
+  brute = TRUE,
+  subset,
+  na.action,
+  method = "qr",
+  model = TRUE,
+  contrasts = NULL,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{formula}{The lm/lmer-style formula for the model to fit. Variables must correspond to columns in the data.frame specified in the data

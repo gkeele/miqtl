@@ -4,11 +4,21 @@
 \alias{run.simple.permutation.threshold.scans}
 \title{Runs threshold scans from a matrix of permutation indexes}
 \usage{
-run.simple.permutation.threshold.scans(sim.threshold.object,
-  keep.full.scans = TRUE, scan.index = NULL, genomecache, formula,
-  data, model = c("additive", "full"), use.multi.impute = TRUE,
-  num.imp = 11, chr = "all", just.these.loci = NULL, scan.seed = 1,
-  ...)
+run.simple.permutation.threshold.scans(
+  sim.threshold.object,
+  keep.full.scans = TRUE,
+  scan.index = NULL,
+  genomecache,
+  formula,
+  data,
+  model = c("additive", "full"),
+  use.multi.impute = TRUE,
+  num.imp = 11,
+  chr = "all",
+  just.these.loci = NULL,
+  scan.seed = 1,
+  ...
+)
 }
 \arguments{
 \item{sim.threshold.object}{An object created by generate.simple.permutation.index.matrix().}

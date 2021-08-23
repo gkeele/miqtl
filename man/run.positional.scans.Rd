@@ -4,12 +4,25 @@
 \alias{run.positional.scans}
 \title{Run single chromosome scans on parametric bootstrap samples from the alternative model of a particular locus}
 \usage{
-run.positional.scans(sim.object, keep.full.scans = TRUE, genomecache,
-  data, model = c("additive", "full"), use.par = "h2",
-  use.multi.impute = TRUE, num.imp = 11, brute = TRUE,
-  use.fix.par = FALSE, scan.seed = 1, do.augment = FALSE,
-  use.augment.weights = FALSE, use.full.null = FALSE,
-  added.data.points = 1, alpha = 0.05, ...)
+run.positional.scans(
+  sim.object,
+  keep.full.scans = TRUE,
+  genomecache,
+  data,
+  model = c("additive", "full"),
+  use.par = "h2",
+  use.multi.impute = TRUE,
+  num.imp = 11,
+  brute = TRUE,
+  use.fix.par = FALSE,
+  scan.seed = 1,
+  do.augment = FALSE,
+  use.augment.weights = FALSE,
+  use.full.null = FALSE,
+  added.data.points = 1,
+  alpha = 0.05,
+  ...
+)
 }
 \arguments{
 \item{sim.object}{A sample object. This is primarily a matrix of parametric bootstrap
@@ -44,8 +57,7 @@ these values.}
 more efficient, as the optimization of h2 only needs to be performed once for the null model rather than every locus. 
 Technically less powerful, though in practice it has proven to be almost equal to the exact procedure.}
 
-\item{scan.seed}{DEFAULT: 1. If imputations are used, the sampling procedure is a random process. Specifying a seed allows 
-consistent results across runs and machines. This is reset over scans, so that the same imputations are used for each scan.}
+\item{scan.seed}{DEFAULT: 1.}
 
 \item{do.augment}{DEFAULT: FALSE. Augments the data with null observations for genotype groups. This is an approximately Bayesian 
 approach to applying a prior to the data, and can help control highly influential data points.}
@@ -57,8 +69,6 @@ augmented data points to all genotype classes while reducing their overall contr
 that do not influence the estimation of other model parameters as much.}
 
 \item{added.data.points}{DEFAULT: 1. If augment weights are being used, this specifies how many data points should be added in total.}
-
-\item{scan.seed}{DEFAULT: 1.}
 }
 \description{
 This function runs single chromosome scans of parametric bootstrap samples from the alternative model of a particular locus. These

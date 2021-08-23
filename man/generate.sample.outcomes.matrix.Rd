@@ -4,10 +4,17 @@
 \alias{generate.sample.outcomes.matrix}
 \title{Returns a matrix of outcome samples, either permutations or from the null model of no locus effect}
 \usage{
-generate.sample.outcomes.matrix(scan.object, model.type = c("null",
-  "alt"), method = c("bootstrap", "permutation", "subsample"),
-  subsample.prop = 0.63, subsample.chr = NULL, use.REML = TRUE,
-  use.BLUP = FALSE, num.samples, seed = 1)
+generate.sample.outcomes.matrix(
+  scan.object,
+  model.type = c("null", "alt"),
+  method = c("bootstrap", "permutation", "subsample"),
+  subsample.prop = 0.63,
+  subsample.chr = NULL,
+  use.REML = TRUE,
+  use.BLUP = FALSE,
+  num.samples,
+  seed = 1
+)
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object.}

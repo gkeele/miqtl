@@ -5,9 +5,14 @@
 \title{Reduce genome caches by averaging together loci that are very similar up to some set
 tolerance level of a specified criterion}
 \usage{
-collapse.genomecache(original.cache, new.cache, subjects = NULL,
-  criterion = c("l2.norm", "max.category"), model = c("additive",
-  "full"), proportion.tol = 0.01)
+\method{collapse}{genomecache}(
+  original.cache,
+  new.cache,
+  subjects = NULL,
+  criterion = c("l2.norm", "max.category"),
+  model = c("additive", "full"),
+  proportion.tol = 0.01
+)
 }
 \arguments{
 \item{original.cache}{The path of the genome cache to be reduced.}

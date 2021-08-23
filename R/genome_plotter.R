@@ -74,7 +74,7 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
                                scale=c("Mb", "cM"), main.col="black", median.band.col="gray88",
                                main="", no.title=FALSE, override.title=NULL, 
                                my.y.line=2, my.y.axis.cex=1, y.max.manual=NULL, make.y.axis.sparse=FALSE, my.ylab.cex=1,
-                               my.x.line=3, my.x.axis.cex=1, my.xlab.cex=1, x.padj=1,
+                               my.x.line=3, my.x.axis.cex=1, my.xlab.cex=1, x.padj=1, my.x.axis.at=NULL,
                                my.x.labels=TRUE, override.xlab=NULL, 
                                my.title.line=0.5, title.cex=1,
                                my.lwd=1.5,
@@ -149,6 +149,10 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
        frame.plot=FALSE, type=my.type, cex=point.cex, lwd=my.lwd, col=main.col, pch=20)
   title(main=this.title, line=my.title.line, cex.main=title.cex)
   
+  if (is.null(my.x.axis.at)) {
+    my.x.axis.at <- axTicks()
+  }
+  
   if(!make.y.axis.sparse){
     axis(side=2, at=0:y.max, las=2, cex.axis=my.y.axis.cex)
   }
@@ -159,7 +163,7 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
   mtext(text=this.ylab, side=2, line=my.y.line, cex=my.ylab.cex)
   
   this.xlab <- ifelse(is.null(override.xlab), paste("Chr", chr, paste0("(", scale, ")")), override.xlab)
-  axis(side=1, cex.axis=my.x.axis.cex, labels=my.x.labels, padj=x.padj)
+  axis(side=1, cex.axis=my.x.axis.cex, labels=my.x.labels, padj=x.padj, at=my.x.axis.at)
   mtext(text=this.xlab, side=1, line=my.x.line, cex=my.xlab.cex)
   
   if(!is.null(CI)){

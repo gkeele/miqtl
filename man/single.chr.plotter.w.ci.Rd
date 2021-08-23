@@ -4,8 +4,15 @@
 \alias{single.chr.plotter.w.ci}
 \title{Plot whole genome and single chromosome windows of haplotype-based genome scan in a PDF output document}
 \usage{
-single.chr.plotter.w.ci(scan.object, qtl.ci.object, ci.type, scan.type,
-  these.col = c("#7BAFD4", "red"), scale = "Mb", alpha = 0.05)
+single.chr.plotter.w.ci(
+  scan.object,
+  qtl.ci.object,
+  ci.type,
+  scan.type,
+  these.col = c("#7BAFD4", "red"),
+  scale = "Mb",
+  alpha = 0.05
+)
 }
 \arguments{
 \item{scan.object}{A scan.h2lmm() object (ROP or multiple imputations). If multiple imputations, median and confidence interval 

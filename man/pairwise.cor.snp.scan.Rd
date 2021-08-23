@@ -5,10 +5,20 @@
 \title{Calculate the r^2 (squared correlation coefficient) between the genotype at all loci on a chromosome 
 and a specified SNP marker.}
 \usage{
-pairwise.cor.snp.scan(data, formula, K, genomecache,
-  model = c("additive", "full"), chr, point.locus,
-  just.these.loci = NULL, print.progress = FALSE,
-  exclusion.freq = .Machine$double.eps, X.list, ...)
+pairwise.cor.snp.scan(
+  data,
+  formula,
+  K,
+  genomecache,
+  model = c("additive", "full"),
+  chr,
+  point.locus,
+  just.these.loci = NULL,
+  print.progress = FALSE,
+  exclusion.freq = .Machine$double.eps,
+  X.list,
+  ...
+)
 }
 \arguments{
 \item{data}{A data frame with outcome and potential covariates. Should also have individual IDs

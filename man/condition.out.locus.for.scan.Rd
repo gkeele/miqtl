@@ -4,13 +4,29 @@
 \alias{condition.out.locus.for.scan}
 \title{Add the residuals to a data.frame after regressing out a specified QTL effect}
 \usage{
-condition.out.locus.for.scan(locus, new.outcome.name = "new.y",
-  genomecache, data, formula, K = NULL, model = c("additive", "full"),
-  locus.as.fixed = TRUE, use.par = "h2", use.multi.impute = TRUE,
-  num.imp = 11, brute = TRUE, use.fix.par = TRUE, seed = 1,
-  pheno.id = "SUBJECT.NAME", geno.id = "SUBJECT.NAME",
-  weights = NULL, do.augment = FALSE, use.full.null = FALSE,
-  added.data.points = 1, ...)
+condition.out.locus.for.scan(
+  locus,
+  new.outcome.name = "new.y",
+  genomecache,
+  data,
+  formula,
+  K = NULL,
+  model = c("additive", "full"),
+  locus.as.fixed = TRUE,
+  use.par = "h2",
+  use.multi.impute = TRUE,
+  num.imp = 11,
+  brute = TRUE,
+  use.fix.par = TRUE,
+  seed = 1,
+  pheno.id = "SUBJECT.NAME",
+  geno.id = "SUBJECT.NAME",
+  weights = NULL,
+  do.augment = FALSE,
+  use.full.null = FALSE,
+  added.data.points = 1,
+  ...
+)
 }
 \arguments{
 \item{locus}{The locus for which the QTL effect will be regressed out. The locus must be contained in the
