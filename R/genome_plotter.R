@@ -82,7 +82,8 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
                                my.legend.cex=0.6, my.type="l", point.cex=0.5,
                                hard.thresholds=NULL, thresholds.col="red", thresholds.legend=NULL,
                                include.qtl.rug=FALSE, rug.pos=NULL, rug.col="gray50",
-                               physical.dist.is.Mb=TRUE){
+                               physical.dist.is.Mb=TRUE,
+                               use.frame.plot = FALSE){
   scale <- scale[1]
   MI <- all.CI <- CI <- NULL
   if(length(thresholds.col) < length(hard.thresholds)){ thresholds.col <- rep(thresholds.col, length(hard.thresholds)) }
@@ -146,7 +147,7 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
        xlim=c(0, max.pos), 
        ylim=c(0, y.max), 
        xaxt="n", yaxt="n", xlab="", ylab="", main="",
-       frame.plot=FALSE, type=my.type, cex=point.cex, lwd=my.lwd, col=main.col, pch=20)
+       frame.plot=use.frame.plot, type=my.type, cex=point.cex, lwd=my.lwd, col=main.col, pch=20)
   title(main=this.title, line=my.title.line, cex.main=title.cex)
   
   if (is.null(my.x.axis.at)) {

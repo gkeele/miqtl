@@ -39,7 +39,8 @@ genome.plotter.chr(
   include.qtl.rug = FALSE,
   rug.pos = NULL,
   rug.col = "gray50",
-  physical.dist.is.Mb = TRUE
+  physical.dist.is.Mb = TRUE,
+  use.frame.plot = FALSE
 )
 }
 \arguments{
