@@ -151,7 +151,7 @@ genome.plotter.chr <- function(scan.object, chr, use.lod=FALSE,
   title(main=this.title, line=my.title.line, cex.main=title.cex)
   
   if (is.null(my.x.axis.at)) {
-    my.x.axis.at <- axTicks()
+    my.x.axis.at <- axTicks(1)
   }
   
   if(!make.y.axis.sparse){
