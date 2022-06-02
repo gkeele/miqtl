@@ -34,8 +34,9 @@ We use the package [sparc](https://github.com/gkeele/sparcc) to simulate phenoty
 
 library(sparcc)
 
-#download the sparc genome cache from GitHub prior to running the code to ensure the directory exists
-
+## Download the sparc genome cache from GitHub
+download.file(url = "https://github.com/gkeele/sparcc_cache/archive/master.zip", destfile = "~/sparcc_cache.zip")
+unzip(zipfile = "~/sparcc_cache.zip")
 genomecache <- "~/sparcc_cache"
 
 phenotypes <- sim.CC.data(genomecache = genomecache, 
