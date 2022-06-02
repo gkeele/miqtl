@@ -47,7 +47,7 @@ phenotypes <- sim.CC.data(genomecache = genomecache,
 ```
 
 
-# Example workflow
+## Example workflow
 
 The following code demonstrates a simple example workflow to implement miQTL. This gives a demonstration of a QTL scan in the Collaborative Cross population and compares scans which handle haplotype uncertainty using regression on probabilities (ROP) and multiple imputation. 
 
