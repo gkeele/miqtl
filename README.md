@@ -75,7 +75,7 @@ miqtl.mi11.scan <- scan.h2lmm(genomecache = genomecache,
                               use.multi.impute = TRUE, 
                               num.imp = 11)
 
-genome.plotter.whole(scan.list = list(miqtl.mi11.scan),i)
+genome.plotter.whole(scan.list = list(miqtl.mi11.scan))
 
 ```
 miQTL generates significance thresholds for each scan using a permutation test
